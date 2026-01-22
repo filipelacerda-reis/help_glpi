@@ -1,0 +1,104 @@
+# GitLab CI/CD Pipeline para GLPI ETUS
+# Este arquivo configura o pipeline de CI/CD no GitLab
+
+stages:
+  - build
+  - test
+  - deploy
+
+variables:
+  NODE_VERSION: "20"
+  POSTGRES_DB: "glpi_etus_test"
+  POSTGRES_USER: "glpi_etus"
+  POSTGRES_PASSWORD: "test_password"
+  POSTGRES_HOST_AUTH_METHOD: "trust"
+
+# Cache para node_modules
+cache:
+  paths:
+    - backend/node_modules/
+    - frontend/node_modules/
+
+# Build do Backend
+build:backend:
+  stage: build
+  image: node:${NODE_VERSION}
+  script:
+    - cd backend
+    - npm ci
+    - npm run build
+  artifacts:
+    paths:
+      - backend/dist/
+    expire_in: 1 hour
+  only:
+    - main
+    - develop
+    - merge_requests
+
+# Build do Frontend
+build:frontend:
+  stage: build
+  image: node:${NODE_VERSION}
+  script:
+    - cd frontend
+    - npm ci
+    - npm run build
+  artifacts:
+    paths:
+      - frontend/dist/
+    expire_in: 1 hour
+  only:
+    - main
+    - develop
+    - merge_requests
+
+# Testes do Backend
+test:backend:
+  stage: test
+  image: node:${NODE_VERSION}
+  services:
+    - postgres:15-alpine
+    - redis:7-alpine
+  variables:
+    POSTGRES_DB: ${POSTGRES_DB}
+    POSTGRES_USER: ${POSTGRES_USER}
+    POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?schema=public"
+    REDIS_HOST: "redis"
+    REDIS_PORT: "6379"
+    NODE_ENV: "test"
+    JWT_SECRET: "test-secret-key-for-ci"
+    JWT_REFRESH_SECRET: "test-refresh-secret-key-for-ci"
+  script:
+    - cd backend
+    - npm ci
+    - npx prisma generate
+    - npx prisma migrate deploy
+    - npm test
+  only:
+    - main
+    - develop
+    - merge_requests
+
+# Deploy (configurar conforme seu ambiente)
+# Este job deve ser configurado manualmente com as credenciais necessárias
+deploy:production:
+  stage: deploy
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - echo "Deploy para produção"
+    - echo "Configure este job com suas credenciais e comandos de deploy"
+    # Exemplo:
+    # - docker build -t glpi-etus-backend ./backend
+    # - docker build -t glpi-etus-frontend ./frontend
+    # - docker-compose -f docker-compose.prod.yml up -d
+  only:
+    - main
+  when: manual
+  environment:
+    name: production
+    url: https://help.etus.io
+

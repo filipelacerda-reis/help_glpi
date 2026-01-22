@@ -1,0 +1,74 @@
+# Node modules
+**/node_modules/
+node_modules/
+
+# Build artifacts
+**/dist/
+dist/
+**/.next/
+.next/
+
+# Environment files - CRÍTICO: NÃO sobrescrever arquivos .env de produção
+.env
+.env.local
+.env.production
+.env.development
+.env.*
+**/.env
+**/.env.*
+backend/.env
+frontend/.env
+**/backend/.env
+**/frontend/.env
+
+# Logs
+**/*.log
+logs/
+*.log
+
+# Cache
+**/.cache/
+.cache/
+**/.vscode/
+.vscode/
+**/.idea/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+**/.DS_Store
+
+# Git
+.git/
+.gitignore
+
+# Docker volumes
+**/uploads/tickets/**
+backend/uploads/tickets/**
+
+# Backups
+backups/
+
+# Temporary files
+*.tmp
+*.temp
+**/*.tmp
+**/*.temp
+
+# Documentation (manter apenas essenciais)
+*.md
+!README.md
+!CHANGELOG.md
+!TECHNICIAN_JOURNAL_IMPLEMENTATION.md
+!RELATORIO_METRICAS_SLA.md
+
+# Cloudflare Tunnel - CRÍTICO: NÃO sobrescrever configuração de produção
+cloudflared-config/
+cloudflared-credentials/
+cloudflared-config.yml
+**/cloudflared-config/
+**/cloudflared-credentials/
+**/*cloudflared*
+*.cfargotunnel.com
+**/cloudflared*

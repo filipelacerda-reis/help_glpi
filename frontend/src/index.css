@@ -1,0 +1,161 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: 'Space Grotesk', 'Roboto', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Estilos para renderização de Markdown */
+.prose {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+}
+
+.prose p {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  margin-bottom: 1em;
+  line-height: 1.75;
+}
+
+.prose p + p {
+  margin-top: 1em;
+}
+
+.prose pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+}
+
+.prose code {
+  word-break: break-all;
+  white-space: pre-wrap;
+  max-width: 100%;
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+}
+
+.prose ul,
+.prose ol {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+}
+
+.prose li {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+}
+
+/* Estilos para comentários exibidos - texto branco */
+.comment-content,
+.comment-content * {
+  color: #E5E7EB !important;
+}
+
+.comment-content p,
+.comment-content div,
+.comment-content span,
+.comment-content strong,
+.comment-content em,
+.comment-content u,
+.comment-content li,
+.comment-content h1,
+.comment-content h2,
+.comment-content h3,
+.comment-content h4,
+.comment-content h5,
+.comment-content h6,
+.comment-content blockquote,
+.comment-content code,
+.comment-content pre,
+.comment-content a {
+  color: #E5E7EB !important;
+}
+
+/* Estilos globais para RichTextEditor em tema claro - garantir texto preto visível */
+.rich-text-editor-light .ql-editor,
+.rich-text-editor-light .ql-editor * {
+  color: #111827 !important;
+}
+
+.rich-text-editor-light .ql-editor p,
+.rich-text-editor-light .ql-editor div,
+.rich-text-editor-light .ql-editor span,
+.rich-text-editor-light .ql-editor strong,
+.rich-text-editor-light .ql-editor em,
+.rich-text-editor-light .ql-editor u,
+.rich-text-editor-light .ql-editor li,
+.rich-text-editor-light .ql-editor h1,
+.rich-text-editor-light .ql-editor h2,
+.rich-text-editor-light .ql-editor h3,
+.rich-text-editor-light .ql-editor h4,
+.rich-text-editor-light .ql-editor h5,
+.rich-text-editor-light .ql-editor h6,
+.rich-text-editor-light .ql-editor blockquote,
+.rich-text-editor-light .ql-editor code,
+.rich-text-editor-light .ql-editor pre {
+  color: #111827 !important;
+}
+
+/* ============================================
+   ESTILOS GLOBAIS DE SCROLLBAR - PADRONIZADOS
+   ============================================ */
+
+/* Scrollbar para todos os elementos (Firefox) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(75, 85, 99, 0.2) transparent;
+}
+
+/* Scrollbar para Webkit (Chrome, Safari, Edge) */
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(75, 85, 99, 0.2);
+  border-radius: 3px;
+  transition: background-color 0.2s ease;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(75, 85, 99, 0.4);
+}
+
+/* Scrollbar para elementos com hover (mais visível quando necessário) */
+*:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(75, 85, 99, 0.3);
+}
+
+*:hover::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(75, 85, 99, 0.5);
+}
+

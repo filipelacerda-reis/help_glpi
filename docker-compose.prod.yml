@@ -1,0 +1,109 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: glpi_etus_db
+    environment:
+      POSTGRES_USER: glpi_etus
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: glpi_etus
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U glpi_etus"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - glpi_etus_network
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: glpi_etus_redis
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - glpi_etus_network
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: production
+    container_name: glpi_etus_backend
+    env_file:
+      - .env
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: glpi_etus
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: glpi_etus
+      DB_SCHEMA: public
+      # DATABASE_URL será construída automaticamente pelo entrypoint script
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ""
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      JWT_EXPIRES_IN: 1h
+      JWT_REFRESH_EXPIRES_IN: 7d
+      NODE_ENV: production
+      PORT: 8080
+      FRONTEND_URL: ${FRONTEND_URL:-https://help.etus.io}
+      # Assistente Virtual
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+    volumes:
+      - ./backend/uploads:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - glpi_etus_network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: production
+      args:
+        - VITE_API_URL=${FRONTEND_URL:-https://help.etus.io}
+    container_name: glpi_etus_frontend
+    depends_on:
+      - backend
+    networks:
+      - glpi_etus_network
+    restart: unless-stopped
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: glpi_etus_cloudflared
+    command: tunnel --config /etc/cloudflared/config.yml run
+    volumes:
+      - ./cloudflared-config:/etc/cloudflared:ro
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - glpi_etus_network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  glpi_etus_network:
+    driver: bridge
+

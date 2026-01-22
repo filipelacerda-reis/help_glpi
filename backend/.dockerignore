@@ -1,0 +1,14 @@
+node_modules
+npm-debug.log
+dist
+.env.local
+.env.*.local
+*.log
+.vscode
+.idea
+coverage
+.nyc_output
+tmp
+temp
+*.tmp
+.prisma

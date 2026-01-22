@@ -1,0 +1,667 @@
+import { useEffect, useState } from 'react';
+import ModernLayout from '../components/ModernLayout';
+import { adminSettingsService } from '../services/adminSettings.service';
+import { slaService } from '../services/sla.service';
+import { teamService } from '../services/team.service';
+import { categoryService } from '../services/category.service';
+
+type TabKey = 'sso' | 'platform' | 'tools' | 'audit';
+
+const SamlAdminPage = () => {
+  const ticketTypes = ['INCIDENT', 'SERVICE_REQUEST', 'PROBLEM', 'CHANGE', 'TASK', 'QUESTION'];
+  const priorities = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'];
+  const [activeTab, setActiveTab] = useState<TabKey>('sso');
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [settings, setSettings] = useState<any>(null);
+  const [samlCert, setSamlCert] = useState('');
+  const [calendars, setCalendars] = useState<any[]>([]);
+  const [teams, setTeams] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [auditItems, setAuditItems] = useState<any[]>([]);
+  const [auditCursor, setAuditCursor] = useState<string | null>(null);
+  const [toolFilters, setToolFilters] = useState({
+    from: '',
+    to: '',
+    teamId: '',
+    categoryId: '',
+  });
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const [settingsData, calendarsData, teamsData, categoriesData] = await Promise.all([
+          adminSettingsService.getSettings(),
+          slaService.getAllCalendars(),
+          teamService.getAllTeams(),
+          categoryService.getAllCategories(),
+        ]);
+        const samlDefaults = {
+          issuer: 'glpi-etus-backend',
+          callbackUrl: 'https://help.etus.io/api/auth/saml/acs',
+          jwtRedirectUrl: 'https://help.etus.io/auth/callback',
+          allowedDomains: '',
+          groupsAttribute: 'groups',
+          defaultRole: 'REQUESTER',
+          updateRoleOnLogin: true,
+          requireGroup: true,
+          signatureAlgorithm: 'sha256',
+          nameIdFormat: 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress',
+        };
+        const merged = {
+          ...settingsData,
+          saml: {
+            ...samlDefaults,
+            ...(settingsData.saml || {}),
+          },
+        };
+        setSettings(merged);
+        setCalendars(calendarsData);
+        setTeams(teamsData);
+        setCategories(categoriesData);
+      } catch (err: any) {
+        setError(err.response?.data?.error || 'Erro ao carregar configurações');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    load();
+  }, []);
+
+  const handleSave = async () => {
+    setError('');
+    setSuccess('');
+    setSaving(true);
+    try {
+      if (settings.saml?.enabled) {
+        if (!settings.saml.entryPoint || !settings.saml.issuer || !settings.saml.callbackUrl) {
+          setError('Preencha Entry Point, Issuer e Callback.');
+          setSaving(false);
+          return;
+        }
+        if (!settings.saml.allowedDomains) {
+          setError('Informe os domínios permitidos.');
+          setSaving(false);
+          return;
+        }
+        if (settings.saml.requireGroup && !settings.saml.roleMappingJson) {
+          setError('Informe o mapeamento de grupos.');
+          setSaving(false);
+          return;
+        }
+        if (samlCert && !samlCert.includes('BEGIN CERTIFICATE')) {
+          setError('Certificado inválido.');
+          setSaving(false);
+          return;
+        }
+      }
+
+      const payload = {
+        saml: {
+          ...settings.saml,
+          cert: samlCert || undefined,
+        },
+        platform: settings.platform,
+      };
+      await adminSettingsService.updateSettings(payload);
+      setSuccess('Configurações salvas com sucesso');
+      setSamlCert('');
+      const refreshed = await adminSettingsService.getSettings();
+      setSettings(refreshed);
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Erro ao salvar configurações');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleTestSaml = async () => {
+    setError('');
+    setSuccess('');
+    try {
+      const result = await adminSettingsService.testSaml();
+      setSuccess(result.message || 'Configuração válida');
+    } catch (err: any) {
+      const message = err.response?.data?.errors?.join(', ') || err.response?.data?.error;
+      setError(message || 'Falha ao testar configuração');
+    }
+  };
+
+  const loadAudit = async () => {
+    const result = await adminSettingsService.getAudit(50, auditCursor || undefined);
+    setAuditItems((prev) => [...prev, ...result.data]);
+    setAuditCursor(result.nextCursor);
+  };
+
+  if (loading) {
+    return (
+      <ModernLayout title="Administração" subtitle="Console Administrativo">
+        <div className="p-6 text-gray-300">Carregando...</div>
+      </ModernLayout>
+    );
+  }
+
+  return (
+    <ModernLayout title="Administração" subtitle="Console Administrativo">
+      <div className="p-6 space-y-6">
+        {error && (
+          <div className="bg-red-500/20 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg backdrop-blur-sm">
+            {error}
+          </div>
+        )}
+        {success && (
+          <div className="bg-emerald-500/20 border border-emerald-500/50 text-emerald-300 px-4 py-3 rounded-lg backdrop-blur-sm">
+            {success}
+          </div>
+        )}
+
+        <div className="flex gap-2 flex-wrap">
+          {[
+            { key: 'sso', label: 'SSO / SAML' },
+            { key: 'platform', label: 'Configurações Gerais' },
+            { key: 'tools', label: 'Ferramentas' },
+            { key: 'audit', label: 'Auditoria' },
+          ].map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key as TabKey)}
+              className={`px-4 py-2 rounded-lg text-sm ${
+                activeTab === tab.key
+                  ? 'bg-etus-green text-gray-900'
+                  : 'bg-gray-800/50 text-gray-300 hover:text-white'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {activeTab === 'sso' && settings && (
+          <div className="bg-gray-800/40 border border-gray-700/50 rounded-xl p-6 space-y-4">
+            <div className="grid md:grid-cols-2 gap-4">
+              <label className="text-sm text-gray-300">
+                <span className="block mb-2">Habilitar SAML</span>
+                <input
+                  type="checkbox"
+                  checked={Boolean(settings.saml.enabled)}
+                  onChange={(e) =>
+                    setSettings({ ...settings, saml: { ...settings.saml, enabled: e.target.checked } })
+                  }
+                />
+              </label>
+              <label className="text-sm text-gray-300">
+                <span className="block mb-2">Entry Point</span>
+                <input
+                  className="w-full px-3 py-2 bg-gray-700/40 border border-gray-600 rounded-lg text-white"
+                  value={settings.saml.entryPoint || ''}
+                  onChange={(e) => setSettings({ ...settings, saml: { ...settings.saml, entryPoint: e.target.value } })}
+                />
+                <span className="text-xs text-gray-500">Preencher com URL do IdP Google</span>
+              </label>
+              <label className="text-sm text-gray-300">
+                <span className="block mb-2">Issuer</span>
+                <input
+                  className="w-full px-3 py-2 bg-gray-700/40 border border-gray-600 rounded-lg text-white"
+                  value={settings.saml.issuer || ''}
+                  onChange={(e) => setSettings({ ...settings, saml: { ...settings.saml, issuer: e.target.value } })}
+                />
+              </label>
+              <label className="text-sm text-gray-300">
+                <span className="block mb-2">ACS Callback</span>
+                <input
+                  className="w-full px-3 py-2 bg-gray-700/40 border border-gray-600 rounded-lg text-white"
+                  value={settings.saml.callbackUrl || ''}
+                  onChange={(e) => setSettings({ ...settings, saml: { ...settings.saml, callbackUrl: e.target.value } })}
+                />
+              </label>
+              <label className="text-sm text-gray-300 md:col-span-2">
+                <span className="block mb-2">Certificado (PEM)</span>
+                <textarea
+                  className="w-full px-3 py-2 bg-gray-700/40 border border-gray-600 rounded-lg text-white h-28"
+                  placeholder={settings.saml.cert === '***' ? 'Certificado já configurado' : ''}
+                  value={samlCert}
+                  onChange={(e) => setSamlCert(e.target.value)}
+                />
+                <span className="text-xs text-gray-500">Colar certificado do IdP Google</span>
+              </label>
+              <div className="md:col-span-2 text-sm text-gray-400">
+                Certificado configurado: <span className="text-white">{settings.saml.cert === '***' ? 'Sim' : 'Não'}</span>
+              </div>
+              <label className="text-sm text-gray-300">
+                <span className="block mb-2">Domínios permitidos (CSV)</span>
+                <input
+                  className="w-full px-3 py-2 bg-gray-700/40 border border-gray-600 rounded-lg text-white"
+                  value={settings.saml.allowedDomains || ''}
+                  onChange={(e) =>
+                    setSettings({ ...settings, saml: { ...settings.saml, allowedDomains: e.target.value } })
+                  }
+                />
+              </label>
+              <label className="text-sm text-gray-300">
+                <span className="block mb-2">Atributo de grupos</span>
+                <input
+                  className="w-full px-3 py-2 bg-gray-700/40 border border-gray-600 rounded-lg text-white"
+                  value={settings.saml.groupsAttribute || ''}
+                  onChange={(e) =>
+                    setSettings({ ...settings, saml: { ...settings.saml, groupsAttribute: e.target.value } })
+                  }
+                />
+              </label>
+              <label className="text-sm text-gray-300">
+                <span className="block mb-2">Role padrão</span>
+                <select
+                  className="w-full px-3 py-2 bg-gray-700/40 border border-gray-600 rounded-lg text-white"
+                  value={settings.saml.defaultRole || 'REQUESTER'}
+                  onChange={(e) =>
+                    setSettings({ ...settings, saml: { ...settings.saml, defaultRole: e.target.value } })
+                  }
+                >
+                  {['ADMIN', 'TRIAGER', 'TECHNICIAN', 'REQUESTER'].map((role) => (
+                    <option key={role} value={role}>
+                      {role}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="text-sm text-gray-300">
+                <span className="block mb-2">Atualizar role no login</span>
+                <input
+                  type="checkbox"
+                  checked={Boolean(settings.saml.updateRoleOnLogin)}
+                  onChange={(e) =>
+                    setSettings({ ...settings, saml: { ...settings.saml, updateRoleOnLogin: e.target.checked } })
+                  }
+                />
+              </label>
+              <label className="text-sm text-gray-300">
+                <span className="block mb-2">Requer grupo</span>
+                <input
+                  type="checkbox"
+                  checked={Boolean(settings.saml.requireGroup)}
+                  onChange={(e) =>
+                    setSettings({ ...settings, saml: { ...settings.saml, requireGroup: e.target.checked } })
+                  }
+                />
+              </label>
+              <label className="text-sm text-gray-300 md:col-span-2">
+                <span className="block mb-2">Mapeamento de grupos</span>
+                <textarea
+                  className="w-full px-3 py-2 bg-gray-700/40 border border-gray-600 rounded-lg text-white h-32"
+                  value={settings.saml.roleMappingJson || '{}'}
+                  onChange={(e) =>
+                    setSettings({ ...settings, saml: { ...settings.saml, roleMappingJson: e.target.value } })
+                  }
+                />
+                <span className="text-xs text-gray-500">Mapear grupos do Workspace → roles</span>
+              </label>
+            </div>
+
+            <div className="flex gap-3 flex-wrap">
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                className="px-4 py-2 rounded-lg bg-etus-green text-gray-900 font-semibold"
+              >
+                {saving ? 'Salvando...' : 'Salvar'}
+              </button>
+              <button
+                onClick={handleTestSaml}
+                className="px-4 py-2 rounded-lg border border-gray-600 text-gray-200"
+              >
+                Testar configuração SAML
+              </button>
+              <a
+                href={`${import.meta.env.VITE_API_URL}/api/auth/saml/metadata`}
+                target="_blank"
+                rel="noreferrer"
+                className="px-4 py-2 rounded-lg border border-gray-600 text-gray-200"
+              >
+                Ver metadata do SP
+              </a>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'platform' && settings && (
+          <div className="bg-gray-800/40 border border-gray-700/50 rounded-xl p-6 space-y-4">
+            <div className="grid md:grid-cols-2 gap-4">
+              <label className="text-sm text-gray-300">
+                <span className="block mb-2">Nome do sistema</span>
+                <input
+                  className="w-full px-3 py-2 bg-gray-700/40 border border-gray-600 rounded-lg text-white"
+                  value={settings.platform?.branding?.name || ''}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      platform: {
+                        ...settings.platform,
+                        branding: { ...settings.platform?.branding, name: e.target.value },
+                      },
+                    })
+                  }
+                />
+              </label>
+              <label className="text-sm text-gray-300">
+                <span className="block mb-2">Logo URL</span>
+                <input
+                  className="w-full px-3 py-2 bg-gray-700/40 border border-gray-600 rounded-lg text-white"
+                  value={settings.platform?.branding?.logoUrl || ''}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      platform: {
+                        ...settings.platform,
+                        branding: { ...settings.platform?.branding, logoUrl: e.target.value },
+                      },
+                    })
+                  }
+                />
+              </label>
+              <label className="text-sm text-gray-300">
+                <span className="block mb-2">Timezone</span>
+                <input
+                  className="w-full px-3 py-2 bg-gray-700/40 border border-gray-600 rounded-lg text-white"
+                  value={settings.platform?.timezone || ''}
+                  onChange={(e) =>
+                    setSettings({ ...settings, platform: { ...settings.platform, timezone: e.target.value } })
+                  }
+                />
+              </label>
+              <label className="text-sm text-gray-300">
+                <span className="block mb-2">Calendário padrão</span>
+                <select
+                  className="w-full px-3 py-2 bg-gray-700/40 border border-gray-600 rounded-lg text-white"
+                  value={settings.platform?.businessCalendarDefaultId || ''}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      platform: { ...settings.platform, businessCalendarDefaultId: e.target.value },
+                    })
+                  }
+                >
+                  <option value="">Selecione...</option>
+                  {calendars.map((calendar) => (
+                    <option key={calendar.id} value={calendar.id}>
+                      {calendar.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="text-sm text-gray-300">
+                <span className="block mb-2">Solicitante pode criar</span>
+                <input
+                  type="checkbox"
+                  checked={Boolean(settings.platform?.ticketing?.allowRequesterCreate)}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      platform: {
+                        ...settings.platform,
+                        ticketing: { ...settings.platform?.ticketing, allowRequesterCreate: e.target.checked },
+                      },
+                    })
+                  }
+                />
+              </label>
+              <div className="text-sm text-gray-300 md:col-span-2">
+                <span className="block mb-2">Tipos habilitados</span>
+                <div className="grid grid-cols-2 gap-2">
+                  {ticketTypes.map((type) => (
+                    <label key={type} className="flex items-center gap-2 text-xs text-gray-300">
+                      <input
+                        type="checkbox"
+                        checked={settings.platform?.ticketing?.enabledTypes?.includes(type) || false}
+                        onChange={(e) => {
+                          const current = settings.platform?.ticketing?.enabledTypes || [];
+                          const updated = e.target.checked
+                            ? [...current, type]
+                            : current.filter((item: string) => item !== type);
+                          setSettings({
+                            ...settings,
+                            platform: {
+                              ...settings.platform,
+                              ticketing: { ...settings.platform?.ticketing, enabledTypes: updated },
+                            },
+                          });
+                        }}
+                      />
+                      {type}
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <div className="text-sm text-gray-300 md:col-span-2">
+                <span className="block mb-2">Prioridades habilitadas</span>
+                <div className="grid grid-cols-2 gap-2">
+                  {priorities.map((priority) => (
+                    <label key={priority} className="flex items-center gap-2 text-xs text-gray-300">
+                      <input
+                        type="checkbox"
+                        checked={settings.platform?.ticketing?.enabledPriorities?.includes(priority) || false}
+                        onChange={(e) => {
+                          const current = settings.platform?.ticketing?.enabledPriorities || [];
+                          const updated = e.target.checked
+                            ? [...current, priority]
+                            : current.filter((item: string) => item !== priority);
+                          setSettings({
+                            ...settings,
+                            platform: {
+                              ...settings.platform,
+                              ticketing: { ...settings.platform?.ticketing, enabledPriorities: updated },
+                            },
+                          });
+                        }}
+                      />
+                      {priority}
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <label className="text-sm text-gray-300">
+                <span className="block mb-2">Socket habilitado</span>
+                <input
+                  type="checkbox"
+                  checked={Boolean(settings.platform?.notifications?.socketEnabled)}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      platform: {
+                        ...settings.platform,
+                        notifications: { ...settings.platform?.notifications, socketEnabled: e.target.checked },
+                      },
+                    })
+                  }
+                />
+              </label>
+              <label className="text-sm text-gray-300">
+                <span className="block mb-2">Retenção notificações (dias)</span>
+                <input
+                  type="number"
+                  className="w-full px-3 py-2 bg-gray-700/40 border border-gray-600 rounded-lg text-white"
+                  value={settings.platform?.notifications?.retentionDays || ''}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      platform: {
+                        ...settings.platform,
+                        notifications: {
+                          ...settings.platform?.notifications,
+                          retentionDays: Number(e.target.value),
+                        },
+                      },
+                    })
+                  }
+                />
+              </label>
+              <label className="text-sm text-gray-300">
+                <span className="block mb-2">Assistente habilitado</span>
+                <input
+                  type="checkbox"
+                  checked={Boolean(settings.platform?.ai?.assistantEnabled)}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      platform: {
+                        ...settings.platform,
+                        ai: { ...settings.platform?.ai, assistantEnabled: e.target.checked },
+                      },
+                    })
+                  }
+                />
+              </label>
+              <label className="text-sm text-gray-300">
+                <span className="block mb-2">Limite diário IA</span>
+                <input
+                  type="number"
+                  className="w-full px-3 py-2 bg-gray-700/40 border border-gray-600 rounded-lg text-white"
+                  value={settings.platform?.ai?.dailyLimit || ''}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      platform: {
+                        ...settings.platform,
+                        ai: { ...settings.platform?.ai, dailyLimit: Number(e.target.value) },
+                      },
+                    })
+                  }
+                />
+              </label>
+            </div>
+            <div>
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                className="px-4 py-2 rounded-lg bg-etus-green text-gray-900 font-semibold"
+              >
+                {saving ? 'Salvando...' : 'Salvar'}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'tools' && (
+          <div className="bg-gray-800/40 border border-gray-700/50 rounded-xl p-6 space-y-4">
+            <div className="grid md:grid-cols-2 gap-4">
+              <label className="text-sm text-gray-300">
+                <span className="block mb-2">Data inicial</span>
+                <input
+                  type="date"
+                  className="w-full px-3 py-2 bg-gray-700/40 border border-gray-600 rounded-lg text-white"
+                  value={toolFilters.from}
+                  onChange={(e) => setToolFilters({ ...toolFilters, from: e.target.value })}
+                />
+              </label>
+              <label className="text-sm text-gray-300">
+                <span className="block mb-2">Data final</span>
+                <input
+                  type="date"
+                  className="w-full px-3 py-2 bg-gray-700/40 border border-gray-600 rounded-lg text-white"
+                  value={toolFilters.to}
+                  onChange={(e) => setToolFilters({ ...toolFilters, to: e.target.value })}
+                />
+              </label>
+              <label className="text-sm text-gray-300">
+                <span className="block mb-2">Time</span>
+                <select
+                  className="w-full px-3 py-2 bg-gray-700/40 border border-gray-600 rounded-lg text-white"
+                  value={toolFilters.teamId}
+                  onChange={(e) => setToolFilters({ ...toolFilters, teamId: e.target.value })}
+                >
+                  <option value="">Todos</option>
+                  {teams.map((team) => (
+                    <option key={team.id} value={team.id}>
+                      {team.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="text-sm text-gray-300">
+                <span className="block mb-2">Categoria</span>
+                <select
+                  className="w-full px-3 py-2 bg-gray-700/40 border border-gray-600 rounded-lg text-white"
+                  value={toolFilters.categoryId}
+                  onChange={(e) => setToolFilters({ ...toolFilters, categoryId: e.target.value })}
+                >
+                  <option value="">Todas</option>
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+            <div className="flex gap-3 flex-wrap">
+              <button
+                onClick={async () => {
+                  await adminSettingsService.recalculateSla(toolFilters);
+                  setSuccess('Job de recálculo enviado');
+                }}
+                className="px-4 py-2 rounded-lg bg-etus-green text-gray-900 font-semibold"
+              >
+                Recalcular SLA/Stats
+              </button>
+              <button
+                className="px-4 py-2 rounded-lg border border-gray-600 text-gray-500 cursor-not-allowed"
+                disabled
+              >
+                Reindexar métricas (em breve)
+              </button>
+              <a
+                href="/users"
+                className="px-4 py-2 rounded-lg border border-gray-600 text-gray-200"
+              >
+                Gerenciar usuários
+              </a>
+              <a
+                href={`${import.meta.env.VITE_API_URL}/api/admin/audit/export`}
+                target="_blank"
+                rel="noreferrer"
+                className="px-4 py-2 rounded-lg border border-gray-600 text-gray-200"
+              >
+                Exportar auditoria
+              </a>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'audit' && (
+          <div className="bg-gray-800/40 border border-gray-700/50 rounded-xl p-6 space-y-4">
+            <button
+              onClick={loadAudit}
+              className="px-4 py-2 rounded-lg border border-gray-600 text-gray-200"
+            >
+              Carregar auditoria
+            </button>
+            <div className="space-y-3">
+              {auditItems.map((item) => (
+                <div key={item.id} className="border border-gray-700/50 rounded-lg p-3 text-sm text-gray-300">
+                  <div className="flex justify-between">
+                    <span>{item.resource} - {item.action}</span>
+                    <span>{new Date(item.createdAt).toLocaleString()}</span>
+                  </div>
+                  <div className="text-gray-400">
+                    {item.actor?.email || 'system'}
+                  </div>
+                </div>
+              ))}
+            </div>
+            {auditCursor && (
+              <button
+                onClick={loadAudit}
+                className="px-4 py-2 rounded-lg border border-gray-600 text-gray-200"
+              >
+                Carregar mais
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+    </ModernLayout>
+  );
+};
+
+export default SamlAdminPage;

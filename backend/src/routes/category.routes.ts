@@ -1,0 +1,18 @@
+import { Router } from 'express';
+import { categoryController } from '../controllers/category.controller';
+import { authenticate, authorize } from '../middleware/auth';
+import { UserRole } from '@prisma/client';
+
+const router = Router();
+
+// Leitura pública (para seleção em formulários)
+router.get('/', categoryController.getAllCategories);
+router.get('/:id', categoryController.getCategoryById);
+
+// Mutações apenas para ADMIN
+router.post('/', authenticate, authorize(UserRole.ADMIN), categoryController.createCategory);
+router.patch('/:id', authenticate, authorize(UserRole.ADMIN), categoryController.updateCategory);
+router.delete('/:id', authenticate, authorize(UserRole.ADMIN), categoryController.deleteCategory);
+
+export { router as categoryRoutes };
+

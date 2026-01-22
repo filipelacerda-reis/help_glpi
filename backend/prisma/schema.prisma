@@ -1,0 +1,934 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "darwin-arm64", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Seed configuration
+// Run with: npx prisma db seed
+
+enum UserRole {
+  REQUESTER
+  TECHNICIAN
+  TRIAGER
+  ADMIN
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  WAITING_REQUESTER
+  WAITING_THIRD_PARTY
+  RESOLVED
+  CLOSED
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum TicketType {
+  INCIDENT
+  SERVICE_REQUEST
+  PROBLEM
+  CHANGE
+  TASK
+  QUESTION
+}
+
+enum InfraType {
+  LOCAL
+  NUVEM
+  HIBRIDA
+  ESTACAO_TRABALHO
+  REDE_LOCAL
+  SERVIDOR_FISICO
+}
+
+enum TagGroup {
+  FEATURE
+  AREA
+  ENV
+  PLATFORM
+  SOURCE
+  IMPACT
+  RC
+  STATUS_REASON
+  WORK
+  QUESTION
+  INFRA
+}
+
+enum InteractionType {
+  PUBLIC_REPLY
+  INTERNAL_NOTE
+  STATUS_CHANGE
+  ASSIGNMENT
+  TEAM_CHANGE
+}
+
+enum CommentType {
+  PUBLIC
+  INTERNAL
+}
+
+enum TeamRole {
+  MEMBER
+  LEAD
+}
+
+enum TicketEventType {
+  CREATED
+  UPDATED
+  STATUS_CHANGED
+  PRIORITY_CHANGED
+  ASSIGNED
+  UNASSIGNED
+  TEAM_CHANGED
+  COMMENT_ADDED
+  ATTACHMENT_ADDED
+  ATTACHMENT_REMOVED
+  TAG_ADDED
+  TAG_REMOVED
+  SLA_STARTED
+  SLA_PAUSED
+  SLA_RESUMED
+  SLA_BREACHED
+  SLA_MET
+  AUTOMATION_TRIGGERED
+  RELATION_ADDED
+  RELATION_REMOVED
+}
+
+enum EventOrigin {
+  PORTAL
+  API
+  EMAIL
+  SCRIPT
+  AUTO_RULE
+  SYSTEM
+}
+
+enum TicketRelationType {
+  DUPLICATE_OF
+  CHILD_OF
+  PARENT_OF
+  CAUSED_BY
+  BLOCKED_BY
+}
+
+enum SlaInstanceStatus {
+  RUNNING
+  PAUSED
+  BREACHED
+  MET
+  CANCELLED
+}
+
+enum AutomationEvent {
+  ON_TICKET_CREATED
+  ON_TICKET_UPDATED
+  ON_STATUS_CHANGED
+  ON_PRIORITY_CHANGED
+  ON_TEAM_CHANGED
+  ON_SLA_BREACH
+  ON_SLA_MET
+  ON_COMMENT_ADDED
+}
+
+enum KbArticleStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum TechnicianJournalEntryType {
+  MANUAL
+  AUTO_TICKET_WORKLOG
+  AUTO_TICKET_STATUS
+  AUTO_TICKET_COMMENT
+  AUTO_OTHER
+}
+
+enum ChatStatus {
+  OPEN
+  CLOSED
+  ESCALATED
+}
+
+enum ChatMessageRole {
+  USER
+  ASSISTANT
+  SYSTEM
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         UserRole
+  department   String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  requestedTickets  Ticket[]                 @relation("Requester")
+  assignedTickets   Ticket[]                 @relation("AssignedTechnician")
+  comments          TicketComment[]
+  statusChanges     TicketStatusHistory[]
+  uploadedFiles     TicketAttachment[]
+  teams             UserTeam[]
+  notifications     Notification[]
+  interactions      TicketInteraction[]
+  observedTickets   TicketObserver[]
+  addedObservers    TicketObserver[]         @relation("ObserverAddedBy")
+  ticketEvents      TicketEvent[]
+  worklogs          TicketWorklog[]
+  kbArticlesCreated KbArticle[]              @relation("KbArticleCreator")
+  kbArticlesUpdated KbArticle[]              @relation("KbArticleUpdater")
+  kbArticleUsage    KbArticleUsage[]
+  reportPresets     ReportPreset[]
+  journalEntries    TechnicianJournalEntry[]
+  dailySummaries    TechnicianDailySummary[]
+  chatSessions      ChatSession[]
+  platformSettingsUpdated PlatformSetting[] @relation("PlatformSettingUpdatedBy")
+  platformAuditLogs PlatformAuditLog[] @relation("PlatformAuditActor")
+
+  @@map("users")
+}
+
+model Category {
+  id               String   @id @default(uuid())
+  name             String   @unique
+  parentCategoryId String?
+  active           Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  parentCategory Category?  @relation("CategoryHierarchy", fields: [parentCategoryId], references: [id])
+  subCategories  Category[] @relation("CategoryHierarchy")
+  tickets        Ticket[]
+  teams           TeamCategory[]
+
+  @@map("categories")
+}
+
+model Team {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  users              UserTeam[]
+  responsibleTickets Ticket[]   @relation("ResponsibleTeam")
+  requesterTickets   Ticket[]   @relation("RequesterTeam")
+  categories         TeamCategory[]
+  ticketTypes        TeamTicketType[]
+
+  @@map("teams")
+}
+
+model UserTeam {
+  userId String
+  teamId String
+  role   TeamRole @default(MEMBER)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@id([userId, teamId])
+  @@map("user_teams")
+}
+
+model Ticket {
+  id                           String         @id @default(uuid())
+  title                        String
+  description                  String
+  status                       TicketStatus   @default(OPEN)
+  priority                     TicketPriority @default(MEDIUM)
+  tipo                         TicketType     @default(INCIDENT)
+  infraTipo                    InfraType?
+  requesterId                  String
+  assignedTechnicianId         String?
+  categoryId                   String?
+  teamId                       String?
+  teamSolicitanteId            String?
+  createdAt                    DateTime       @default(now())
+  updatedAt                    DateTime       @updatedAt
+  firstResponseAt              DateTime?
+  resolvedAt                   DateTime?
+  closedAt                     DateTime?
+  firstResponseBusinessMinutes Int?
+  resolutionBusinessMinutes    Int?
+  closureBusinessMinutes       Int?
+  // Gestão de Projetos
+  dueDate                      DateTime?     // Data de entrega do projeto/tarefa
+  estimatedMinutes             Int?           // Estimativa de tempo de execução em minutos
+  customFields                 Json?          // Campos personalizados dinâmicos
+
+  // Relations
+  requester          User                     @relation("Requester", fields: [requesterId], references: [id])
+  assignedTechnician User?                    @relation("AssignedTechnician", fields: [assignedTechnicianId], references: [id])
+  category           Category?                @relation(fields: [categoryId], references: [id])
+  team               Team?                    @relation("ResponsibleTeam", fields: [teamId], references: [id])
+  teamSolicitante    Team?                    @relation("RequesterTeam", fields: [teamSolicitanteId], references: [id])
+  comments           TicketComment[]
+  statusHistory      TicketStatusHistory[]
+  attachments        TicketAttachment[]
+  notifications      Notification[]
+  tags               TicketTag[]
+  interactions       TicketInteraction[]
+  observers          TicketObserver[]
+  events             TicketEvent[]
+  relations          TicketRelation[]         @relation("TicketRelations")
+  relatedTickets     TicketRelation[]         @relation("RelatedTicketRelations")
+  slaInstances       TicketSlaInstance[]
+  slaStats           TicketSlaStats?
+  worklogs           TicketWorklog[]
+  satisfaction       TicketSatisfaction?
+  kbArticles         TicketKbArticle[]
+  journalEntries     TechnicianJournalEntry[]
+  chatSessions       ChatSession[]
+
+  @@index([tipo])
+  @@index([teamId])
+  @@index([teamSolicitanteId])
+  @@index([createdAt])
+  // Índices compostos para performance de métricas e filtros comuns
+  @@index([status, createdAt])
+  @@index([teamId, status])
+  @@index([assignedTechnicianId, status])
+  @@index([categoryId, status])
+  @@index([priority, status])
+  @@map("tickets")
+}
+
+model TicketComment {
+  id        String      @id @default(uuid())
+  ticketId  String
+  authorId  String
+  type      CommentType @default(PUBLIC)
+  content   String
+  createdAt DateTime    @default(now())
+
+  // Relations
+  ticket       Ticket                  @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  author       User                    @relation(fields: [authorId], references: [id])
+  attachments  TicketAttachment[]
+  journalEntry TechnicianJournalEntry?
+
+  @@map("ticket_comments")
+}
+
+model TicketStatusHistory {
+  id          String        @id @default(uuid())
+  ticketId    String
+  oldStatus   TicketStatus?
+  newStatus   TicketStatus
+  changedById String
+  changedAt   DateTime      @default(now())
+
+  // Relations
+  ticket    Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  changedBy User   @relation(fields: [changedById], references: [id])
+
+  @@map("ticket_status_history")
+}
+
+model TicketAttachment {
+  id           String   @id @default(uuid())
+  ticketId     String
+  commentId    String? // Opcional: se associado a um comentário
+  fileName     String
+  filePath     String
+  fileSize     Int? // Tamanho em bytes
+  mimeType     String? // Tipo MIME (image/jpeg, image/png, etc)
+  uploadedById String
+  uploadedAt   DateTime @default(now())
+
+  // Relations
+  ticket     Ticket         @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  comment    TicketComment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  uploadedBy User           @relation(fields: [uploadedById], references: [id])
+
+  @@map("ticket_attachments")
+}
+
+enum NotificationType {
+  COMMENT
+  STATUS_CHANGE
+  ASSIGNMENT
+  TEAM_CHANGE
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  ticketId  String?
+  type      NotificationType
+  title     String
+  message   String
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  readAt    DateTime?
+
+  // Relations
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticket Ticket? @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read])
+  @@map("notifications")
+}
+
+model Tag {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  group     TagGroup
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tickets        TicketTag[]
+  journalEntries JournalTag[]
+
+  @@index([group])
+  @@index([isActive])
+  @@map("tags")
+}
+
+model TicketTag {
+  ticketId  String
+  tagId     String
+  createdAt DateTime @default(now())
+
+  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([ticketId, tagId])
+  @@index([ticketId])
+  @@index([tagId])
+  @@map("ticket_tags")
+}
+
+model TicketInteraction {
+  id           String          @id @default(uuid())
+  ticketId     String
+  authorId     String
+  authorTeamId String?
+  type         InteractionType
+  createdAt    DateTime        @default(now())
+
+  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  author User   @relation(fields: [authorId], references: [id])
+
+  @@index([ticketId])
+  @@index([authorId])
+  @@index([authorTeamId])
+  @@index([type])
+  @@index([createdAt])
+  @@map("ticket_interactions")
+}
+
+model TicketObserver {
+  ticketId   String
+  observerId String
+  addedById  String // Quem adicionou o observador
+  createdAt  DateTime @default(now())
+
+  ticket   Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  observer User   @relation(fields: [observerId], references: [id], onDelete: Cascade)
+  addedBy  User   @relation("ObserverAddedBy", fields: [addedById], references: [id])
+
+  @@id([ticketId, observerId])
+  @@index([ticketId])
+  @@index([observerId])
+  @@map("ticket_observers")
+}
+
+// ============================================
+// AUDIT TRAIL - Ticket Events
+// ============================================
+model TicketEvent {
+  id          String          @id @default(uuid())
+  ticketId    String
+  eventType   TicketEventType
+  actorUserId String?
+  origin      EventOrigin     @default(PORTAL)
+  oldValue    Json?
+  newValue    Json?
+  metadata    Json?
+  createdAt   DateTime        @default(now())
+
+  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  actor  User?  @relation(fields: [actorUserId], references: [id])
+
+  @@index([ticketId])
+  @@index([eventType])
+  @@index([createdAt])
+  @@map("ticket_events")
+}
+
+// ============================================
+// TICKET RELATIONS
+// ============================================
+model TicketRelation {
+  ticketId        String
+  relatedTicketId String
+  relationType    TicketRelationType
+  createdAt       DateTime           @default(now())
+
+  ticket        Ticket @relation("TicketRelations", fields: [ticketId], references: [id], onDelete: Cascade)
+  relatedTicket Ticket @relation("RelatedTicketRelations", fields: [relatedTicketId], references: [id], onDelete: Cascade)
+
+  @@id([ticketId, relatedTicketId, relationType])
+  @@index([ticketId])
+  @@index([relatedTicketId])
+  @@map("ticket_relations")
+}
+
+// ============================================
+// SLA - Business Calendars
+// ============================================
+model BusinessCalendar {
+  id        String   @id @default(uuid())
+  name      String
+  timezone  String   @default("America/Sao_Paulo")
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Horários de trabalho por dia da semana (JSON: { monday: { open: "09:00", close: "18:00" }, ... })
+  schedule Json // { monday: { open: "09:00", close: "18:00", enabled: true }, ... }
+
+  slaPolicies SlaPolicy[]
+  exceptions  BusinessCalendarException[]
+
+  @@map("business_calendars")
+}
+
+model BusinessCalendarException {
+  id          String   @id @default(uuid())
+  calendarId  String
+  date        DateTime // Data do feriado/exceção
+  isHoliday   Boolean  @default(true)
+  description String?
+  createdAt   DateTime @default(now())
+
+  calendar BusinessCalendar @relation(fields: [calendarId], references: [id], onDelete: Cascade)
+
+  @@unique([calendarId, date])
+  @@index([calendarId])
+  @@map("business_calendar_exceptions")
+}
+
+// ============================================
+// SLA - Policies
+// ============================================
+model SlaPolicy {
+  id                                 String   @id @default(uuid())
+  name                               String
+  description                        String?
+  appliesTo                          Json // { teamId?: string, categoryId?: string, priority?: string, ticketType?: string, requesterTeamId?: string }
+  targetFirstResponseBusinessMinutes Int?
+  targetResolutionBusinessMinutes    Int
+  targetCompliance                   Float?   @default(98.5) // Meta de compliance em porcentagem (SLO) - padrão 98.5%
+  calendarId                         String
+  active                             Boolean  @default(true)
+  createdAt                          DateTime @default(now())
+  updatedAt                          DateTime @updatedAt
+
+  calendar  BusinessCalendar    @relation(fields: [calendarId], references: [id])
+  instances TicketSlaInstance[]
+  stats     TicketSlaStats[]
+
+  @@index([active])
+  @@map("sla_policies")
+}
+
+// ============================================
+// SLA - Instances and Stats
+// ============================================
+model TicketSlaInstance {
+  id          String            @id @default(uuid())
+  ticketId    String
+  slaPolicyId String
+  startedAt   DateTime
+  pausedAt    DateTime?
+  resumedAt   DateTime?
+  breachedAt  DateTime?
+  resolvedAt  DateTime?
+  status      SlaInstanceStatus @default(RUNNING)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  ticket    Ticket    @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  slaPolicy SlaPolicy @relation(fields: [slaPolicyId], references: [id])
+
+  @@index([ticketId])
+  @@index([slaPolicyId])
+  @@index([status])
+  @@map("ticket_sla_instances")
+}
+
+model TicketSlaStats {
+  ticketId                    String    @id
+  slaPolicyId                 String
+  firstResponseAt             DateTime?
+  resolvedAt                  DateTime?
+  businessFirstResponseTimeMs Int?
+  businessResolutionTimeMs    Int?
+  breached                    Boolean   @default(false)
+  breachReason                String?
+  createdAt                   DateTime  @default(now())
+  updatedAt                   DateTime  @updatedAt
+
+  ticket    Ticket    @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  slaPolicy SlaPolicy @relation(fields: [slaPolicyId], references: [id])
+
+  @@index([slaPolicyId])
+  @@index([breached])
+  @@map("ticket_sla_stats")
+}
+
+// ============================================
+// WORKLOGS
+// ============================================
+model TicketWorklog {
+  id              String   @id @default(uuid())
+  ticketId        String
+  userId          String
+  durationMinutes Int
+  description     String?
+  createdAt       DateTime @default(now())
+
+  ticket       Ticket                  @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  user         User                    @relation(fields: [userId], references: [id])
+  journalEntry TechnicianJournalEntry?
+
+  @@index([ticketId])
+  @@index([userId])
+  @@index([createdAt])
+  @@map("ticket_worklogs")
+}
+
+// ============================================
+// CSAT - Customer Satisfaction
+// ============================================
+model TicketSatisfaction {
+  id         String   @id @default(uuid())
+  ticketId   String   @unique
+  score      Int // 1 a 5
+  comment    String?
+  answeredAt DateTime @default(now())
+  answeredBy String? // user_id ou email
+
+  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@index([score])
+  @@index([answeredAt])
+  @@map("ticket_satisfaction")
+}
+
+// ============================================
+// AUTOMATION RULES
+// ============================================
+model AutomationRule {
+  id          String          @id @default(uuid())
+  name        String
+  description String?
+  enabled     Boolean         @default(true)
+  event       AutomationEvent
+  conditions  Json // { priority?: string, categoryId?: string, teamId?: string, ... }
+  actions     Json // [{ type: "SET_TEAM", teamId: "..." }, { type: "SET_PRIORITY", priority: "HIGH" }, ...]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@index([enabled])
+  @@index([event])
+  @@map("automation_rules")
+}
+
+// ============================================
+// KNOWLEDGE BASE
+// ============================================
+model KbCategory {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  parentId    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  parent   KbCategory?  @relation("KbCategoryHierarchy", fields: [parentId], references: [id])
+  children KbCategory[] @relation("KbCategoryHierarchy")
+  articles KbArticle[]
+
+  @@index([parentId])
+  @@map("kb_categories")
+}
+
+model KbArticle {
+  id          String          @id @default(uuid())
+  categoryId  String?
+  title       String
+  content     String // Markdown/HTML
+  status      KbArticleStatus @default(DRAFT)
+  tags        String[] // Array de tags
+  createdById String
+  updatedById String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  category    KbCategory?       @relation(fields: [categoryId], references: [id])
+  createdBy   User              @relation("KbArticleCreator", fields: [createdById], references: [id])
+  updatedBy   User?             @relation("KbArticleUpdater", fields: [updatedById], references: [id])
+  usage       KbArticleUsage[]
+  ticketLinks TicketKbArticle[]
+
+  @@index([categoryId])
+  @@index([status])
+  @@index([title])
+  @@map("kb_articles")
+}
+
+model KbArticleUsage {
+  id        String   @id @default(uuid())
+  articleId String
+  ticketId  String?
+  usedById  String
+  usedAt    DateTime @default(now())
+
+  article KbArticle @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  user    User      @relation(fields: [usedById], references: [id])
+
+  @@index([articleId])
+  @@index([ticketId])
+  @@index([usedById])
+  @@map("kb_article_usage")
+}
+
+model TicketKbArticle {
+  ticketId  String
+  articleId String
+  createdAt DateTime @default(now())
+
+  ticket  Ticket    @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  article KbArticle @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@id([ticketId, articleId])
+  @@index([ticketId])
+  @@index([articleId])
+  @@map("ticket_kb_articles")
+}
+
+// ============================================
+// REPORT PRESETS - Filtros salvos de relatórios
+// ============================================
+model ReportPreset {
+  id          String   @id @default(uuid())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+  name        String
+  description String?
+  filters     Json // Armazena os filtros em JSON
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@map("report_presets")
+}
+
+// ============================================
+// TECHNICIAN JOURNAL - Diário do Técnico
+// ============================================
+model TechnicianJournalEntry {
+  id           String @id @default(cuid())
+  technician   User   @relation(fields: [technicianId], references: [id], onDelete: Cascade)
+  technicianId String
+
+  // Tipo de entrada
+  type TechnicianJournalEntryType
+
+  // Referências opcionais a tickets / worklogs / comentários para entradas automáticas
+  ticket    Ticket?        @relation(fields: [ticketId], references: [id], onDelete: SetNull)
+  ticketId  String?
+  worklog   TicketWorklog? @relation(fields: [worklogId], references: [id], onDelete: SetNull)
+  worklogId String?        @unique
+  comment   TicketComment? @relation(fields: [commentId], references: [id], onDelete: SetNull)
+  commentId String?        @unique
+
+  // Conteúdo
+  title       String?
+  description String
+  contentHtml String? // Conteúdo rico em HTML (para editor rico)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Metadados
+  source String?
+
+  // Tags (relação com Tag da plataforma)
+  tags JournalTag[]
+
+  // Anexos
+  attachments JournalAttachment[]
+
+  @@index([technicianId])
+  @@index([createdAt])
+  @@index([ticketId])
+  @@index([type])
+  @@map("technician_journal_entries")
+}
+
+model JournalAttachment {
+  id             String   @id @default(uuid())
+  journalEntryId String
+  fileName       String
+  filePath       String
+  fileSize       Int? // Tamanho em bytes
+  mimeType       String? // Tipo MIME
+  uploadedAt     DateTime @default(now())
+
+  // Relations
+  journalEntry TechnicianJournalEntry @relation(fields: [journalEntryId], references: [id], onDelete: Cascade)
+
+  @@index([journalEntryId])
+  @@map("journal_attachments")
+}
+
+model JournalTag {
+  journalEntryId String
+  tagId          String
+  createdAt      DateTime @default(now())
+
+  journalEntry TechnicianJournalEntry @relation(fields: [journalEntryId], references: [id], onDelete: Cascade)
+  tag          Tag                    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([journalEntryId, tagId])
+  @@index([journalEntryId])
+  @@index([tagId])
+  @@map("journal_tags")
+}
+
+model ChatSession {
+  id              String     @id @default(cuid())
+  userId          String? // FK para User, se existir
+  externalId      String? // opcional para usuários não autenticados (portal público)
+  status          ChatStatus @default(OPEN)
+  createdTicketId String? // FK para Ticket, se existir
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user     User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  ticket   Ticket?       @relation(fields: [createdTicketId], references: [id], onDelete: SetNull)
+  messages ChatMessage[]
+
+  @@map("chat_sessions")
+}
+
+model ChatMessage {
+  id        String      @id @default(cuid())
+  session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sessionId String
+
+  role     ChatMessageRole
+  content  String
+  metadata Json?
+
+  createdAt DateTime @default(now())
+
+  @@map("chat_messages")
+}
+
+model TechnicianDailySummary {
+  id           String @id @default(cuid())
+  technician   User   @relation(fields: [technicianId], references: [id], onDelete: Cascade)
+  technicianId String
+
+  date             DateTime // normalizar para meia-noite UTC ou equivalente
+  ticketsWorked    Int      @default(0) // quantidade de tickets com atividade nesse dia
+  totalWorkMinutes Int? // se houver worklogs com duração
+  entriesCount     Int      @default(0) // quantidade de entradas de diário nesse dia
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([technicianId, date])
+  @@index([technicianId])
+  @@index([date])
+  @@map("technician_daily_summaries")
+}
+
+// Tabelas intermediárias para relacionar Team com Category e TicketType
+model TeamCategory {
+  teamId     String
+  categoryId String
+
+  team     Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@id([teamId, categoryId])
+  @@index([teamId])
+  @@index([categoryId])
+  @@map("team_categories")
+}
+
+model TeamTicketType {
+  teamId     String
+  ticketType TicketType
+
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@id([teamId, ticketType])
+  @@index([teamId])
+  @@index([ticketType])
+  @@map("team_ticket_types")
+}
+
+model PlatformSetting {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  valueJson   Json
+  isSecret    Boolean  @default(false)
+  updatedById String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  updatedBy User? @relation("PlatformSettingUpdatedBy", fields: [updatedById], references: [id])
+
+  @@index([key])
+  @@map("platform_settings")
+}
+
+model PlatformAuditLog {
+  id          String   @id @default(uuid())
+  actorUserId String?
+  action      String
+  resource    String
+  detailsJson Json?
+  createdAt   DateTime @default(now())
+
+  actor User? @relation("PlatformAuditActor", fields: [actorUserId], references: [id])
+
+  @@index([resource])
+  @@index([action])
+  @@index([createdAt])
+  @@map("platform_audit_logs")
+}
