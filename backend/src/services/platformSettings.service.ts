@@ -11,13 +11,13 @@ export type PlatformSettingRecord = {
   updatedAt?: Date;
 };
 
-const maskValue = (value: any) => {
+const maskValue = (value: unknown): unknown => {
   if (Array.isArray(value)) {
     return value.map(maskValue);
   }
   if (value && typeof value === 'object') {
     return Object.fromEntries(
-      Object.entries(value).map(([key, val]) => {
+      Object.entries(value as Record<string, unknown>).map(([key, val]) => {
         const lower = key.toLowerCase();
         if (['cert', 'secret', 'key', 'password'].some((token) => lower.includes(token))) {
           return [key, '***'];
@@ -115,7 +115,7 @@ export const platformSettingsService = {
     });
   },
 
-  maskSecretsForResponse(valueJson: any) {
+  maskSecretsForResponse(valueJson: any): any {
     return maskValue(valueJson);
   },
 };

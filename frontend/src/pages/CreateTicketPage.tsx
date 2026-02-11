@@ -11,7 +11,7 @@ import { RichTextEditor } from '../components/RichTextEditor';
 import { FileUpload } from '../components/FileUpload';
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
-import { kbService, KbArticle, AiSolution } from '../services/kb.service';
+import { kbService, KbArticle } from '../services/kb.service';
 import ModernLayout from '../components/ModernLayout';
 import DarkModal from '../components/DarkModal';
 

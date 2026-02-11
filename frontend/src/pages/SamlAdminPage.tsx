@@ -10,6 +10,26 @@ type TabKey = 'sso' | 'platform' | 'tools' | 'audit';
 const SamlAdminPage = () => {
   const ticketTypes = ['INCIDENT', 'SERVICE_REQUEST', 'PROBLEM', 'CHANGE', 'TASK', 'QUESTION'];
   const priorities = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'];
+  const roleMappingTemplate = `{
+  "glpi-admins@empresa.com": "ADMIN",
+  "glpi-triage@empresa.com": "TRIAGER",
+  "glpi-techs@empresa.com": "TECHNICIAN",
+  "glpi-users@empresa.com": "REQUESTER"
+}`;
+  const applyWorkspaceDefaults = () => {
+    setSettings((prev: any) => ({
+      ...prev,
+      saml: {
+        ...prev?.saml,
+        issuer: 'glpi-etus-backend',
+        callbackUrl: 'https://help.etus.io/api/auth/saml/acs',
+        jwtRedirectUrl: 'https://help.etus.io/auth/callback',
+        groupsAttribute: 'groups',
+        signatureAlgorithm: 'sha256',
+        nameIdFormat: 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress',
+      },
+    }));
+  };
   const [activeTab, setActiveTab] = useState<TabKey>('sso');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -17,6 +37,7 @@ const SamlAdminPage = () => {
   const [success, setSuccess] = useState('');
   const [settings, setSettings] = useState<any>(null);
   const [samlCert, setSamlCert] = useState('');
+  const [auth0ClientSecret, setAuth0ClientSecret] = useState('');
   const [calendars, setCalendars] = useState<any[]>([]);
   const [teams, setTeams] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
@@ -49,12 +70,32 @@ const SamlAdminPage = () => {
           requireGroup: true,
           signatureAlgorithm: 'sha256',
           nameIdFormat: 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress',
+          validateInResponseTo: true,
+          requestIdTtlMs: 8 * 60 * 60 * 1000,
+        };
+        const apiBase = import.meta.env.VITE_API_URL || '';
+        const appBase = import.meta.env.VITE_APP_URL || window.location.origin;
+        const auth0Defaults = {
+          domain: '',
+          clientId: '',
+          callbackUrl: apiBase ? `${apiBase.replace(/\/$/, '')}/api/auth/auth0/callback` : '',
+          jwtRedirectUrl: `${appBase.replace(/\/$/, '')}/auth/callback`,
+          allowedDomains: '',
+          rolesClaim: 'https://glpi.etus.io/roles',
+          roleMappingJson: '{}',
+          defaultRole: 'REQUESTER',
+          updateRoleOnLogin: true,
+          requireRole: false,
         };
         const merged = {
           ...settingsData,
           saml: {
             ...samlDefaults,
             ...(settingsData.saml || {}),
+          },
+          auth0: {
+            ...auth0Defaults,
+            ...(settingsData.auth0 || {}),
           },
         };
         setSettings(merged);
@@ -98,17 +139,34 @@ const SamlAdminPage = () => {
           return;
         }
       }
+      if (settings.auth0?.enabled) {
+        if (!settings.auth0.domain || !settings.auth0.clientId || !settings.auth0.callbackUrl) {
+          setError('Auth0: preencha Domain, Client ID e Callback URL.');
+          setSaving(false);
+          return;
+        }
+        if (settings.auth0.clientSecret !== '***' && !auth0ClientSecret) {
+          setError('Auth0: informe o Client Secret.');
+          setSaving(false);
+          return;
+        }
+      }
 
       const payload = {
         saml: {
           ...settings.saml,
           cert: samlCert || undefined,
         },
+        auth0: {
+          ...settings.auth0,
+          clientSecret: auth0ClientSecret || (settings.auth0?.clientSecret === '***' ? undefined : settings.auth0?.clientSecret),
+        },
         platform: settings.platform,
       };
       await adminSettingsService.updateSettings(payload);
       setSuccess('Configurações salvas com sucesso');
       setSamlCert('');
+      setAuth0ClientSecret('');
       const refreshed = await adminSettingsService.getSettings();
       setSettings(refreshed);
     } catch (err: any) {
@@ -129,6 +187,39 @@ const SamlAdminPage = () => {
       setError(message || 'Falha ao testar configuração');
     }
   };
+
+  const handleTestAuth0 = async () => {
+    setError('');
+    setSuccess('');
+    try {
+      const result = await adminSettingsService.testAuth0();
+      setSuccess(result.message || 'Configuração Auth0 válida');
+    } catch (err: any) {
+      const message = err.response?.data?.errors?.join(', ') || err.response?.data?.error;
+      setError(message || 'Falha ao testar Auth0');
+    }
+  };
+
+  const applyAuth0Defaults = () => {
+    const baseUrl = import.meta.env.VITE_APP_URL || window.location.origin;
+    const apiUrl = import.meta.env.VITE_API_URL || baseUrl;
+    setSettings((prev: any) => ({
+      ...prev,
+      auth0: {
+        ...prev?.auth0,
+        callbackUrl: `${apiUrl.replace(/\/$/, '')}/api/auth/auth0/callback`,
+        jwtRedirectUrl: `${baseUrl.replace(/\/$/, '')}/auth/callback`,
+        rolesClaim: 'https://glpi.etus.io/roles',
+      },
+    }));
+  };
+
+  const auth0RoleMappingTemplate = `{
+  "admin": "ADMIN",
+  "triager": "TRIAGER",
+  "technician": "TECHNICIAN",
+  "requester": "REQUESTER"
+}`;
 
   const loadAudit = async () => {
     const result = await adminSettingsService.getAudit(50, auditCursor || undefined);
@@ -160,7 +251,7 @@ const SamlAdminPage = () => {
 
         <div className="flex gap-2 flex-wrap">
           {[
-            { key: 'sso', label: 'SSO / SAML' },
+            { key: 'sso', label: 'Autenticação (SAML / Auth0)' },
             { key: 'platform', label: 'Configurações Gerais' },
             { key: 'tools', label: 'Ferramentas' },
             { key: 'audit', label: 'Auditoria' },
@@ -180,10 +271,38 @@ const SamlAdminPage = () => {
         </div>
 
         {activeTab === 'sso' && settings && (
-          <div className="bg-gray-800/40 border border-gray-700/50 rounded-xl p-6 space-y-4">
-            <div className="grid md:grid-cols-2 gap-4">
-              <label className="text-sm text-gray-300">
-                <span className="block mb-2">Habilitar SAML</span>
+          <div className="bg-gray-700/30 backdrop-blur-sm border border-gray-600/50 rounded-lg p-6 space-y-6">
+            <div className="grid md:grid-cols-3 gap-4">
+              <div className="border border-gray-600/50 rounded-lg p-4 bg-gray-700/20">
+                <p className="text-sm text-gray-200 font-medium">1) Gerar Metadata do SP</p>
+                <p className="text-xs text-gray-400 mt-2">
+                  Use o link abaixo para cadastrar o app no Google Workspace.
+                </p>
+                <a
+                  href={`${import.meta.env.VITE_API_URL}/api/auth/saml/metadata`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-3 inline-flex text-xs text-etus-green hover:text-etus-green-dark"
+                >
+                  Abrir metadata do SP
+                </a>
+              </div>
+              <div className="border border-gray-600/50 rounded-lg p-4 bg-gray-700/20">
+                <p className="text-sm text-gray-200 font-medium">2) Configurar Google Workspace</p>
+                <p className="text-xs text-gray-400 mt-2">
+                  Crie um app SAML customizado, ative grupos e copie o Entry Point e o Certificado.
+                </p>
+              </div>
+              <div className="border border-gray-600/50 rounded-lg p-4 bg-gray-700/20">
+                <p className="text-sm text-gray-200 font-medium">3) Preencher abaixo e testar</p>
+                <p className="text-xs text-gray-400 mt-2">
+                  Salve as configurações e rode o teste antes de habilitar para todos.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between gap-4 flex-wrap">
+              <label className="text-sm text-gray-300 flex items-center gap-2">
                 <input
                   type="checkbox"
                   checked={Boolean(settings.saml.enabled)}
@@ -191,23 +310,43 @@ const SamlAdminPage = () => {
                     setSettings({ ...settings, saml: { ...settings.saml, enabled: e.target.checked } })
                   }
                 />
+                <span>Habilitar SAML</span>
               </label>
+              <div className="flex gap-3 flex-wrap">
+                <button
+                  onClick={applyWorkspaceDefaults}
+                  className="px-4 py-2 rounded-lg border border-gray-600 text-gray-200 text-sm"
+                >
+                  Aplicar padrão Workspace
+                </button>
+                <button
+                  onClick={handleTestSaml}
+                  className="px-4 py-2 rounded-lg border border-gray-600 text-gray-200 text-sm"
+                >
+                  Testar configuração SAML
+                </button>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
               <label className="text-sm text-gray-300">
-                <span className="block mb-2">Entry Point</span>
+                <span className="block mb-2">Entry Point (SSO URL)</span>
                 <input
                   className="w-full px-3 py-2 bg-gray-700/40 border border-gray-600 rounded-lg text-white"
                   value={settings.saml.entryPoint || ''}
                   onChange={(e) => setSettings({ ...settings, saml: { ...settings.saml, entryPoint: e.target.value } })}
+                  placeholder="https://accounts.google.com/o/saml2/idp?idpid=..."
                 />
-                <span className="text-xs text-gray-500">Preencher com URL do IdP Google</span>
+                <span className="text-xs text-gray-500">Copie do Google Workspace → SSO URL</span>
               </label>
               <label className="text-sm text-gray-300">
-                <span className="block mb-2">Issuer</span>
+                <span className="block mb-2">Issuer (Entity ID)</span>
                 <input
                   className="w-full px-3 py-2 bg-gray-700/40 border border-gray-600 rounded-lg text-white"
                   value={settings.saml.issuer || ''}
                   onChange={(e) => setSettings({ ...settings, saml: { ...settings.saml, issuer: e.target.value } })}
                 />
+                <span className="text-xs text-gray-500">Use este valor no Google como Entity ID do SP</span>
               </label>
               <label className="text-sm text-gray-300">
                 <span className="block mb-2">ACS Callback</span>
@@ -216,6 +355,18 @@ const SamlAdminPage = () => {
                   value={settings.saml.callbackUrl || ''}
                   onChange={(e) => setSettings({ ...settings, saml: { ...settings.saml, callbackUrl: e.target.value } })}
                 />
+                <span className="text-xs text-gray-500">Use este valor no Google como ACS URL</span>
+              </label>
+              <label className="text-sm text-gray-300">
+                <span className="block mb-2">JWT Redirect URL</span>
+                <input
+                  className="w-full px-3 py-2 bg-gray-700/40 border border-gray-600 rounded-lg text-white"
+                  value={settings.saml.jwtRedirectUrl || ''}
+                  onChange={(e) =>
+                    setSettings({ ...settings, saml: { ...settings.saml, jwtRedirectUrl: e.target.value } })
+                  }
+                />
+                <span className="text-xs text-gray-500">URL do frontend para receber o token</span>
               </label>
               <label className="text-sm text-gray-300 md:col-span-2">
                 <span className="block mb-2">Certificado (PEM)</span>
@@ -225,7 +376,7 @@ const SamlAdminPage = () => {
                   value={samlCert}
                   onChange={(e) => setSamlCert(e.target.value)}
                 />
-                <span className="text-xs text-gray-500">Colar certificado do IdP Google</span>
+                <span className="text-xs text-gray-500">Cole o certificado X.509 exportado no Google Workspace</span>
               </label>
               <div className="md:col-span-2 text-sm text-gray-400">
                 Certificado configurado: <span className="text-white">{settings.saml.cert === '***' ? 'Sim' : 'Não'}</span>
@@ -238,7 +389,9 @@ const SamlAdminPage = () => {
                   onChange={(e) =>
                     setSettings({ ...settings, saml: { ...settings.saml, allowedDomains: e.target.value } })
                   }
+                  placeholder="empresa.com.br,empresa.com"
                 />
+                <span className="text-xs text-gray-500">Bloqueia acesso de domínios externos</span>
               </label>
               <label className="text-sm text-gray-300">
                 <span className="block mb-2">Atributo de grupos</span>
@@ -249,6 +402,7 @@ const SamlAdminPage = () => {
                     setSettings({ ...settings, saml: { ...settings.saml, groupsAttribute: e.target.value } })
                   }
                 />
+                <span className="text-xs text-gray-500">Nome do atributo de grupos enviado pelo IdP</span>
               </label>
               <label className="text-sm text-gray-300">
                 <span className="block mb-2">Role padrão</span>
@@ -265,6 +419,7 @@ const SamlAdminPage = () => {
                     </option>
                   ))}
                 </select>
+                <span className="text-xs text-gray-500">Usado quando o grupo não foi mapeado</span>
               </label>
               <label className="text-sm text-gray-300">
                 <span className="block mb-2">Atualizar role no login</span>
@@ -275,6 +430,7 @@ const SamlAdminPage = () => {
                     setSettings({ ...settings, saml: { ...settings.saml, updateRoleOnLogin: e.target.checked } })
                   }
                 />
+                <span className="text-xs text-gray-500 block">Sincroniza role com grupos a cada login</span>
               </label>
               <label className="text-sm text-gray-300">
                 <span className="block mb-2">Requer grupo</span>
@@ -285,6 +441,7 @@ const SamlAdminPage = () => {
                     setSettings({ ...settings, saml: { ...settings.saml, requireGroup: e.target.checked } })
                   }
                 />
+                <span className="text-xs text-gray-500 block">Se ativo, só loga quando há grupo mapeado</span>
               </label>
               <label className="text-sm text-gray-300 md:col-span-2">
                 <span className="block mb-2">Mapeamento de grupos</span>
@@ -295,8 +452,262 @@ const SamlAdminPage = () => {
                     setSettings({ ...settings, saml: { ...settings.saml, roleMappingJson: e.target.value } })
                   }
                 />
-                <span className="text-xs text-gray-500">Mapear grupos do Workspace → roles</span>
+                <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
+                  <span>Mapeie grupos do Workspace → roles internos</span>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setSettings({ ...settings, saml: { ...settings.saml, roleMappingJson: roleMappingTemplate } })
+                    }
+                    className="text-etus-green hover:text-etus-green-dark"
+                  >
+                    Usar template
+                  </button>
+                </div>
               </label>
+            </div>
+
+            <div className="border border-gray-600/50 rounded-lg p-4 bg-gray-700/20 space-y-3">
+              <p className="text-sm text-gray-200 font-medium">Configurações avançadas</p>
+              <div className="grid md:grid-cols-2 gap-4">
+                <label className="text-sm text-gray-300">
+                  <span className="block mb-2">NameID Format</span>
+                  <input
+                    className="w-full px-3 py-2 bg-gray-700/40 border border-gray-600 rounded-lg text-white"
+                    value={settings.saml.nameIdFormat || ''}
+                    onChange={(e) =>
+                      setSettings({ ...settings, saml: { ...settings.saml, nameIdFormat: e.target.value } })
+                    }
+                  />
+                </label>
+                <label className="text-sm text-gray-300">
+                  <span className="block mb-2">Signature Algorithm</span>
+                  <input
+                    className="w-full px-3 py-2 bg-gray-700/40 border border-gray-600 rounded-lg text-white"
+                    value={settings.saml.signatureAlgorithm || ''}
+                    onChange={(e) =>
+                      setSettings({ ...settings, saml: { ...settings.saml, signatureAlgorithm: e.target.value } })
+                    }
+                  />
+                </label>
+                <label className="text-sm text-gray-300">
+                  <span className="block mb-2">Validate InResponseTo</span>
+                  <input
+                    type="checkbox"
+                    checked={Boolean(settings.saml.validateInResponseTo)}
+                    onChange={(e) =>
+                      setSettings({ ...settings, saml: { ...settings.saml, validateInResponseTo: e.target.checked } })
+                    }
+                  />
+                  <span className="text-xs text-gray-500 block">Recomendado para produção (anti-replay)</span>
+                </label>
+                <label className="text-sm text-gray-300">
+                  <span className="block mb-2">TTL Request ID (ms)</span>
+                  <input
+                    type="number"
+                    className="w-full px-3 py-2 bg-gray-700/40 border border-gray-600 rounded-lg text-white"
+                    value={settings.saml.requestIdTtlMs || ''}
+                    onChange={(e) =>
+                      setSettings({
+                        ...settings,
+                        saml: { ...settings.saml, requestIdTtlMs: Number(e.target.value) },
+                      })
+                    }
+                  />
+                </label>
+              </div>
+            </div>
+
+            {/* Auth0 */}
+            <div className="border-t border-gray-600/50 pt-6 mt-6">
+              <h3 className="text-lg font-medium text-white mb-2">Auth0 (OIDC)</h3>
+              <p className="text-sm text-gray-400 mb-4">
+                Use Auth0 como provedor de identidade. Configure um Application no Dashboard e preencha os campos abaixo.
+              </p>
+              <div className="grid md:grid-cols-3 gap-4 mb-4">
+                <div className="border border-gray-600/50 rounded-lg p-4 bg-gray-700/20">
+                  <p className="text-sm text-gray-200 font-medium">1) Criar Application no Auth0</p>
+                  <p className="text-xs text-gray-400 mt-2">
+                    Dashboard → Applications → Create Application → Regular Web Application. Anote Domain, Client ID e Client Secret.
+                  </p>
+                </div>
+                <div className="border border-gray-600/50 rounded-lg p-4 bg-gray-700/20">
+                  <p className="text-sm text-gray-200 font-medium">2) URLs no Auth0</p>
+                  <p className="text-xs text-gray-400 mt-2">
+                    Allowed Callback URLs: use o valor de Callback URL abaixo. Allowed Logout URLs (opcional): URL do frontend.
+                  </p>
+                </div>
+                <div className="border border-gray-600/50 rounded-lg p-4 bg-gray-700/20">
+                  <p className="text-sm text-gray-200 font-medium">3) Roles (opcional)</p>
+                  <p className="text-xs text-gray-400 mt-2">
+                    Crie roles no Auth0 e adicione uma Action para incluir o claim no ID token. Use o nome do claim em &quot;Claim de roles&quot;.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between gap-4 flex-wrap mb-4">
+                <label className="text-sm text-gray-300 flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={Boolean(settings.auth0?.enabled)}
+                    onChange={(e) =>
+                      setSettings({ ...settings, auth0: { ...settings.auth0, enabled: e.target.checked } })
+                    }
+                  />
+                  <span>Habilitar Auth0</span>
+                </label>
+                <button
+                  onClick={applyAuth0Defaults}
+                  className="px-4 py-2 rounded-lg border border-gray-600 text-gray-200 text-sm"
+                >
+                  Aplicar URLs padrão
+                </button>
+                <button
+                  onClick={handleTestAuth0}
+                  className="px-4 py-2 rounded-lg border border-gray-600 text-gray-200 text-sm"
+                >
+                  Testar configuração Auth0
+                </button>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-4">
+                <label className="text-sm text-gray-300">
+                  <span className="block mb-2">Domain (tenant)</span>
+                  <input
+                    className="w-full px-3 py-2 bg-gray-700/40 border border-gray-600 rounded-lg text-white"
+                    value={settings.auth0?.domain || ''}
+                    onChange={(e) =>
+                      setSettings({ ...settings, auth0: { ...settings.auth0, domain: e.target.value } })
+                    }
+                    placeholder="seu-tenant.us.auth0.com"
+                  />
+                  <span className="text-xs text-gray-500">Ex.: meu-tenant.us.auth0.com (sem https://)</span>
+                </label>
+                <label className="text-sm text-gray-300">
+                  <span className="block mb-2">Client ID</span>
+                  <input
+                    className="w-full px-3 py-2 bg-gray-700/40 border border-gray-600 rounded-lg text-white"
+                    value={settings.auth0?.clientId || ''}
+                    onChange={(e) =>
+                      setSettings({ ...settings, auth0: { ...settings.auth0, clientId: e.target.value } })
+                    }
+                  />
+                </label>
+                <label className="text-sm text-gray-300">
+                  <span className="block mb-2">Client Secret</span>
+                  <input
+                    type="password"
+                    className="w-full px-3 py-2 bg-gray-700/40 border border-gray-600 rounded-lg text-white"
+                    placeholder={settings.auth0?.clientSecret === '***' ? 'Secret já configurado' : ''}
+                    value={auth0ClientSecret}
+                    onChange={(e) => setAuth0ClientSecret(e.target.value)}
+                  />
+                  <span className="text-xs text-gray-500">Copie do Auth0 Dashboard → Application → Settings</span>
+                </label>
+                <label className="text-sm text-gray-300">
+                  <span className="block mb-2">Callback URL</span>
+                  <input
+                    className="w-full px-3 py-2 bg-gray-700/40 border border-gray-600 rounded-lg text-white"
+                    value={settings.auth0?.callbackUrl || ''}
+                    onChange={(e) =>
+                      setSettings({ ...settings, auth0: { ...settings.auth0, callbackUrl: e.target.value } })
+                    }
+                  />
+                  <span className="text-xs text-gray-500">Cole em Allowed Callback URLs no Auth0</span>
+                </label>
+                <label className="text-sm text-gray-300">
+                  <span className="block mb-2">JWT Redirect URL</span>
+                  <input
+                    className="w-full px-3 py-2 bg-gray-700/40 border border-gray-600 rounded-lg text-white"
+                    value={settings.auth0?.jwtRedirectUrl || ''}
+                    onChange={(e) =>
+                      setSettings({ ...settings, auth0: { ...settings.auth0, jwtRedirectUrl: e.target.value } })
+                    }
+                  />
+                  <span className="text-xs text-gray-500">URL do frontend para receber o token (ex.: /auth/callback)</span>
+                </label>
+                <label className="text-sm text-gray-300">
+                  <span className="block mb-2">Domínios permitidos (CSV)</span>
+                  <input
+                    className="w-full px-3 py-2 bg-gray-700/40 border border-gray-600 rounded-lg text-white"
+                    value={settings.auth0?.allowedDomains || ''}
+                    onChange={(e) =>
+                      setSettings({ ...settings, auth0: { ...settings.auth0, allowedDomains: e.target.value } })
+                    }
+                    placeholder="empresa.com.br,empresa.com"
+                  />
+                </label>
+                <label className="text-sm text-gray-300">
+                  <span className="block mb-2">Claim de roles</span>
+                  <input
+                    className="w-full px-3 py-2 bg-gray-700/40 border border-gray-600 rounded-lg text-white"
+                    value={settings.auth0?.rolesClaim || ''}
+                    onChange={(e) =>
+                      setSettings({ ...settings, auth0: { ...settings.auth0, rolesClaim: e.target.value } })
+                    }
+                  />
+                  <span className="text-xs text-gray-500">Nome do claim no ID token (ex.: https://glpi.etus.io/roles)</span>
+                </label>
+                <label className="text-sm text-gray-300">
+                  <span className="block mb-2">Role padrão</span>
+                  <select
+                    className="w-full px-3 py-2 bg-gray-700/40 border border-gray-600 rounded-lg text-white"
+                    value={settings.auth0?.defaultRole || 'REQUESTER'}
+                    onChange={(e) =>
+                      setSettings({ ...settings, auth0: { ...settings.auth0, defaultRole: e.target.value } })
+                    }
+                  >
+                    {['ADMIN', 'TRIAGER', 'TECHNICIAN', 'REQUESTER'].map((role) => (
+                      <option key={role} value={role}>
+                        {role}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="text-sm text-gray-300">
+                  <span className="block mb-2">Atualizar role no login</span>
+                  <input
+                    type="checkbox"
+                    checked={Boolean(settings.auth0?.updateRoleOnLogin)}
+                    onChange={(e) =>
+                      setSettings({ ...settings, auth0: { ...settings.auth0, updateRoleOnLogin: e.target.checked } })
+                    }
+                  />
+                </label>
+                <label className="text-sm text-gray-300">
+                  <span className="block mb-2">Requer role mapeada</span>
+                  <input
+                    type="checkbox"
+                    checked={Boolean(settings.auth0?.requireRole)}
+                    onChange={(e) =>
+                      setSettings({ ...settings, auth0: { ...settings.auth0, requireRole: e.target.checked } })
+                    }
+                  />
+                  <span className="text-xs text-gray-500 block">Se ativo, exige claim de roles no token</span>
+                </label>
+                <label className="text-sm text-gray-300 md:col-span-2">
+                  <span className="block mb-2">Mapeamento de roles (Auth0 → plataforma)</span>
+                  <textarea
+                    className="w-full px-3 py-2 bg-gray-700/40 border border-gray-600 rounded-lg text-white h-28"
+                    value={settings.auth0?.roleMappingJson || '{}'}
+                    onChange={(e) =>
+                      setSettings({ ...settings, auth0: { ...settings.auth0, roleMappingJson: e.target.value } })
+                    }
+                  />
+                  <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
+                    <span>Valor do claim no Auth0 → role interno</span>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setSettings({ ...settings, auth0: { ...settings.auth0, roleMappingJson: auth0RoleMappingTemplate } })
+                      }
+                      className="text-etus-green hover:text-etus-green-dark"
+                    >
+                      Usar template
+                    </button>
+                  </div>
+                </label>
+              </div>
             </div>
 
             <div className="flex gap-3 flex-wrap">
@@ -306,12 +717,6 @@ const SamlAdminPage = () => {
                 className="px-4 py-2 rounded-lg bg-etus-green text-gray-900 font-semibold"
               >
                 {saving ? 'Salvando...' : 'Salvar'}
-              </button>
-              <button
-                onClick={handleTestSaml}
-                className="px-4 py-2 rounded-lg border border-gray-600 text-gray-200"
-              >
-                Testar configuração SAML
               </button>
               <a
                 href={`${import.meta.env.VITE_API_URL}/api/auth/saml/metadata`}

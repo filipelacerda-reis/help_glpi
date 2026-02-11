@@ -22,6 +22,21 @@ type SamlRuntimeConfig = {
   jwtRedirectUrl: string;
 };
 
+type Auth0RuntimeConfig = {
+  enabled: boolean;
+  domain: string;
+  clientId: string;
+  clientSecret: string;
+  callbackUrl: string;
+  jwtRedirectUrl: string;
+  allowedDomains: string;
+  rolesClaim: string;
+  roleMappingJson: string;
+  defaultRole: UserRole;
+  updateRoleOnLogin: boolean;
+  requireRole: boolean;
+};
+
 type PlatformRuntimeConfig = {
   branding?: {
     name?: string;
@@ -46,6 +61,7 @@ type PlatformRuntimeConfig = {
 
 export type RuntimeConfig = {
   saml: SamlRuntimeConfig;
+  auth0: Auth0RuntimeConfig;
   platform: PlatformRuntimeConfig;
 };
 
@@ -71,6 +87,20 @@ const buildDefaultConfig = (): RuntimeConfig => ({
     requestIdTtlMs: env.SAML_REQUEST_ID_TTL_MS,
     jwtRedirectUrl: env.SAML_JWT_REDIRECT_URL,
   },
+  auth0: {
+    enabled: env.AUTH0_ENABLED,
+    domain: env.AUTH0_DOMAIN,
+    clientId: env.AUTH0_CLIENT_ID,
+    clientSecret: env.AUTH0_CLIENT_SECRET,
+    callbackUrl: env.AUTH0_CALLBACK_URL,
+    jwtRedirectUrl: env.AUTH0_JWT_REDIRECT_URL,
+    allowedDomains: env.AUTH0_ALLOWED_DOMAINS,
+    rolesClaim: env.AUTH0_ROLES_CLAIM,
+    roleMappingJson: env.AUTH0_ROLE_MAPPING_JSON,
+    defaultRole: (env.AUTH0_DEFAULT_ROLE as UserRole) || UserRole.REQUESTER,
+    updateRoleOnLogin: env.AUTH0_UPDATE_ROLE_ON_LOGIN,
+    requireRole: env.AUTH0_REQUIRE_ROLE,
+  },
   platform: {
     timezone: 'America/Recife',
   },
@@ -89,17 +119,26 @@ export const getRuntimeConfig = async (): Promise<RuntimeConfig> => {
 
   const defaults = buildDefaultConfig();
   try {
-    const [saml, samlSecret, platform] = await Promise.all([
+    const [saml, samlSecret, auth0, auth0Secret, platform] = await Promise.all([
       platformSettingsService.getSettingDecrypted('saml'),
       platformSettingsService.getSettingDecrypted('saml.secret'),
+      platformSettingsService.getSettingDecrypted('auth0'),
+      platformSettingsService.getSettingDecrypted('auth0.secret'),
       platformSettingsService.getSettingDecrypted('platform'),
     ]);
+
+    const auth0SecretObj = auth0Secret as { clientSecret?: string } | null;
 
     cachedConfig = {
       saml: {
         ...defaults.saml,
         ...(saml || {}),
-        cert: samlSecret?.cert || defaults.saml.cert,
+        cert: (samlSecret as { cert?: string } | null)?.cert || defaults.saml.cert,
+      },
+      auth0: {
+        ...defaults.auth0,
+        ...(auth0 || {}),
+        clientSecret: auth0SecretObj?.clientSecret || defaults.auth0.clientSecret,
       },
       platform: {
         ...defaults.platform,

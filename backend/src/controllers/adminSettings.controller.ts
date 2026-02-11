@@ -57,8 +57,24 @@ const platformSchema = z.object({
     .optional(),
 });
 
+const auth0Schema = z.object({
+  enabled: z.boolean(),
+  domain: z.string().optional(),
+  clientId: z.string().optional(),
+  clientSecret: z.string().optional(),
+  callbackUrl: z.string().url().optional(),
+  jwtRedirectUrl: z.string().optional(),
+  allowedDomains: z.string().optional(),
+  rolesClaim: z.string().optional(),
+  roleMappingJson: z.string().optional(),
+  defaultRole: roleEnum.optional(),
+  updateRoleOnLogin: z.boolean().optional(),
+  requireRole: z.boolean().optional(),
+});
+
 const settingsSchema = z.object({
   saml: samlSchema.optional(),
+  auth0: auth0Schema.optional(),
   platform: platformSchema.optional(),
 });
 
@@ -81,17 +97,41 @@ const validateSamlConfig = (saml: any) => {
   return { ok: errors.length === 0, errors };
 };
 
+const validateAuth0Config = (auth0: any) => {
+  if (!auth0.enabled) return { ok: true };
+
+  const errors: string[] = [];
+  if (!auth0.domain) errors.push('domain é obrigatório');
+  if (!auth0.clientId) errors.push('clientId é obrigatório');
+  if (!auth0.callbackUrl) errors.push('callbackUrl é obrigatório');
+  if (!auth0.clientSecret) errors.push('clientSecret é obrigatório');
+  if (auth0.requireRole && !auth0.roleMappingJson) {
+    errors.push('roleMappingJson é obrigatório quando requireRole=true');
+  }
+
+  return { ok: errors.length === 0, errors };
+};
+
 export const adminSettingsController = {
   async getSettings(_req: Request, res: Response) {
     const runtime = await getRuntimeConfig();
     const samlSecret = await platformSettingsService.getSetting('saml.secret');
+    const samlSecretConfigured = Boolean((samlSecret?.valueJson as any)?.isConfigured);
     const samlMasked = platformSettingsService.maskSecretsForResponse({
       ...runtime.saml,
-      cert: samlSecret?.valueJson?.isConfigured ? '***' : '',
+      cert: samlSecretConfigured ? '***' : '',
+    });
+
+    const auth0Secret = await platformSettingsService.getSetting('auth0.secret');
+    const auth0SecretConfigured = Boolean((auth0Secret?.valueJson as any)?.isConfigured);
+    const auth0Masked = platformSettingsService.maskSecretsForResponse({
+      ...runtime.auth0,
+      clientSecret: auth0SecretConfigured ? '***' : '',
     });
 
     res.json({
       saml: samlMasked,
+      auth0: auth0Masked,
       platform: runtime.platform,
     });
   },
@@ -110,6 +150,17 @@ export const adminSettingsController = {
 
       if (cert && cert !== '***') {
         updates.push({ key: 'saml.secret', valueJson: { cert }, isSecret: true });
+      }
+    }
+
+    if (payload.auth0) {
+      const auth0 = { ...payload.auth0 };
+      const clientSecret = auth0.clientSecret;
+      delete (auth0 as any).clientSecret;
+      updates.push({ key: 'auth0', valueJson: auth0, isSecret: false });
+
+      if (clientSecret && clientSecret !== '***') {
+        updates.push({ key: 'auth0.secret', valueJson: { clientSecret }, isSecret: true });
       }
     }
 
@@ -158,6 +209,28 @@ export const adminSettingsController = {
       ok: true,
       metadataUrl: '/api/auth/saml/metadata',
       message: 'Configuração SAML válida',
+    });
+  },
+
+  async testAuth0Settings(req: Request, res: Response) {
+    const runtime = await getRuntimeConfig();
+    const auth0 = runtime.auth0;
+    const validation = validateAuth0Config(auth0);
+
+    await platformAuditService.log(req.userId as string, 'SETTING_TESTED', 'AUTH0', {
+      ok: validation.ok,
+      errors: validation.errors,
+    });
+
+    if (!validation.ok) {
+      res.status(400).json({ ok: false, errors: validation.errors });
+      return;
+    }
+
+    res.json({
+      ok: true,
+      loginUrl: '/api/auth/auth0/login',
+      message: 'Configuração Auth0 válida',
     });
   },
 };

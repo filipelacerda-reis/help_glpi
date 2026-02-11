@@ -2,6 +2,7 @@ import { api } from './api';
 
 export interface AdminSettingsPayload {
   saml?: Record<string, any>;
+  auth0?: Record<string, any>;
   platform?: Record<string, any>;
 }
 
@@ -16,6 +17,10 @@ export const adminSettingsService = {
   },
   async testSaml() {
     const response = await api.post('/admin/settings/saml/test');
+    return response.data;
+  },
+  async testAuth0() {
+    const response = await api.post('/admin/settings/auth0/test');
     return response.data;
   },
   async recalculateSla(payload: { from?: string; to?: string; teamId?: string; categoryId?: string }) {

@@ -186,5 +186,18 @@ export const env = {
   SAML_VALIDATE_IN_RESPONSE_TO: process.env.SAML_VALIDATE_IN_RESPONSE_TO === 'true',
   SAML_REQUEST_ID_TTL_MS: parseInt(process.env.SAML_REQUEST_ID_TTL_MS || '28800000', 10),
   SAML_REQUIRE_GROUP: process.env.SAML_REQUIRE_GROUP !== 'false',
+  // Auth0
+  AUTH0_ENABLED: process.env.AUTH0_ENABLED === 'true',
+  AUTH0_DOMAIN: process.env.AUTH0_DOMAIN || '',
+  AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID || '',
+  AUTH0_CLIENT_SECRET: process.env.AUTH0_CLIENT_SECRET || '',
+  AUTH0_CALLBACK_URL: process.env.AUTH0_CALLBACK_URL || '',
+  AUTH0_JWT_REDIRECT_URL: process.env.AUTH0_JWT_REDIRECT_URL || '',
+  AUTH0_ALLOWED_DOMAINS: process.env.AUTH0_ALLOWED_DOMAINS || '',
+  AUTH0_ROLES_CLAIM: process.env.AUTH0_ROLES_CLAIM || 'https://glpi.etus.io/roles',
+  AUTH0_ROLE_MAPPING_JSON: process.env.AUTH0_ROLE_MAPPING_JSON || '{}',
+  AUTH0_DEFAULT_ROLE: process.env.AUTH0_DEFAULT_ROLE || 'REQUESTER',
+  AUTH0_UPDATE_ROLE_ON_LOGIN: process.env.AUTH0_UPDATE_ROLE_ON_LOGIN === 'true',
+  AUTH0_REQUIRE_ROLE: process.env.AUTH0_REQUIRE_ROLE !== 'false',
 };
 

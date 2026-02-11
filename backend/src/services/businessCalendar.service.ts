@@ -1,4 +1,5 @@
 import prisma from '../lib/prisma';
+import { Prisma } from '@prisma/client';
 import { AppError } from '../middleware/errorHandler';
 import { logger } from '../utils/logger';
 import { BusinessSchedule } from '../domain/time/businessTime.engine';
@@ -122,7 +123,10 @@ export const businessCalendarService = {
       return `${values.year}-${values.month}-${values.day}`;
     };
 
-    let calendar = null;
+    type CalendarWithExceptions = Prisma.BusinessCalendarGetPayload<{
+      include: { exceptions: true };
+    }>;
+    let calendar: CalendarWithExceptions | null = null;
     if (calendarId) {
       calendar = await prisma.businessCalendar.findUnique({
         where: { id: calendarId },
@@ -138,8 +142,16 @@ export const businessCalendarService = {
       });
       if (!calendar) {
         logger.warn('Calendário padrão não encontrado, usando default corporativo');
-        calendar = await this.createDefaultCalendar();
+        const created = await this.createDefaultCalendar();
+        calendar = await prisma.businessCalendar.findUnique({
+          where: { id: created.id },
+          include: { exceptions: true },
+        });
       }
+    }
+
+    if (!calendar) {
+      throw new AppError('Calendário padrão não encontrado', 500);
     }
 
     const schedule = (calendar.schedule || {}) as Record<
@@ -147,9 +159,9 @@ export const businessCalendarService = {
       { open?: string; close?: string; enabled?: boolean }
     >;
     const timezone = calendar.timezone || 'America/Sao_Paulo';
-    const holidays = (calendar.exceptions || [])
-      .filter((exception) => exception.isHoliday)
-      .map((exception) => formatDateInTimeZone(exception.date, timezone));
+    const holidays = (calendar?.exceptions || [])
+      .filter((exception: { isHoliday: boolean }) => exception.isHoliday)
+      .map((exception: { date: Date }) => formatDateInTimeZone(exception.date, timezone));
 
     const mapDay = (day: { open?: string; close?: string; enabled?: boolean } | undefined, enabled: boolean) => ({
       start: day?.open || '09:00',

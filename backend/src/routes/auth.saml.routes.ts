@@ -81,7 +81,7 @@ router.get('/saml/metadata', (_req, res) => {
         return;
       }
       res.type('application/xml');
-      res.send(strategy.generateServiceProviderMetadata());
+      res.send(strategy.generateServiceProviderMetadata(''));
     })
     .catch(() => {
       res.status(500).json({ error: 'Erro ao gerar metadata SAML' });

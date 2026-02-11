@@ -149,21 +149,26 @@ export const getSamlStrategy = async () => {
     validateInResponseTo: saml.validateInResponseTo,
     requestIdExpirationPeriodMs: saml.requestIdTtlMs,
     identifierFormat: saml.nameIdFormat,
+    passReqToCallback: true,
   };
 
   if (saml.validateInResponseTo) {
     (strategyConfig as any).cacheProvider = buildCacheProvider();
   }
 
-  const strategy = new SamlStrategy(strategyConfig, async (profile, done) => {
+  const strategy = new SamlStrategy(strategyConfig, async (_req, profile, done) => {
     try {
+      if (!profile) {
+        return done(new AppError('Perfil SAML inválido', 401));
+      }
+
       const email = extractEmail(profile);
       if (!email) {
-        return done(new AppError('Email não encontrado no SAML', 401), null);
+        return done(new AppError('Email não encontrado no SAML', 401));
       }
 
       if (!isEmailAllowed(email, allowedDomains)) {
-        return done(new AppError('Domínio não autorizado', 403), null);
+        return done(new AppError('Domínio não autorizado', 403));
       }
 
       const groups = extractGroups(profile, saml.groupsAttribute);
@@ -171,16 +176,16 @@ export const getSamlStrategy = async () => {
       const role = mapGroupsToRole(groups, roleMapping, defaultRole);
 
       if (saml.requireGroup && groups.length === 0) {
-        return done(new AppError('Usuário sem grupos permitidos', 403), null);
+        return done(new AppError('Usuário sem grupos permitidos', 403));
       }
 
       if (saml.requireGroup && role === defaultRole && Object.keys(roleMapping).length > 0) {
-        return done(new AppError('Usuário sem grupos mapeados', 403), null);
+        return done(new AppError('Usuário sem grupos mapeados', 403));
       }
 
       const name =
         (profile as any).displayName ||
-        [profile?.firstName, profile?.lastName].filter(Boolean).join(' ') ||
+        [(profile as any).firstName, (profile as any).lastName].filter(Boolean).join(' ') ||
         email.split('@')[0];
 
       let user = await prisma.user.findUnique({ where: { email } });
@@ -211,7 +216,7 @@ export const getSamlStrategy = async () => {
 
       return done(null, { ...user, samlGroups: groups, samlEmail: email });
     } catch (error) {
-      return done(error as Error, null);
+      return done(error as Error);
     }
   });
 

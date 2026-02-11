@@ -1,4 +1,4 @@
-import { Queue, QueueOptions } from 'bullmq';
+import { Queue, QueueOptions, ConnectionOptions } from 'bullmq';
 import Redis from 'ioredis';
 import { env } from '../config/env';
 import { logger } from '../utils/logger';
@@ -8,7 +8,7 @@ let redisAvailable = false;
 
 // Cliente Redis compartilhado (lazy initialization)
 let redisClient: Redis | null = null;
-let redisConnection: Redis | null = null;
+let redisConnection: ConnectionOptions | null = null;
 
 // Função para criar cliente Redis com tratamento de erros
 function createRedisClient(): Redis | null {
@@ -64,7 +64,16 @@ function createRedisClient(): Redis | null {
 
 // Inicializar cliente Redis
 redisClient = createRedisClient();
-redisConnection = redisClient;
+redisConnection = redisClient
+  ? {
+      host: env.REDIS_HOST,
+      port: env.REDIS_PORT,
+      password: env.REDIS_PASSWORD || undefined,
+      db: env.REDIS_DB,
+      maxRetriesPerRequest: null,
+      enableReadyCheck: false,
+    }
+  : null;
 
 // Opções padrão para todas as filas (serão criadas dinamicamente quando Redis estiver disponível)
 

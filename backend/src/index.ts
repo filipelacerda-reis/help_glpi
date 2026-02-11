@@ -16,6 +16,7 @@ import { requestLogger } from './middleware/requestLogger';
 import { attachIo } from './middleware/socket';
 import { authRoutes } from './routes/auth.routes';
 import { samlAuthRoutes } from './routes/auth.saml.routes';
+import { auth0AuthRoutes } from './routes/auth.auth0.routes';
 import { userRoutes } from './routes/user.routes';
 import { ticketRoutes } from './routes/ticket.routes';
 import { categoryRoutes } from './routes/category.routes';
@@ -99,6 +100,7 @@ app.get('/health', (_req, res) => {
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/auth', samlAuthRoutes);
+app.use('/api/auth', auth0AuthRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/tickets', ticketRoutes);
 app.use('/api/categories', categoryRoutes);

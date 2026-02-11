@@ -1,54 +1,76 @@
 ## SSO SAML (Google Workspace) - Configuração
 
-### 1) Criar aplicativo SAML no Google Admin
-1. Admin Console → **Apps** → **Web and mobile apps** → **Add app** → **Add custom SAML app**.
-2. Defina um nome (ex.: `GLPI ETUS`).
-3. Baixe/obtenha:
-   - **SSO URL** (SAML_ENTRY_POINT)
-   - **Certificate** (SAML_CERT)
+### Visão geral
+O fluxo é: Google Workspace (IdP) autentica o usuário → retorna SAML para o backend → backend emite JWT e redireciona o usuário para o frontend.
 
-### 2) Configurar Service Provider (SP)
-Use os valores:
+### Dados que você vai precisar
+Use estes valores ao configurar o **Service Provider (SP)** no Google:
 - **ACS URL**: `https://help.etus.io/api/auth/saml/acs`
 - **Entity ID**: `glpi-etus-backend`
 - **Name ID**: `PRIMARY_EMAIL`
 - **Name ID format**: `emailAddress`
 
-### 3) Attribute Mapping
-Opcional (se desejar enriquecer usuário):
+No backend, estes campos são configurados na UI (Administração → SSO / SAML):
+- **Entry Point (SSO URL)** do Google
+- **Certificado X.509**
+- **Domínios permitidos**
+- **Atributo de grupos**
+- **Mapeamento de grupos**
+
+### 1) Criar aplicativo SAML no Google Admin
+1. Acesse o **Admin Console**.
+2. Vá em **Apps** → **Web and mobile apps** → **Add app** → **Add custom SAML app**.
+3. Dê um nome (ex.: `GLPI ETUS`).
+4. Na etapa de detalhes do IdP, anote:
+   - **SSO URL** (Entry Point)
+   - **Certificate** (download do X.509)
+
+### 2) Configurar o Service Provider (SP)
+Na etapa “Service Provider Details”, preencha:
+- **ACS URL**: `https://help.etus.io/api/auth/saml/acs`
+- **Entity ID**: `glpi-etus-backend`
+- **Name ID**: `PRIMARY_EMAIL`
+- **Name ID format**: `emailAddress`
+
+### 3) Attribute Mapping (opcional)
+Se desejar enriquecer o perfil do usuário, você pode mapear:
 - `email`, `firstName`, `lastName`, `department`
 
-### 4) Group Membership Mapping
-1. Habilitar envio de grupos.
-2. Selecionar os grupos relevantes (ex.: `glpi-admins`, `glpi-techs`).
-3. Definir **App attribute name** como `groups` (ou o valor de `SAML_GROUPS_ATTRIBUTE`).
+### 4) Group Membership Mapping (obrigatório para roles)
+1. Habilite o envio de grupos.
+2. Selecione os grupos que terão acesso (ex.: `glpi-admins`, `glpi-techs`).
+3. Defina **App attribute name** como `groups` (ou o valor configurado em `SAML_GROUPS_ATTRIBUTE`).
 
-### 5) Ativar app
-Ativar para as OUs/grupos corretos.
+### 5) Ativar o app
+Ative o app para as OUs/grupos corretos.
 
-### 6) Configurar variáveis de ambiente no backend
-Exemplo:
+### 6) Configurar na plataforma (Administração → SSO / SAML)
+1. Clique em **Aplicar padrão Workspace** (preenche Issuer, ACS e NameID Format).
+2. Preencha o **Entry Point** com a SSO URL.
+3. Cole o **Certificado X.509**.
+4. Informe **Domínios permitidos** (CSV).
+5. Defina **Atributo de grupos** (por padrão, `groups`).
+6. Preencha o **Mapeamento de grupos** (JSON).
+7. Clique em **Salvar** e depois em **Testar configuração SAML**.
+8. Habilite o SAML e valide com usuários reais.
+
+Exemplo de mapeamento:
 ```
-SAML_ENABLED=true
-SAML_ENTRY_POINT=https://accounts.google.com/o/saml2/idp?idpid=XXXX
-SAML_ISSUER=glpi-etus-backend
-SAML_CALLBACK_URL=https://help.etus.io/api/auth/saml/acs
-SAML_CERT=-----BEGIN CERTIFICATE-----...-----END CERTIFICATE-----
-SAML_SIGNATURE_ALG=sha256
-SAML_NAMEID_FORMAT=urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress
-SAML_ALLOWED_DOMAINS=empresa.com.br,empresa.com
-SAML_GROUPS_ATTRIBUTE=groups
-SAML_ROLE_MAPPING_JSON={"glpi-admins@empresa.com":"ADMIN","glpi-triage@empresa.com":"TRIAGER","glpi-techs@empresa.com":"TECHNICIAN","glpi-users@empresa.com":"REQUESTER"}
-SAML_DEFAULT_ROLE=REQUESTER
-SAML_UPDATE_ROLE_ON_LOGIN=true
-SAML_REQUIRE_GROUP=true
-SAML_VALIDATE_IN_RESPONSE_TO=true
-SAML_REQUEST_ID_TTL_MS=28800000
-SAML_JWT_REDIRECT_URL=https://help.etus.io/auth/callback
+{
+  "glpi-admins@empresa.com": "ADMIN",
+  "glpi-triage@empresa.com": "TRIAGER",
+  "glpi-techs@empresa.com": "TECHNICIAN",
+  "glpi-users@empresa.com": "REQUESTER"
+}
 ```
 
 ### 7) Teste manual
-1. Abrir `https://app.../login`.
-2. Clicar **Entrar com Google**.
-3. Validar redirecionamento para `/auth/callback` com token.
-4. Validar role por grupo e login em cada perfil.
+1. Abra `https://help.etus.io/login`.
+2. Clique em **Entrar com Google**.
+3. Verifique o redirecionamento para `/auth/callback` com token.
+4. Valide o role por grupo (ADMIN/TRIAGER/TECHNICIAN/REQUESTER).
+
+### Troubleshooting rápido
+- **Erro de domínio**: verifique `Domínios permitidos`.
+- **Sem grupos**: confirme o atributo `groups` no Google e o `requireGroup`.
+- **Sem certificado**: cole o X.509 em formato PEM (`BEGIN CERTIFICATE`).

@@ -12,6 +12,7 @@ router.use(requireAdmin());
 router.get('/settings', adminSettingsController.getSettings);
 router.put('/settings', adminSettingsController.updateSettings);
 router.post('/settings/saml/test', adminSettingsController.testSamlSettings);
+router.post('/settings/auth0/test', adminSettingsController.testAuth0Settings);
 
 router.post('/tools/recalculate-sla', adminToolsController.recalculateSla);
 router.get('/audit', adminAuditController.list);

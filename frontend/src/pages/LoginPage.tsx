@@ -10,15 +10,23 @@ const LoginPage = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const [samlEnabled, setSamlEnabled] = useState(import.meta.env.VITE_SAML_ENABLED === 'true');
+  const [auth0Enabled, setAuth0Enabled] = useState(false);
   const apiUrl = import.meta.env.VITE_API_URL;
 
-  const loadSamlStatus = async () => {
+  const loadProviderStatus = async () => {
     if (!apiUrl) return;
     try {
-      const response = await fetch(`${apiUrl}/api/auth/saml/status`);
-      if (response.ok) {
-        const data = await response.json();
+      const [samlRes, auth0Res] = await Promise.all([
+        fetch(`${apiUrl}/api/auth/saml/status`),
+        fetch(`${apiUrl}/api/auth/auth0/status`),
+      ]);
+      if (samlRes.ok) {
+        const data = await samlRes.json();
         setSamlEnabled(Boolean(data.enabled));
+      }
+      if (auth0Res.ok) {
+        const data = await auth0Res.json();
+        setAuth0Enabled(Boolean(data.enabled));
       }
     } catch {
       // fallback ao env
@@ -26,7 +34,7 @@ const LoginPage = () => {
   };
 
   useEffect(() => {
-    loadSamlStatus();
+    loadProviderStatus();
   }, []);
 
   const handleSsoLogin = () => {
@@ -35,6 +43,14 @@ const LoginPage = () => {
       return;
     }
     window.location.href = `${apiUrl}/api/auth/saml/login`;
+  };
+
+  const handleAuth0Login = () => {
+    if (!apiUrl) {
+      setError('Auth0 não configurado. Verifique VITE_API_URL.');
+      return;
+    }
+    window.location.href = `${apiUrl}/api/auth/auth0/login`;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -135,15 +151,26 @@ const LoginPage = () => {
             </button>
           </div>
 
-          {samlEnabled && (
-            <div>
-              <button
-                type="button"
-                onClick={handleSsoLogin}
-                className="group relative w-full flex justify-center py-3 px-4 border border-gray-600 text-sm font-semibold rounded-lg text-white bg-gray-700/60 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-etus-green transition-all shadow-lg"
-              >
-                Entrar com Google
-              </button>
+          {(samlEnabled || auth0Enabled) && (
+            <div className="space-y-3">
+              {samlEnabled && (
+                <button
+                  type="button"
+                  onClick={handleSsoLogin}
+                  className="group relative w-full flex justify-center py-3 px-4 border border-gray-600 text-sm font-semibold rounded-lg text-white bg-gray-700/60 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-etus-green transition-all shadow-lg"
+                >
+                  Entrar com Google
+                </button>
+              )}
+              {auth0Enabled && (
+                <button
+                  type="button"
+                  onClick={handleAuth0Login}
+                  className="group relative w-full flex justify-center py-3 px-4 border border-gray-600 text-sm font-semibold rounded-lg text-white bg-gray-700/60 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-etus-green transition-all shadow-lg"
+                >
+                  Entrar com Auth0
+                </button>
+              )}
             </div>
           )}
         </form>
