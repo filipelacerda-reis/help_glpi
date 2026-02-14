@@ -1,7 +1,7 @@
 import prisma from '../lib/prisma';
 import { AppError } from '../middleware/errorHandler';
 import { logger } from '../utils/logger';
-import { TicketStatus, SlaInstanceStatus, TicketEventType, EventOrigin } from '@prisma/client';
+import { TicketStatus, SlaInstanceStatus, TicketEventType, EventOrigin, AutomationEvent } from '@prisma/client';
 import { businessCalendarService } from './businessCalendar.service';
 import { ticketEventService } from './ticketEvent.service';
 import { businessMinutesBetween, BusinessSchedule } from '../domain/time/businessTime.engine';
@@ -468,7 +468,152 @@ export const slaService = {
       },
     });
 
+    // Disparar automações específicas de SLA
+    try {
+      const fullTicket = await prisma.ticket.findUnique({
+        where: { id: ticketId },
+      });
+      if (fullTicket) {
+        const { automationService } = await import('./automation.service');
+        await automationService.processAutomations(
+          breached ? AutomationEvent.ON_SLA_BREACH : AutomationEvent.ON_SLA_MET,
+          fullTicket
+        );
+      }
+    } catch (error: any) {
+      logger.warn('Erro ao disparar automações de SLA na resolução', {
+        ticketId,
+        breached,
+        error: error?.message || String(error),
+      });
+    }
+
     logger.info('Resolução registrada no SLA', { ticketId, businessMinutes, breached });
+  },
+
+  /**
+   * Verifica se um SLA em execução já ultrapassou o tempo alvo e deve ser marcado como violado.
+   */
+  async checkBreachForTicket(ticketId: string) {
+    const instance = await prisma.ticketSlaInstance.findFirst({
+      where: {
+        ticketId,
+        status: {
+          in: [SlaInstanceStatus.RUNNING, SlaInstanceStatus.PAUSED],
+        },
+      },
+      include: {
+        slaPolicy: true,
+      },
+    });
+
+    if (!instance) {
+      return { checked: false, breached: false, reason: 'NO_ACTIVE_INSTANCE' };
+    }
+
+    const ticket = await prisma.ticket.findUnique({
+      where: { id: ticketId },
+      select: { id: true, createdAt: true },
+    });
+
+    if (!ticket) {
+      return { checked: false, breached: false, reason: 'TICKET_NOT_FOUND' };
+    }
+
+    const schedule = await businessCalendarService.getBusinessSchedule(instance.slaPolicy.calendarId);
+    const elapsedBusinessMinutes = await calculateElapsedBusinessMinutes(ticket, new Date(), schedule);
+    const targetBusinessMinutes = instance.slaPolicy.targetResolutionBusinessMinutes;
+
+    if (elapsedBusinessMinutes > targetBusinessMinutes) {
+      await this.breachSla(ticketId, 'RESOLUTION_EXCEEDED');
+      return { checked: true, breached: true, elapsedBusinessMinutes, targetBusinessMinutes };
+    }
+
+    return { checked: true, breached: false, elapsedBusinessMinutes, targetBusinessMinutes };
+  },
+
+  /**
+   * Recalcula SLA para tickets já resolvidos/fechados dentro de um filtro.
+   */
+  async recalculateForFilters(filters: {
+    from?: string;
+    to?: string;
+    teamId?: string;
+    categoryId?: string;
+  }) {
+    const createdAt: any = {};
+    if (filters.from) {
+      createdAt.gte = new Date(filters.from);
+    }
+    if (filters.to) {
+      createdAt.lte = new Date(filters.to);
+    }
+
+    const tickets = await prisma.ticket.findMany({
+      where: {
+        ...(Object.keys(createdAt).length > 0 ? { createdAt } : {}),
+        ...(filters.teamId ? { teamId: filters.teamId } : {}),
+        ...(filters.categoryId ? { categoryId: filters.categoryId } : {}),
+      },
+      select: {
+        id: true,
+        firstResponseAt: true,
+        resolvedAt: true,
+        closedAt: true,
+      },
+    });
+
+    let recalculated = 0;
+    for (const ticket of tickets) {
+      try {
+        if (ticket.firstResponseAt) {
+          await this.recordFirstResponse(ticket.id, ticket.firstResponseAt);
+        }
+        if (ticket.resolvedAt) {
+          await this.recordResolution(ticket.id, ticket.resolvedAt);
+        } else if (ticket.closedAt) {
+          await this.recordResolution(ticket.id, ticket.closedAt);
+        }
+        recalculated += 1;
+      } catch (error: any) {
+        logger.warn('Falha ao recalcular SLA de ticket', {
+          ticketId: ticket.id,
+          error: error?.message || String(error),
+        });
+      }
+    }
+
+    return { scanned: tickets.length, recalculated };
+  },
+
+  /**
+   * Recalcula SLA para um ticket específico.
+   */
+  async recalculateForTicket(ticketId: string) {
+    const ticket = await prisma.ticket.findUnique({
+      where: { id: ticketId },
+      select: {
+        id: true,
+        firstResponseAt: true,
+        resolvedAt: true,
+        closedAt: true,
+      },
+    });
+
+    if (!ticket) {
+      return { recalculated: false, reason: 'TICKET_NOT_FOUND' };
+    }
+
+    if (ticket.firstResponseAt) {
+      await this.recordFirstResponse(ticket.id, ticket.firstResponseAt);
+    }
+    if (ticket.resolvedAt) {
+      await this.recordResolution(ticket.id, ticket.resolvedAt);
+    } else if (ticket.closedAt) {
+      await this.recordResolution(ticket.id, ticket.closedAt);
+    }
+
+    return { recalculated: true };
   },
 
   /**
@@ -513,6 +658,22 @@ export const slaService = {
         reason,
       },
     });
+
+    // Disparar automações ON_SLA_BREACH
+    try {
+      const fullTicket = await prisma.ticket.findUnique({
+        where: { id: ticketId },
+      });
+      if (fullTicket) {
+        const { automationService } = await import('./automation.service');
+        await automationService.processAutomations(AutomationEvent.ON_SLA_BREACH, fullTicket);
+      }
+    } catch (error: any) {
+      logger.warn('Erro ao disparar automações de SLA violado', {
+        ticketId,
+        error: error?.message || String(error),
+      });
+    }
 
     logger.warn('SLA violado', { ticketId, reason });
   },

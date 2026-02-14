@@ -2,6 +2,7 @@ import prisma from '../../lib/prisma';
 import { ChatMessageRole } from '@prisma/client';
 import { generateSupportReply, LlmMessage } from './llm.service';
 import { logger } from '../../utils/logger';
+import { buildAssetContextForChat } from './asset-context.service';
 
 type CreateSessionInput = {
   userId?: string;
@@ -96,8 +97,10 @@ export async function handleUserChatMessage(
     const history = await getRecentMessagesForLlm(sessionId);
     logger.debug('Histórico de mensagens obtido', { sessionId, messageCount: history.length });
 
+    const assetContext = await buildAssetContextForChat(userContent);
+
     logger.debug('Gerando resposta do assistente', { sessionId });
-    const assistantContent = await generateSupportReply(history);
+    const assistantContent = await generateSupportReply(history, assetContext);
     logger.debug('Resposta do assistente gerada', { sessionId, contentLength: assistantContent.length });
 
     const assistantMessage = await appendAssistantMessage(
@@ -196,4 +199,3 @@ export async function createTicketFromSession(sessionId: string) {
 
   return ticket;
 }
-

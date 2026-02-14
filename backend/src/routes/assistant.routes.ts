@@ -6,6 +6,7 @@ import {
 } from '../services/assistant/chat.service';
 import { AppError, ErrorType } from '../middleware/errorHandler';
 import { authenticate } from '../middleware/auth';
+import { platformPolicyService } from '../services/platformPolicy.service';
 
 export const assistantRouter = Router();
 
@@ -26,6 +27,8 @@ assistantRouter.post('/session', async (req, res, next) => {
     if (!userId) {
       throw new AppError('Usuário não autenticado', 401);
     }
+
+    await platformPolicyService.enforceAssistantAccess(userId);
 
     const session = await getOrCreateChatSession({
       sessionId,
@@ -50,6 +53,12 @@ assistantRouter.post('/message', async (req, res, next) => {
     if (!sessionId || !message) {
       throw new AppError('sessionId and message are required', 400);
     }
+
+    if (!req.userId) {
+      throw new AppError('Usuário não autenticado', 401);
+    }
+
+    await platformPolicyService.enforceAssistantAccess(req.userId);
 
     const assistantMessage = await handleUserChatMessage(sessionId, message);
 
@@ -85,4 +94,3 @@ assistantRouter.post('/escalate', async (req, res, next) => {
     next(err);
   }
 });
-

@@ -21,13 +21,28 @@ export async function resetDatabase(): Promise<void> {
   await prisma.ticket.deleteMany();
   await prisma.notification.deleteMany();
   await prisma.technicianJournalEntry.deleteMany();
+  await prisma.ticketKbArticle.deleteMany();
+  await prisma.kbArticleUsage.deleteMany();
+  await prisma.kbArticle.deleteMany();
+  await prisma.kbCategory.deleteMany();
   await prisma.userTeam.deleteMany();
+  await prisma.reportPreset.deleteMany();
+  await prisma.chatMessage.deleteMany();
+  await prisma.chatSession.deleteMany();
+  await prisma.ticketSlaStats.deleteMany();
+  await prisma.ticketSlaInstance.deleteMany();
+  await prisma.equipmentAssignment.deleteMany();
+  await prisma.equipment.deleteMany();
+  await prisma.employee.deleteMany();
+  await prisma.platformAuditLog.deleteMany();
+  await prisma.platformSetting.deleteMany();
   await prisma.team.deleteMany();
   await prisma.tag.deleteMany();
   await prisma.category.deleteMany();
   await prisma.user.deleteMany();
   await prisma.slaPolicy.deleteMany();
   await prisma.automationRule.deleteMany();
+  await prisma.businessCalendarException.deleteMany();
   await prisma.businessCalendar.deleteMany();
 }
 
@@ -37,4 +52,3 @@ export async function resetDatabase(): Promise<void> {
 export async function closeDatabase(): Promise<void> {
   await prisma.$disconnect();
 }
-

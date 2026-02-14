@@ -35,6 +35,8 @@ import { kbRoutes } from './routes/kb.routes';
 import { reportPresetRoutes } from './routes/reportPreset.routes';
 import { technicianJournalRoutes } from './routes/technicianJournal.routes';
 import { assistantRouter } from './routes/assistant.routes';
+import { employeeRoutes } from './routes/employee.routes';
+import { equipmentRoutes } from './routes/equipment.routes';
 import { logger } from './utils/logger';
 import { initializeQueues, closeQueues } from './lib/queue';
 import { initSocket } from './lib/socket';
@@ -119,6 +121,8 @@ app.use('/api/kb', kbRoutes);
 app.use('/api/report-presets', reportPresetRoutes);
 app.use('/api', technicianJournalRoutes);
 app.use('/api/assistant', assistantRouter);
+app.use('/api/employees', employeeRoutes);
+app.use('/api/equipments', equipmentRoutes);
 
 // Error handler
 app.use(errorHandler);
@@ -190,4 +194,3 @@ process.on('SIGINT', async () => {
 });
 
 startServer();
-

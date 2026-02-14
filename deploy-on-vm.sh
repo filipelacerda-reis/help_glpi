@@ -9,7 +9,7 @@
 # - Docker Compose está configurado em /opt/glpi-etus
 # - Arquivos .env e Cloudflare Tunnel NÃO serão sobrescritos (já configurados em produção)
 
-set -e  # Parar em caso de erro
+set -euo pipefail  # Parar em caso de erro, variável não definida e falha em pipes
 
 # Cores para output
 RED='\033[0;31m'
@@ -19,9 +19,10 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configurações
-SOURCE_DIR="/home/filipe_lacerda/glpi_atualizado"
-TARGET_DIR="/opt/glpi-etus"
+SOURCE_DIR="${SOURCE_DIR:-/home/filipe_lacerda/glpi_atualizado}"
+TARGET_DIR="${TARGET_DIR:-/opt/glpi-etus}"
 BACKUP_BASE_DIR="$TARGET_DIR/backups"
+PROD_COMPOSE_FILE="docker-compose.prod.yml"
 
 # Banner
 echo -e "${BLUE}"
@@ -37,6 +38,29 @@ if [ ! -d "$SOURCE_DIR" ]; then
     echo "Copie o código para: $SOURCE_DIR"
     exit 1
 fi
+
+# Validar pré-requisitos de runtime
+for cmd in docker rsync grep awk curl; do
+    if ! command -v "$cmd" >/dev/null 2>&1; then
+        echo -e "${RED}❌ Erro: comando obrigatório não encontrado: $cmd${NC}"
+        exit 1
+    fi
+done
+
+# Validar arquivo de ambiente de produção
+if [ ! -f "$TARGET_DIR/.env" ]; then
+    echo -e "${RED}❌ Erro: arquivo $TARGET_DIR/.env não encontrado.${NC}"
+    echo "Crie o .env de produção antes de executar o deploy."
+    exit 1
+fi
+
+REQUIRED_ENV_KEYS=("DB_PASSWORD" "JWT_SECRET" "JWT_REFRESH_SECRET" "CONFIG_ENCRYPTION_KEY")
+for key in "${REQUIRED_ENV_KEYS[@]}"; do
+    if ! grep -Eq "^${key}=.+" "$TARGET_DIR/.env"; then
+        echo -e "${RED}❌ Erro: variável obrigatória ausente no .env: ${key}${NC}"
+        exit 1
+    fi
+done
 
 # Verificar se diretório destino existe
 if [ ! -d "$TARGET_DIR" ]; then
@@ -67,7 +91,11 @@ mkdir -p "$BACKUP_DIR"
 cd "$TARGET_DIR"
 
 echo "   Fazendo backup do banco de dados..."
-docker compose -f docker-compose.prod.yml exec -T db pg_dump -U glpi_etus glpi_etus > "$BACKUP_DIR/database_backup.sql" 2>&1 || echo "⚠️ Erro no backup do banco" >&2
+docker compose -f "$PROD_COMPOSE_FILE" exec -T postgres pg_dump -U glpi_etus glpi_etus > "$BACKUP_DIR/database_backup.sql" || {
+  echo -e "${RED}❌ Erro no backup do banco${NC}" >&2
+  exit 1
+}
+chmod 600 "$BACKUP_DIR/database_backup.sql"
 
 echo "   Fazendo backup dos uploads..."
 cp -r backend/uploads "$BACKUP_DIR/uploads" 2>/dev/null || true
@@ -161,8 +189,16 @@ backups/
 *.md
 !README.md
 !CHANGELOG.md
-!TECHNICIAN_JOURNAL_IMPLEMENTATION.md
-!RELATORIO_METRICAS_SLA.md
+!DEPLOY_INSTRUCTIONS.md
+!DEPLOY_GITLAB.md
+!DOCKER-SETUP.md
+!N8N_INTEGRATION.md
+!KB_SEED_INSTRUCTIONS.md
+!PRE_DEPLOY_CHECKLIST.md
+!AUTOMATION.md
+!docs/admin-console.md
+!docs/auth0.md
+!docs/sso-google-workspace.md
 !PRE_DEPLOY_CHECKLIST.md
 !N8N_INTEGRATION.md
 !docs/admin-console.md
@@ -203,11 +239,11 @@ rsync -av \
   --exclude='**/cloudflared*' \
   --exclude='*.cfargotunnel.com' \
   --delete \
-  --progress \
+  --info=stats2,progress2 \
   "$SOURCE_DIR/" \
-  "$TARGET_DIR/" 2>&1 | grep -E "(sending|sent|total|^deleting)" || true
+  "$TARGET_DIR/"
 
-if [ ${PIPESTATUS[0]} -ne 0 ]; then
+if [ $? -ne 0 ]; then
     echo -e "${RED}❌ Erro ao sincronizar arquivos${NC}"
     exit 1
 fi
@@ -240,16 +276,16 @@ echo "   durante a reconstrução das imagens (multi-stage build)."
 echo ""
 
 echo "   Reconstruindo imagens (isso pode levar alguns minutos)..."
-docker compose -f docker-compose.prod.yml build --no-cache || {
+docker compose -f "$PROD_COMPOSE_FILE" build --no-cache || {
     echo -e "${RED}⚠️ Erro ao reconstruir imagens${NC}"
     exit 1
 }
 
 echo "   Parando containers..."
-docker compose -f docker-compose.prod.yml down
+docker compose -f "$PROD_COMPOSE_FILE" down
 
 echo "   Iniciando containers..."
-docker compose -f docker-compose.prod.yml up -d || {
+docker compose -f "$PROD_COMPOSE_FILE" up -d || {
     echo -e "${RED}⚠️ Erro ao iniciar containers${NC}"
     exit 1
 }
@@ -271,13 +307,13 @@ echo "   Verificando status dos containers..."
 MAX_RETRIES=30
 RETRY_COUNT=0
 while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-  if docker compose -f docker-compose.prod.yml ps backend | grep -q "Up"; then
+  if docker compose -f "$PROD_COMPOSE_FILE" ps backend | grep -q "Up"; then
     echo -e "   ${GREEN}✅ Container backend está rodando${NC}"
     break
   fi
-  if docker compose -f docker-compose.prod.yml ps backend | grep -q "Restarting"; then
+  if docker compose -f "$PROD_COMPOSE_FILE" ps backend | grep -q "Restarting"; then
     echo -e "   ${YELLOW}⚠️  Container backend está reiniciando... Verificando logs...${NC}"
-    docker compose -f docker-compose.prod.yml logs --tail=20 backend
+    docker compose -f "$PROD_COMPOSE_FILE" logs --tail=20 backend
     echo ""
     echo -e "   ${RED}❌ Container não conseguiu iniciar. Verifique os logs acima.${NC}"
     exit 1
@@ -290,7 +326,7 @@ done
 if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
   echo -e "${RED}❌ Timeout aguardando container iniciar${NC}"
   echo "   Logs do backend:"
-  docker compose -f docker-compose.prod.yml logs --tail=50 backend
+  docker compose -f "$PROD_COMPOSE_FILE" logs --tail=50 backend
   exit 1
 fi
 
@@ -298,7 +334,7 @@ fi
 echo "   Construindo DATABASE_URL a partir das variáveis de ambiente..."
 # Executar o comando dentro do container para construir a DATABASE_URL e executar migrations
 # O Prisma CLI precisa da variável DATABASE_URL diretamente, não apenas as variáveis separadas
-docker compose -f docker-compose.prod.yml exec -T backend sh -c '
+docker compose -f "$PROD_COMPOSE_FILE" exec -T backend sh -c '
   # Ler variáveis de ambiente do container
   DB_HOST=${DB_HOST:-postgres}
   DB_PORT=${DB_PORT:-5432}
@@ -335,33 +371,41 @@ echo -e "${YELLOW}🔍 Passo 5: Verificando serviços...${NC}"
 cd "$TARGET_DIR"
 
 echo "   Status dos containers:"
-docker compose -f docker-compose.prod.yml ps
+docker compose -f "$PROD_COMPOSE_FILE" ps
 
 echo ""
 echo "   Verificando logs recentes do backend:"
-docker compose -f docker-compose.prod.yml logs --tail=20 backend | tail -10
+docker compose -f "$PROD_COMPOSE_FILE" logs --tail=20 backend | tail -10
 
 echo ""
 echo "   Verificando logs recentes do frontend:"
-docker compose -f docker-compose.prod.yml logs --tail=20 frontend | tail -10
+docker compose -f "$PROD_COMPOSE_FILE" logs --tail=20 frontend | tail -10
 
 # Verificar se diretórios de uploads foram criados
 echo ""
 echo "   Verificando diretórios de uploads..."
-if docker compose -f docker-compose.prod.yml exec -T backend test -d /app/uploads/journal 2>/dev/null; then
+if docker compose -f "$PROD_COMPOSE_FILE" exec -T backend test -d /app/uploads/journal 2>/dev/null; then
     echo -e "   ${GREEN}✅ Diretório uploads/journal existe${NC}"
 else
     echo -e "   ${YELLOW}⚠️  Criando diretório uploads/journal...${NC}"
-    docker compose -f docker-compose.prod.yml exec -T backend mkdir -p /app/uploads/journal || true
-    docker compose -f docker-compose.prod.yml exec -T backend chmod 755 /app/uploads/journal || true
+    docker compose -f "$PROD_COMPOSE_FILE" exec -T backend mkdir -p /app/uploads/journal || true
+    docker compose -f "$PROD_COMPOSE_FILE" exec -T backend chmod 755 /app/uploads/journal || true
 fi
 
-if docker compose -f docker-compose.prod.yml exec -T backend test -d /app/uploads/tickets 2>/dev/null; then
+if docker compose -f "$PROD_COMPOSE_FILE" exec -T backend test -d /app/uploads/tickets 2>/dev/null; then
     echo -e "   ${GREEN}✅ Diretório uploads/tickets existe${NC}"
 else
     echo -e "   ${YELLOW}⚠️  Criando diretório uploads/tickets...${NC}"
-    docker compose -f docker-compose.prod.yml exec -T backend mkdir -p /app/uploads/tickets || true
-    docker compose -f docker-compose.prod.yml exec -T backend chmod 755 /app/uploads/tickets || true
+    docker compose -f "$PROD_COMPOSE_FILE" exec -T backend mkdir -p /app/uploads/tickets || true
+    docker compose -f "$PROD_COMPOSE_FILE" exec -T backend chmod 755 /app/uploads/tickets || true
+fi
+
+echo ""
+echo "   Verificando healthcheck da API..."
+if curl -fsS "http://localhost:8080/health" >/dev/null; then
+    echo -e "   ${GREEN}✅ Healthcheck /health respondeu com sucesso${NC}"
+else
+    echo -e "   ${YELLOW}⚠️  Healthcheck local falhou. Verifique network/proxy da VM.${NC}"
 fi
 
 echo ""
@@ -372,10 +416,9 @@ echo ""
 echo -e "${BLUE}📋 Próximos passos:${NC}"
 echo "   1. Verifique se a aplicação está funcionando"
 echo "   2. Teste as novas funcionalidades (tags, diário do técnico)"
-echo "   3. Monitore os logs: docker compose -f docker-compose.prod.yml logs -f"
+echo "   3. Monitore os logs: docker compose -f $PROD_COMPOSE_FILE logs -f"
 echo "   4. Verifique se o diretório de uploads do journal foi criado:"
-echo "      docker compose -f docker-compose.prod.yml exec backend ls -la uploads/journal"
+echo "      docker compose -f $PROD_COMPOSE_FILE exec backend ls -la uploads/journal"
 echo ""
 echo -e "${YELLOW}💾 Backup salvo em: $BACKUP_DIR${NC}"
 echo ""
-

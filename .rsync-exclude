@@ -60,8 +60,16 @@ backups/
 *.md
 !README.md
 !CHANGELOG.md
-!TECHNICIAN_JOURNAL_IMPLEMENTATION.md
-!RELATORIO_METRICAS_SLA.md
+!DEPLOY_INSTRUCTIONS.md
+!DEPLOY_GITLAB.md
+!DOCKER-SETUP.md
+!N8N_INTEGRATION.md
+!KB_SEED_INSTRUCTIONS.md
+!PRE_DEPLOY_CHECKLIST.md
+!AUTOMATION.md
+!docs/admin-console.md
+!docs/auth0.md
+!docs/sso-google-workspace.md
 
 # Cloudflare Tunnel - CRÍTICO: NÃO sobrescrever configuração de produção
 cloudflared-config/

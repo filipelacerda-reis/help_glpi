@@ -47,15 +47,25 @@ export const slaWorker = new Worker<SlaJobData>(
           break;
 
         case 'RECALCULATE_SLA':
-          // Recalcular SLA (útil para correções ou mudanças de política)
-          // TODO: Implementar recálculo completo de SLA
-          logger.info('Recálculo de SLA solicitado', { ticketId });
+          // Recalcular SLA em lote (filtros opcionais em data)
+          if (ticketId === 'batch') {
+            const result = await slaService.recalculateForFilters({
+              from: data?.from,
+              to: data?.to,
+              teamId: data?.teamId,
+              categoryId: data?.categoryId,
+            });
+            logger.info('Recálculo de SLA em lote concluído', result);
+          } else {
+            const result = await slaService.recalculateForTicket(ticketId);
+            logger.info('Recálculo de SLA concluído', { ticketId, ...result });
+          }
           break;
 
         case 'CHECK_BREACH':
-          // Verificar se SLA foi violado
-          // TODO: Implementar verificação de violação
-          logger.info('Verificação de violação de SLA solicitada', { ticketId });
+          // Verificar se SLA de ticket em execução já ultrapassou alvo
+          await slaService.checkBreachForTicket(ticketId);
+          logger.info('Verificação de violação de SLA concluída', { ticketId });
           break;
 
         default:
@@ -105,4 +115,3 @@ slaWorker.on('error', (err) => {
 });
 
 logger.info('✅ Worker de SLA inicializado');
-

@@ -77,7 +77,7 @@ nano /opt/glpi-etus/backend/.env
 nano /opt/glpi-etus/.env
 
 # Adicionar a linha:
-GEMINI_API_KEY=AIzaSy...
+GEMINI_API_KEY=<SUA_CHAVE_GEMINI>
 
 # Salvar e sair (Ctrl+X, Y, Enter)
 ```
@@ -194,4 +194,3 @@ curl -X POST http://localhost:8080/api/kb/ai-solution \
 
 **Última atualização**: Dezembro 2024
 **Status**: ✅ Pronto para produção
-

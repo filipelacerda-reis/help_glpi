@@ -169,7 +169,11 @@ export const kbController = {
    */
   async createArticle(req: Request, res: Response) {
     try {
-      const userId = (req as any).user?.id;
+      const userId = req.userId;
+      if (!userId) {
+        res.status(401).json({ error: 'Não autenticado' });
+        return;
+      }
       const data = createArticleSchema.parse(req.body);
       const article = await kbService.createArticle(userId, data);
       res.status(201).json(article);
@@ -192,7 +196,11 @@ export const kbController = {
   async updateArticle(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const userId = (req as any).user?.id;
+      const userId = req.userId;
+      if (!userId) {
+        res.status(401).json({ error: 'Não autenticado' });
+        return;
+      }
       const data = createArticleSchema.partial().parse(req.body);
       const article = await kbService.updateArticle(id, userId, data);
       res.json(article);
@@ -287,7 +295,11 @@ export const kbController = {
   async linkArticleToTicket(req: Request, res: Response) {
     try {
       const { ticketId } = req.params;
-      const userId = (req as any).user?.id;
+      const userId = req.userId;
+      if (!userId) {
+        res.status(401).json({ error: 'Não autenticado' });
+        return;
+      }
       const data = z.object({ articleId: z.string().uuid() }).parse(req.body);
 
       await kbService.linkArticleToTicket(ticketId, data.articleId, userId);
@@ -319,4 +331,3 @@ export const kbController = {
     }
   },
 };
-

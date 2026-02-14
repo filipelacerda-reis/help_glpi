@@ -19,6 +19,8 @@ import KbAdminPage from './pages/KbAdminPage';
 import SamlAdminPage from './pages/SamlAdminPage';
 import NotificationsPage from './pages/NotificationsPage';
 import MyJournalPage from './pages/MyJournalPage';
+import EmployeesPage from './pages/EmployeesPage';
+import EquipmentsPage from './pages/EquipmentsPage';
 import Layout from './components/Layout';
 
 const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -86,6 +88,8 @@ function AppRoutes() {
         />
         <Route path="notifications" element={<NotificationsPage />} />
         <Route path="my/journal" element={<MyJournalPage />} />
+        <Route path="employees" element={<EmployeesPage />} />
+        <Route path="equipments" element={<EquipmentsPage />} />
       </Route>
     </Routes>
   );
@@ -104,4 +108,3 @@ function App() {
 }
 
 export default App;
-

@@ -17,8 +17,29 @@ export const platformAuditService = {
     });
   },
 
-  async list(limit: number, cursor?: string) {
+  async list(
+    limit: number,
+    cursor?: string,
+    filters?: {
+      actorUserId?: string;
+      action?: string;
+      resource?: string;
+      from?: Date;
+      to?: Date;
+    }
+  ) {
+    const where: any = {};
+    if (filters?.actorUserId) where.actorUserId = filters.actorUserId;
+    if (filters?.action) where.action = filters.action;
+    if (filters?.resource) where.resource = filters.resource;
+    if (filters?.from || filters?.to) {
+      where.createdAt = {};
+      if (filters.from) where.createdAt.gte = filters.from;
+      if (filters.to) where.createdAt.lte = filters.to;
+    }
+
     const items = await prisma.platformAuditLog.findMany({
+      where,
       take: limit + 1,
       orderBy: { createdAt: 'desc' },
       ...(cursor

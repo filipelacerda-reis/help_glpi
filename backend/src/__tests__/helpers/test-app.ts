@@ -12,6 +12,7 @@ import { ticketRoutes } from '../../routes/ticket.routes';
 import { categoryRoutes } from '../../routes/category.routes';
 import { teamRoutes } from '../../routes/team.routes';
 import { adminRoutes } from '../../routes/admin.routes';
+import { adminSettingsRoutes } from '../../routes/admin.settings.routes';
 import { notificationRoutes } from '../../routes/notification.routes';
 import { tagRoutes } from '../../routes/tag.routes';
 import { ticketEventRoutes } from '../../routes/ticketEvent.routes';
@@ -24,6 +25,8 @@ import { kbRoutes } from '../../routes/kb.routes';
 import { reportPresetRoutes } from '../../routes/reportPreset.routes';
 import { technicianJournalRoutes } from '../../routes/technicianJournal.routes';
 import { assistantRouter } from '../../routes/assistant.routes';
+import { employeeRoutes } from '../../routes/employee.routes';
+import { equipmentRoutes } from '../../routes/equipment.routes';
 import path from 'path';
 
 /**
@@ -66,6 +69,7 @@ export function createTestApp(): express.Application {
   app.use('/api/categories', categoryRoutes);
   app.use('/api/teams', teamRoutes);
   app.use('/api/admin', adminRoutes);
+  app.use('/api/admin', adminSettingsRoutes);
   app.use('/api/notifications', notificationRoutes);
   app.use('/api/tags', tagRoutes);
   app.use('/api/tickets', ticketEventRoutes);
@@ -78,10 +82,11 @@ export function createTestApp(): express.Application {
   app.use('/api/report-presets', reportPresetRoutes);
   app.use('/api', technicianJournalRoutes);
   app.use('/api/assistant', assistantRouter);
+  app.use('/api/employees', employeeRoutes);
+  app.use('/api/equipments', equipmentRoutes);
 
   // Error handler
   app.use(errorHandler);
 
   return app;
 }
-

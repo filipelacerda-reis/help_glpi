@@ -172,6 +172,36 @@ enum ChatMessageRole {
   SYSTEM
 }
 
+enum EquipmentType {
+  NOTEBOOK
+  DESKTOP
+  MONITOR
+  KEYBOARD
+  MOUSE
+  HEADSET
+  HUB_USB
+  DOCK
+  PHONE
+  TABLET
+  CHARGER
+  OTHER
+}
+
+enum EquipmentStatus {
+  IN_STOCK
+  ASSIGNED
+  MAINTENANCE
+  RETIRED
+  LOST
+}
+
+enum EquipmentCondition {
+  NEW
+  GOOD
+  FAIR
+  DAMAGED
+}
+
 model User {
   id           String   @id @default(uuid())
   name         String
@@ -236,6 +266,7 @@ model Team {
   requesterTickets   Ticket[]   @relation("RequesterTeam")
   categories         TeamCategory[]
   ticketTypes        TeamTicketType[]
+  employees          Employee[]
 
   @@map("teams")
 }
@@ -931,4 +962,72 @@ model PlatformAuditLog {
   @@index([action])
   @@index([createdAt])
   @@map("platform_audit_logs")
+}
+
+model Employee {
+  id           String   @id @default(uuid())
+  name         String
+  cpf          String   @unique
+  roleTitle    String
+  teamId       String?
+  hireDate     DateTime?
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  team         Team?                 @relation(fields: [teamId], references: [id], onDelete: SetNull)
+  assignments  EquipmentAssignment[]
+
+  @@index([teamId])
+  @@index([active])
+  @@map("employees")
+}
+
+model Equipment {
+  id               String             @id @default(uuid())
+  invoiceNumber    String
+  purchaseDate     DateTime
+  equipmentType    EquipmentType
+  assetTag         String             @unique
+  value            Decimal            @db.Decimal(10, 2)
+  serialNumber     String?
+  brand            String?
+  model            String?
+  status           EquipmentStatus    @default(IN_STOCK)
+  condition        EquipmentCondition @default(NEW)
+  warrantyEndDate  DateTime?
+  notes            String?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+
+  assignments      EquipmentAssignment[]
+
+  @@index([equipmentType])
+  @@index([status])
+  @@index([purchaseDate])
+  @@map("equipments")
+}
+
+model EquipmentAssignment {
+  id                 String             @id @default(uuid())
+  equipmentId        String
+  employeeId         String
+  assignedAt         DateTime           @default(now())
+  expectedReturnAt   DateTime?
+  returnedAt         DateTime?
+  deliveryCondition  EquipmentCondition @default(NEW)
+  returnCondition    EquipmentCondition?
+  deliveryTermNumber String?
+  notes              String?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  equipment          Equipment          @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+  employee           Employee           @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([equipmentId])
+  @@index([employeeId])
+  @@index([assignedAt])
+  @@index([returnedAt])
+  @@map("equipment_assignments")
 }

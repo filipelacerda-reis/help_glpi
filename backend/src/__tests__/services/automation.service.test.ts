@@ -16,6 +16,10 @@ jest.mock('../../lib/prisma', () => ({
     ticket: {
       findUnique: jest.fn(),
     },
+    ticketTag: {
+      createMany: jest.fn(),
+      deleteMany: jest.fn(),
+    },
   },
 }));
 
@@ -105,7 +109,7 @@ describe('automationService.processAutomations', () => {
     expect(ticketEventService.createEvent).toHaveBeenCalledTimes(1);
   });
 
-  it('handles ADD_TAG and TRIGGER_SLA as no-op success', async () => {
+  it('handles ADD_TAG and TRIGGER_SLA as success', async () => {
     (prisma.automationRule.findMany as jest.Mock).mockResolvedValue([
       {
         id: 'rule-3',
@@ -125,6 +129,33 @@ describe('automationService.processAutomations', () => {
     expect(results[0].actionResults).toHaveLength(2);
     expect(results[0].actionResults[0].success).toBe(true);
     expect(results[0].actionResults[1].success).toBe(true);
+    expect(prisma.ticketTag.createMany).toHaveBeenCalledWith({
+      data: [{ ticketId: 'ticket-1', tagId: 'tag-1' }],
+      skipDuplicates: true,
+    });
+  });
+
+  it('handles REMOVE_TAG as success', async () => {
+    (prisma.automationRule.findMany as jest.Mock).mockResolvedValue([
+      {
+        id: 'rule-6',
+        name: 'Rule remove tag',
+        event: AutomationEvent.ON_TICKET_UPDATED,
+        enabled: true,
+        conditions: {},
+        actions: [{ type: 'REMOVE_TAG', tagId: 'tag-1' }],
+      },
+    ]);
+
+    const results = await automationService.processAutomations(
+      AutomationEvent.ON_TICKET_UPDATED,
+      ticket
+    );
+
+    expect(results[0].actionResults[0].success).toBe(true);
+    expect(prisma.ticketTag.deleteMany).toHaveBeenCalledWith({
+      where: { ticketId: 'ticket-1', tagId: 'tag-1' },
+    });
   });
 
   it('calls webhook when configured', async () => {

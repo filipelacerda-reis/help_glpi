@@ -35,7 +35,7 @@ describe('Fluxo Crítico de Tickets - Testes de Integração', () => {
   let teamId: string;
   let ticketId: string;
 
-  beforeAll(async () => {
+  const setupBaseData = async () => {
     // Criar usuários de teste
     const hashedPassword = await bcrypt.hash('password123', 10);
 
@@ -90,6 +90,11 @@ describe('Fluxo Crítico de Tickets - Testes de Integração', () => {
         password: 'password123',
       });
     technicianToken = technicianLoginRes.body.accessToken;
+  };
+
+  beforeEach(async () => {
+    await resetDatabase();
+    await setupBaseData();
   });
 
   describe('POST /api/tickets - Criar Ticket', () => {
@@ -300,4 +305,3 @@ describe('Fluxo Crítico de Tickets - Testes de Integração', () => {
     });
   });
 });
-

@@ -7,6 +7,7 @@ import { notificationService } from './notification.service';
 import { businessMinutesBetween, BusinessSchedule } from '../domain/time/businessTime.engine';
 import { businessCalendarService } from './businessCalendar.service';
 import * as ticketIntegrations from './ticketIntegrations.service';
+import { platformPolicyService } from './platformPolicy.service';
 
 export interface CreateTicketDto {
   title: string;
@@ -137,6 +138,43 @@ async function validateTeamCategoryAndType(
   }
 }
 
+async function hasTicketAccess(
+  ticket: {
+    id: string;
+    requesterId: string;
+    assignedTechnicianId: string | null;
+    teamId: string | null;
+  },
+  userId: string,
+  userRole: UserRole
+): Promise<boolean> {
+  if (userRole === UserRole.ADMIN || userRole === UserRole.TRIAGER) {
+    return true;
+  }
+
+  if (ticket.requesterId === userId || ticket.assignedTechnicianId === userId) {
+    return true;
+  }
+
+  if (ticket.teamId) {
+    const isMember = await isUserTeamMember(userId, ticket.teamId);
+    if (isMember) {
+      return true;
+    }
+  }
+
+  const isObserver = await prisma.ticketObserver.findUnique({
+    where: {
+      ticketId_observerId: {
+        ticketId: ticket.id,
+        observerId: userId,
+      },
+    },
+  });
+
+  return !!isObserver;
+}
+
 export const ticketService = {
   async createTicket(
     userId: string,
@@ -170,6 +208,26 @@ export const ticketService = {
       throw new AppError('O time selecionado não possui membros. Adicione membros ao time antes de criar tickets.', 400, ErrorType.VALIDATION_ERROR);
     }
 
+    let requesterRole: UserRole = UserRole.REQUESTER;
+    const userDelegate = (prisma as any).user;
+    if (userDelegate?.findUnique) {
+      const requester = await userDelegate.findUnique({
+        where: { id: userId },
+        select: { role: true },
+      });
+      if (requester?.role) {
+        requesterRole = requester.role;
+      }
+    }
+
+    const targetPriority = data.priority || TicketPriority.MEDIUM;
+    const targetTipo = data.tipo || TicketType.INCIDENT;
+    await platformPolicyService.enforceTicketCreatePolicy(
+      requesterRole,
+      targetPriority,
+      targetTipo
+    );
+
     await validateTeamCategoryAndType(data.teamId, data.categoryId, data.tipo);
 
     // Determinar teamSolicitanteId se não fornecido
@@ -197,10 +255,10 @@ export const ticketService = {
         title: data.title,
         description: data.description,
         requesterId: userId,
-        priority: data.priority || TicketPriority.MEDIUM,
+        priority: targetPriority,
         categoryId: data.categoryId,
         teamId: data.teamId, // Agora obrigatório
-        tipo: data.tipo || TicketType.INCIDENT,
+        tipo: targetTipo,
         infraTipo: data.infraTipo,
         teamSolicitanteId,
         status: TicketStatus.OPEN,
@@ -748,12 +806,18 @@ export const ticketService = {
       throw new AppError('Ticket não encontrado', 404, ErrorType.NOT_FOUND_ERROR);
     }
 
-    // Verificar permissão
-    if (userRole === UserRole.REQUESTER && ticket.requesterId !== userId) {
+    await platformPolicyService.enforceTicketUpdatePolicy({
+      priority: data.priority,
+      tipo: data.tipo,
+    });
+
+    // Verificar permissão de acesso ao ticket
+    const canAccess = await hasTicketAccess(ticket, userId, userRole);
+    if (!canAccess) {
       logger.warn('Tentativa de acesso negado ao ticket', {
         ticketId: id,
         userId,
-        requesterId: ticket.requesterId,
+        userRole,
       });
       throw new AppError('Acesso negado', 403, ErrorType.FORBIDDEN_ERROR);
     }
@@ -803,6 +867,27 @@ export const ticketService = {
       await validateTeamCategoryAndType(targetTeamId, targetCategoryId, targetTipo);
     }
 
+    // Se o ticket for movido de time sem trocar explicitamente o técnico, garantir consistência
+    if (
+      data.teamId !== undefined &&
+      data.teamId !== ticket.teamId &&
+      data.assignedTechnicianId === undefined &&
+      targetTeamId &&
+      ticket.assignedTechnicianId
+    ) {
+      const isAssignedMemberOfTargetTeam = await isUserTeamMember(
+        ticket.assignedTechnicianId,
+        targetTeamId
+      );
+      if (!isAssignedMemberOfTargetTeam) {
+        throw new AppError(
+          'O técnico atualmente atribuído não pertence ao novo time. Reatribua ou desatribua o ticket.',
+          400,
+          ErrorType.VALIDATION_ERROR
+        );
+      }
+    }
+
     // Validar assignedTechnicianId (assumir ou atribuir ticket)
     if (data.assignedTechnicianId !== undefined && data.assignedTechnicianId !== ticket.assignedTechnicianId) {
       const oldAssignedTechnicianId = ticket.assignedTechnicianId;
@@ -836,6 +921,21 @@ export const ticketService = {
       }
       else {
         throw new AppError('Você não tem permissão para atribuir este ticket', 403, ErrorType.FORBIDDEN_ERROR);
+      }
+
+      // Sempre validar que o técnico atribuído pertence ao time de destino
+      if (data.assignedTechnicianId && targetTeamId) {
+        const isAssignedMemberOfTargetTeam = await isUserTeamMember(
+          data.assignedTechnicianId,
+          targetTeamId
+        );
+        if (!isAssignedMemberOfTargetTeam) {
+          throw new AppError(
+            'O técnico atribuído deve ser membro do time responsável pelo ticket',
+            400,
+            ErrorType.VALIDATION_ERROR
+          );
+        }
       }
 
       // Criar notificação de atribuição
@@ -983,6 +1083,7 @@ export const ticketService = {
 
       // Atualizar datas de resolução/fechamento e calcular tempos
       const updateData: any = { ...data };
+      delete updateData.tagIds;
       let businessSchedule: BusinessSchedule | null = null;
       const ensureBusinessSchedule = async () => {
         if (!businessSchedule) {
@@ -1777,4 +1878,3 @@ export const ticketService = {
     return observers;
   },
 };
-

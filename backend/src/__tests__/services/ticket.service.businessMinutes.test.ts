@@ -13,6 +13,12 @@ jest.mock('../../lib/prisma', () => ({
     ticketRelation: {
       findMany: jest.fn(),
     },
+    teamCategory: {
+      findMany: jest.fn(),
+    },
+    teamTicketType: {
+      findMany: jest.fn(),
+    },
     ticketStatusHistory: {
       create: jest.fn(),
     },
@@ -81,6 +87,8 @@ describe('ticketService business minutes', () => {
 
     (prisma.ticket.findUnique as jest.Mock).mockResolvedValue(mockTicket);
     (prisma.ticketRelation.findMany as jest.Mock).mockResolvedValue([]);
+    (prisma.teamCategory.findMany as jest.Mock).mockResolvedValue([]);
+    (prisma.teamTicketType.findMany as jest.Mock).mockResolvedValue([]);
     (prisma.ticketStatusHistory.create as jest.Mock).mockResolvedValue({});
     (prisma.ticket.update as jest.Mock).mockResolvedValue({
       ...mockTicket,

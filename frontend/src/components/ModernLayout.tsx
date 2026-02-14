@@ -4,6 +4,8 @@ import { useAuth } from '../contexts/AuthContext';
 import { teamService } from '../services/team.service';
 import NotificationBell from './NotificationBell';
 import {
+  ChevronDown,
+  ChevronRight,
   Home,
   FileText,
   BarChart3,
@@ -13,6 +15,8 @@ import {
   Layers,
   UserCog,
   UsersRound,
+  Briefcase,
+  Laptop,
   Zap,
   Bell,
   LogOut,
@@ -29,6 +33,20 @@ interface ModernLayoutProps {
   showRightSidebar?: boolean;
 }
 
+type MenuItem = {
+  path: string;
+  label: string;
+  icon: any;
+  roles: string[];
+  allowTeamLead?: boolean;
+};
+
+type MenuSection = {
+  id: string;
+  label: string;
+  items: MenuItem[];
+};
+
 const ModernLayout = ({
   children,
   title,
@@ -42,6 +60,12 @@ const ModernLayout = ({
   const location = useLocation();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isTeamLead, setIsTeamLead] = useState(false);
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
+    operations: true,
+    assets: true,
+    governance: true,
+    admin: true,
+  });
 
   // Verificar se o usuário é líder de algum time
   useEffect(() => {
@@ -83,16 +107,13 @@ const ModernLayout = ({
     return location.pathname === path || location.pathname.startsWith(path + '/');
   };
 
-  const menuItems: Array<{
-    path: string;
-    label: string;
-    icon: any;
-    roles: string[];
-    allowTeamLead?: boolean;
-  }> = [
+  const menuItems: MenuItem[] = [
     { path: '/', label: 'Dashboard', icon: Home, roles: ['ADMIN', 'TRIAGER', 'TECHNICIAN', 'REQUESTER'] },
     { path: '/tickets', label: 'Tickets', icon: FileText, roles: ['ADMIN', 'TRIAGER', 'TECHNICIAN', 'REQUESTER'] },
     { path: '/my/journal', label: 'Meu Diário', icon: BookOpen, roles: ['ADMIN', 'TRIAGER', 'TECHNICIAN'] },
+    { path: '/notifications', label: 'Notificações', icon: Bell, roles: ['ADMIN', 'TRIAGER', 'TECHNICIAN', 'REQUESTER'] },
+    { path: '/employees', label: 'Funcionários', icon: Briefcase, roles: ['ADMIN', 'TRIAGER', 'TECHNICIAN'] },
+    { path: '/equipments', label: 'Equipamentos', icon: Laptop, roles: ['ADMIN', 'TRIAGER', 'TECHNICIAN'] },
     { path: '/metrics', label: 'Métricas', icon: BarChart3, roles: ['ADMIN'], allowTeamLead: true },
     { path: '/kb', label: 'Base de Conhecimento', icon: FolderKanban, roles: ['ADMIN', 'TRIAGER'] },
     { path: '/sla', label: 'SLA', icon: Target, roles: ['ADMIN'] },
@@ -102,17 +123,71 @@ const ModernLayout = ({
     { path: '/categories', label: 'Categorias', icon: Layers, roles: ['ADMIN'] },
     { path: '/automations', label: 'Automações', icon: Zap, roles: ['ADMIN'] },
     { path: '/admin/sso', label: 'Administração', icon: Settings, roles: ['ADMIN'] },
-    { path: '/notifications', label: 'Notificações', icon: Bell, roles: ['ADMIN', 'TRIAGER', 'TECHNICIAN', 'REQUESTER'] },
   ];
 
-  const filteredMenuItems = menuItems.filter((item) => {
+  const hasAccess = (item: MenuItem) => {
     if (!user?.role) return false;
-    // Verificar se o item permite líderes de time
     if (item.allowTeamLead && !item.roles.includes(user.role)) {
       return isTeamLead;
     }
     return item.roles.includes(user.role);
-  });
+  };
+
+  const getItem = (path: string) => menuItems.find((item) => item.path === path)!;
+
+  const menuSections: MenuSection[] = [
+    {
+      id: 'operations',
+      label: 'Operação',
+      items: [getItem('/'), getItem('/tickets'), getItem('/my/journal'), getItem('/notifications')],
+    },
+    {
+      id: 'assets',
+      label: 'Ativos e Pessoas',
+      items: [getItem('/employees'), getItem('/equipments')],
+    },
+    {
+      id: 'governance',
+      label: 'Conhecimento e Qualidade',
+      items: [getItem('/kb'), getItem('/sla'), getItem('/metrics')],
+    },
+    {
+      id: 'admin',
+      label: 'Administração da Plataforma',
+      items: [
+        getItem('/teams'),
+        getItem('/users'),
+        getItem('/tags'),
+        getItem('/categories'),
+        getItem('/automations'),
+        getItem('/admin/sso'),
+      ],
+    },
+  ];
+
+  const filteredMenuItems = menuItems.filter(hasAccess);
+  const visibleSections = menuSections
+    .map((section) => ({
+      ...section,
+      items: section.items.filter(hasAccess),
+    }))
+    .filter((section) => section.items.length > 0);
+
+  useEffect(() => {
+    setOpenSections((prev) => {
+      const next = { ...prev };
+      for (const section of visibleSections) {
+        if (section.items.some((item) => isActive(item.path))) {
+          next[section.id] = true;
+        }
+      }
+      return next;
+    });
+  }, [location.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const toggleSection = (sectionId: string) => {
+    setOpenSections((prev) => ({ ...prev, [sectionId]: !prev[sectionId] }));
+  };
 
   return (
     <div className="flex h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white overflow-hidden">
@@ -158,26 +233,74 @@ const ModernLayout = ({
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-          {filteredMenuItems.map((item) => {
-            const Icon = item.icon;
-            const active = isActive(item.path);
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`flex items-center space-x-3 p-3 rounded-lg transition-colors ${
-                  active
-                    ? 'bg-etus-green/30 text-etus-green'
-                    : 'hover:bg-etus-green/20 hover:text-etus-green text-gray-300'
-                }`}
-                title={item.label}
-              >
-                <Icon className="w-5 h-5 flex-shrink-0" />
-                {!sidebarCollapsed && <span className="text-sm">{item.label}</span>}
-              </Link>
-            );
-          })}
+        <nav className="flex-1 p-3 overflow-y-auto">
+          {sidebarCollapsed ? (
+            <div className="space-y-1">
+              {filteredMenuItems.map((item) => {
+                const Icon = item.icon;
+                const active = isActive(item.path);
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`flex items-center justify-center p-3 rounded-lg transition-colors ${
+                      active
+                        ? 'bg-etus-green/30 text-etus-green'
+                        : 'hover:bg-etus-green/20 hover:text-etus-green text-gray-300'
+                    }`}
+                    title={item.label}
+                  >
+                    <Icon className="w-5 h-5 flex-shrink-0" />
+                  </Link>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {visibleSections.map((section) => {
+                const sectionOpen = openSections[section.id] ?? true;
+                return (
+                  <div key={section.id} className="rounded-lg border border-gray-700/50 bg-gray-800/40">
+                    <button
+                      type="button"
+                      onClick={() => toggleSection(section.id)}
+                      className="w-full flex items-center justify-between px-3 py-2 text-xs uppercase tracking-wide text-gray-400 hover:text-gray-200 transition-colors"
+                    >
+                      <span>{section.label}</span>
+                      {sectionOpen ? (
+                        <ChevronDown className="h-3.5 w-3.5" />
+                      ) : (
+                        <ChevronRight className="h-3.5 w-3.5" />
+                      )}
+                    </button>
+                    {sectionOpen && (
+                      <div className="px-2 pb-2 space-y-1">
+                        {section.items.map((item) => {
+                          const Icon = item.icon;
+                          const active = isActive(item.path);
+                          return (
+                            <Link
+                              key={item.path}
+                              to={item.path}
+                              className={`flex items-center gap-3 p-2.5 rounded-lg transition-colors ${
+                                active
+                                  ? 'bg-etus-green/25 text-etus-green border border-etus-green/25'
+                                  : 'text-gray-300 hover:bg-etus-green/15 hover:text-etus-green'
+                              }`}
+                              title={item.label}
+                            >
+                              <Icon className="w-4.5 h-4.5 flex-shrink-0" />
+                              <span className="text-sm">{item.label}</span>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </nav>
 
         {/* User Section */}
@@ -255,4 +378,3 @@ const ModernLayout = ({
 };
 
 export default ModernLayout;
-

@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { platformSettingsService } from '../services/platformSettings.service';
 import { platformAuditService } from '../services/platformAudit.service';
 import { getRuntimeConfig, refreshRuntimeConfig } from '../config/runtimeConfig';
-import { UserRole } from '@prisma/client';
+import { TicketPriority, TicketType, UserRole } from '@prisma/client';
 import { logger } from '../utils/logger';
 
 const roleEnum = z.nativeEnum(UserRole);
@@ -39,20 +39,20 @@ const platformSchema = z.object({
   ticketing: z
     .object({
       allowRequesterCreate: z.boolean().optional(),
-      enabledTypes: z.array(z.string()).optional(),
-      enabledPriorities: z.array(z.string()).optional(),
+      enabledTypes: z.array(z.nativeEnum(TicketType)).optional(),
+      enabledPriorities: z.array(z.nativeEnum(TicketPriority)).optional(),
     })
     .optional(),
   notifications: z
     .object({
       socketEnabled: z.boolean().optional(),
-      retentionDays: z.number().optional(),
+      retentionDays: z.number().int().min(1).max(3650).optional(),
     })
     .optional(),
   ai: z
     .object({
       assistantEnabled: z.boolean().optional(),
-      dailyLimit: z.number().optional(),
+      dailyLimit: z.number().int().min(0).max(10000).optional(),
     })
     .optional(),
 });
@@ -77,6 +77,16 @@ const settingsSchema = z.object({
   auth0: auth0Schema.optional(),
   platform: platformSchema.optional(),
 });
+
+const isValidJsonObject = (value?: string) => {
+  if (!value) return true;
+  try {
+    const parsed = JSON.parse(value);
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed);
+  } catch {
+    return false;
+  }
+};
 
 const validateSamlConfig = (saml: any) => {
   if (!saml.enabled) return { ok: true };
@@ -139,6 +149,50 @@ export const adminSettingsController = {
   async updateSettings(req: Request, res: Response) {
     const payload = settingsSchema.parse(req.body);
     const actorUserId = req.userId as string;
+    const runtime = await getRuntimeConfig();
+
+    const mergedSaml = payload.saml
+      ? {
+          ...runtime.saml,
+          ...payload.saml,
+          cert:
+            payload.saml.cert && payload.saml.cert !== '***'
+              ? payload.saml.cert
+              : runtime.saml.cert,
+        }
+      : runtime.saml;
+
+    const mergedAuth0 = payload.auth0
+      ? {
+          ...runtime.auth0,
+          ...payload.auth0,
+          clientSecret:
+            payload.auth0.clientSecret && payload.auth0.clientSecret !== '***'
+              ? payload.auth0.clientSecret
+              : runtime.auth0.clientSecret,
+        }
+      : runtime.auth0;
+
+    if (!isValidJsonObject(mergedSaml.roleMappingJson)) {
+      res.status(400).json({ error: 'SAML: roleMappingJson deve ser um JSON objeto válido' });
+      return;
+    }
+    if (!isValidJsonObject(mergedAuth0.roleMappingJson)) {
+      res.status(400).json({ error: 'Auth0: roleMappingJson deve ser um JSON objeto válido' });
+      return;
+    }
+
+    const samlValidation = validateSamlConfig(mergedSaml);
+    if (!samlValidation.ok) {
+      res.status(400).json({ error: 'Configuração SAML inválida', errors: samlValidation.errors });
+      return;
+    }
+
+    const auth0Validation = validateAuth0Config(mergedAuth0);
+    if (!auth0Validation.ok) {
+      res.status(400).json({ error: 'Configuração Auth0 inválida', errors: auth0Validation.errors });
+      return;
+    }
 
     const updates: Array<{ key: string; valueJson: any; isSecret: boolean }> = [];
 

@@ -4,7 +4,6 @@ import { logger } from '../utils/logger';
 import { AutomationEvent, TicketEventType, EventOrigin, TicketStatus, TicketPriority, UserRole } from '@prisma/client';
 import { ticketEventService } from './ticketEvent.service';
 import { ticketService } from './ticket.service';
-import { slaService } from './sla.service';
 import axios from 'axios';
 
 export interface CreateAutomationRuleDto {
@@ -89,8 +88,20 @@ async function executeActions(ticketId: string, actions: Array<{ type: string; [
 
         case 'ADD_TAG':
           if (action.tagId) {
-            // Implementar adição de tag
-            results.push({ type: action.type, success: true, note: 'Tag addition not yet implemented' });
+            await prisma.ticketTag.createMany({
+              data: [{ ticketId, tagId: action.tagId }],
+              skipDuplicates: true,
+            });
+            results.push({ type: action.type, success: true });
+          }
+          break;
+
+        case 'REMOVE_TAG':
+          if (action.tagId) {
+            await prisma.ticketTag.deleteMany({
+              where: { ticketId, tagId: action.tagId },
+            });
+            results.push({ type: action.type, success: true });
           }
           break;
 
@@ -320,4 +331,3 @@ export const automationService = {
     return results;
   },
 };
-

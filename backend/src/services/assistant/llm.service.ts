@@ -23,6 +23,14 @@ DIRETRIZES:
 OBJETIVO: Ajudar o usuário a resolver seu problema da melhor forma possível, seja ele relacionado à plataforma ou não.
 `;
 
+const ASSET_CONTEXT_INSTRUCTIONS = `
+Quando a pergunta envolver equipamentos, patrimônio, máquina, notebook ou colaborador:
+- Priorize a BASE DE ATIVOS fornecida pelo sistema nesta conversa.
+- Responda com linguagem natural e objetiva, citando nome do colaborador, patrimônio, tipo e data de entrega quando existir.
+- Se não houver dado confiável na BASE DE ATIVOS, diga claramente que não encontrou e sugira refinar por patrimônio, nome ou CPF.
+- Não invente posse de equipamento.
+`;
+
 /**
  * Tenta gerar resposta usando OpenAI GPT
  */
@@ -96,7 +104,11 @@ async function generateWithGemini(messages: LlmMessage[]): Promise<string> {
   }
 
   // Construir prompt combinando system prompt e histórico
-  const systemPrompt = messages.find(m => m.role === 'system')?.content || SUPPORT_SYSTEM_PROMPT;
+  const systemPrompt =
+    messages
+      .filter((m) => m.role === 'system')
+      .map((m) => m.content)
+      .join('\n\n') || SUPPORT_SYSTEM_PROMPT;
   
   // Pegar apenas as últimas mensagens para não exceder limite de tokens
   const recentMessages = messages.slice(-10); // últimas 10 mensagens
@@ -188,6 +200,7 @@ async function generateWithGemini(messages: LlmMessage[]): Promise<string> {
  */
 export async function generateSupportReply(
   history: LlmMessage[],
+  assetContext?: string,
 ): Promise<string> {
   // Verificar se pelo menos um cliente está disponível
   if (!openaiClient && !geminiClient) {
@@ -197,10 +210,12 @@ export async function generateSupportReply(
     );
   }
 
-  const messages: LlmMessage[] = [
-    { role: 'system', content: SUPPORT_SYSTEM_PROMPT },
-    ...history,
-  ];
+  const systemContent = [SUPPORT_SYSTEM_PROMPT, ASSET_CONTEXT_INSTRUCTIONS];
+  if (assetContext && assetContext.trim().length > 0) {
+    systemContent.push(`BASE DE ATIVOS (dados em tempo real):\n${assetContext}`);
+  }
+
+  const messages: LlmMessage[] = [{ role: 'system', content: systemContent.join('\n\n') }, ...history];
 
   // Tentar Gemini primeiro (gemini-2.5-flash como prioridade)
   if (geminiClient) {
@@ -300,4 +315,3 @@ export async function generateSupportReply(
     503
   );
 }
-

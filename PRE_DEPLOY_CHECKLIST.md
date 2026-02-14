@@ -24,7 +24,7 @@
 **Verificar no `.env` de produção:**
 ```bash
 # Backend - Obrigatório para RAG
-GEMINI_API_KEY=AIzaSy...
+GEMINI_API_KEY=<SUA_CHAVE_GEMINI>
 
 # Backend - Obrigatório para Admin Console
 CONFIG_ENCRYPTION_KEY=seu-segredo-forte
@@ -79,10 +79,9 @@ N8N_INGEST_WEBHOOK=https://seu-n8n.com/webhook/ingest
 **Arquivos de documentação criados:**
 - [x] `N8N_INTEGRATION.md` - Integração com N8N
 - [x] `KB_SEED_INSTRUCTIONS.md` - Instruções para popular KB
-- [x] `KB_ARTICLES_QUICK_START.md` - Quick start
-- [x] `GEMINI_RAG_CONFIRMATION.md` - Confirmação do RAG
-- [x] `RAG_PROMPT_IMPROVEMENTS.md` - Melhorias no prompt
-- [x] `GEMINI_MODEL_FIX.md` - Correção do modelo
+- [x] `KB_SEED_INSTRUCTIONS.md` - Instruções para popular Base de Conhecimento
+- [x] `N8N_INTEGRATION.md` - Integração opcional de IA com N8N
+- [x] `DEPLOY_INSTRUCTIONS.md` - Guia rápido de deploy
 
 **Nota:** O script de deploy exclui arquivos `.md` exceto os essenciais. Se quiser incluir a documentação nova, ajuste o `.rsync-exclude`.
 
@@ -111,7 +110,7 @@ N8N_INGEST_WEBHOOK=https://seu-n8n.com/webhook/ingest
 
 3. Adicionar a linha:
    ```env
-   GEMINI_API_KEY=AIzaSy...
+   GEMINI_API_KEY=<SUA_CHAVE_GEMINI>
    ```
 
 4. Reiniciar o container backend:
@@ -208,7 +207,7 @@ nano /opt/glpi-etus/backend/.env
 nano /opt/glpi-etus/.env
 
 # Adicionar:
-GEMINI_API_KEY=AIzaSy...
+GEMINI_API_KEY=<SUA_CHAVE_GEMINI>
 
 # Reiniciar backend
 cd /opt/glpi-etus
@@ -259,4 +258,3 @@ Antes de executar o deploy, confirme:
 **Status**: ✅ **PRONTO PARA DEPLOY**
 
 **Última atualização**: Dezembro 2024
-

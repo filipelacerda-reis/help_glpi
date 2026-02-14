@@ -189,8 +189,8 @@ REDIS_PORT=6379
 FRONTEND_URL=https://seu-dominio.com
 
 # Assistente Virtual (opcional)
-OPENAI_API_KEY=sk-...
-GEMINI_API_KEY=AIzaSy...
+OPENAI_API_KEY=<SUA_CHAVE_OPENAI>
+GEMINI_API_KEY=<SUA_CHAVE_GEMINI>
 
 # Outras
 NODE_ENV=production
@@ -420,6 +420,5 @@ Para problemas durante o deploy:
 ## 📚 Documentação Relacionada
 
 - [README.md](./README.md) - Documentação completa do projeto
-- [TECHNICIAN_JOURNAL_IMPLEMENTATION.md](./TECHNICIAN_JOURNAL_IMPLEMENTATION.md) - Documentação do Diário do Técnico
-- [RELATORIO_METRICAS_SLA.md](./RELATORIO_METRICAS_SLA.md) - Documentação de Métricas e SLA
-
+- [PRE_DEPLOY_CHECKLIST.md](./PRE_DEPLOY_CHECKLIST.md) - Checklist de validação pré-produção
+- [DEPLOY_INSTRUCTIONS.md](./DEPLOY_INSTRUCTIONS.md) - Guia rápido de deploy operacional

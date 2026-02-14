@@ -1,266 +1,10 @@
 [
   {
-    "ticketId": "ff977673-7e40-4831-a72e-d15fb78eff75",
+    "ticketId": "9869eee2-4c04-431f-9dec-cad399839802",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-01T13:00:00.000Z",
-    "firstResponseAt": "2026-01-01T13:30:00.000Z",
-    "resolvedAt": "2026-01-01T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "2118aa69-4a44-4b16-a4de-23875e3234d4",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-01T13:00:00.000Z",
-    "firstResponseAt": "2026-01-01T13:30:00.000Z",
-    "resolvedAt": "2026-01-01T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "50e9eff8-6471-4428-958c-03cde613a7db",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-01T13:00:00.000Z",
-    "firstResponseAt": "2026-01-01T13:30:00.000Z",
-    "resolvedAt": "2026-01-01T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "aa0a7055-274f-456e-b3c1-7f4b1cee7ada",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-01T13:00:00.000Z",
-    "firstResponseAt": "2026-01-01T13:30:00.000Z",
-    "resolvedAt": "2026-01-01T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "060cd508-fd60-472e-ae5d-fe01fc941a1c",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-01T13:00:00.000Z",
-    "firstResponseAt": "2026-01-01T13:30:00.000Z",
-    "resolvedAt": "2026-01-01T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "c6866ee8-fb0e-47e6-a8c7-d26d957dd6c8",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-01T13:00:00.000Z",
-    "firstResponseAt": "2026-01-01T13:30:00.000Z",
-    "resolvedAt": "2026-01-01T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "d922cc84-0f82-49b3-ad9e-3b1528af2068",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-01T13:00:00.000Z",
-    "firstResponseAt": "2026-01-01T13:30:00.000Z",
-    "resolvedAt": "2026-01-01T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "46156449-cd9b-4702-809e-9cea58f963e3",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-01T13:00:00.000Z",
-    "firstResponseAt": "2026-01-01T13:30:00.000Z",
-    "resolvedAt": "2026-01-01T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "3d34d24a-e534-4b6e-911b-7fa4db8a339a",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-02T13:00:00.000Z",
-    "firstResponseAt": "2026-01-02T13:30:00.000Z",
-    "resolvedAt": "2026-01-02T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "9a7656f8-48ed-43cb-b78b-5196fa82584b",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-02T13:00:00.000Z",
-    "firstResponseAt": "2026-01-02T13:30:00.000Z",
-    "resolvedAt": "2026-01-02T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "010fb989-3491-4c62-8e51-a79746a15798",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-02T13:00:00.000Z",
-    "firstResponseAt": "2026-01-02T13:30:00.000Z",
-    "resolvedAt": "2026-01-02T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "a1f47e33-9860-4e08-8aa6-3c07426497b9",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-02T13:00:00.000Z",
-    "firstResponseAt": "2026-01-02T13:30:00.000Z",
-    "resolvedAt": "2026-01-02T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "1b5a88d0-dc13-43db-b4fa-d286b1a59c46",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-02T13:00:00.000Z",
-    "firstResponseAt": "2026-01-02T13:30:00.000Z",
-    "resolvedAt": "2026-01-02T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "b142c6b0-dd55-4ba5-968f-55be342de5e6",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-02T13:00:00.000Z",
-    "firstResponseAt": "2026-01-02T13:30:00.000Z",
-    "resolvedAt": "2026-01-02T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "c6ac1c9f-6c24-42cf-9d74-2f45e44349c6",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-02T13:00:00.000Z",
-    "firstResponseAt": "2026-01-02T13:30:00.000Z",
-    "resolvedAt": "2026-01-02T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "327ef1bc-3730-44ea-af28-e4e643aaaed3",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-02T13:00:00.000Z",
-    "firstResponseAt": "2026-01-02T13:30:00.000Z",
-    "resolvedAt": "2026-01-02T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "e2c7fa08-1910-4e93-adbc-55f1ce509ecc",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-03T13:00:00.000Z",
-    "firstResponseAt": "2026-01-03T13:30:00.000Z",
-    "resolvedAt": "2026-01-03T15:00:00.000Z",
+    "createdAt": "2026-01-24T13:00:00.000Z",
+    "firstResponseAt": "2026-01-24T13:30:00.000Z",
+    "resolvedAt": "2026-01-24T15:00:00.000Z",
     "firstResponseBusinessMinutes": 0,
     "resolutionBusinessMinutes": 0,
     "targets": {
@@ -272,11 +16,11 @@
     "breached": false
   },
   {
-    "ticketId": "830d0dba-1b2b-483c-a344-52e415813abd",
+    "ticketId": "c8c94693-c76a-4b47-b2a9-178f8d2ad2f4",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-03T13:00:00.000Z",
-    "firstResponseAt": "2026-01-03T13:30:00.000Z",
-    "resolvedAt": "2026-01-03T15:00:00.000Z",
+    "createdAt": "2026-01-24T13:00:00.000Z",
+    "firstResponseAt": "2026-01-24T13:30:00.000Z",
+    "resolvedAt": "2026-01-24T15:00:00.000Z",
     "firstResponseBusinessMinutes": 0,
     "resolutionBusinessMinutes": 0,
     "targets": {
@@ -288,11 +32,11 @@
     "breached": false
   },
   {
-    "ticketId": "9be2ccad-0306-4d26-86f9-5090f9cf9359",
+    "ticketId": "d5cbc901-74b3-44d2-80a7-d9afeabe7f92",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-03T13:00:00.000Z",
-    "firstResponseAt": "2026-01-03T13:30:00.000Z",
-    "resolvedAt": "2026-01-03T15:00:00.000Z",
+    "createdAt": "2026-01-24T13:00:00.000Z",
+    "firstResponseAt": "2026-01-24T13:30:00.000Z",
+    "resolvedAt": "2026-01-24T15:00:00.000Z",
     "firstResponseBusinessMinutes": 0,
     "resolutionBusinessMinutes": 0,
     "targets": {
@@ -304,11 +48,11 @@
     "breached": false
   },
   {
-    "ticketId": "671ab831-0f3c-4aba-af8a-0ff588f662b8",
+    "ticketId": "4d5dbac4-18aa-4229-bb02-2186c39fcd2d",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-03T13:00:00.000Z",
-    "firstResponseAt": "2026-01-03T13:30:00.000Z",
-    "resolvedAt": "2026-01-03T15:00:00.000Z",
+    "createdAt": "2026-01-24T13:00:00.000Z",
+    "firstResponseAt": "2026-01-24T13:30:00.000Z",
+    "resolvedAt": "2026-01-24T15:00:00.000Z",
     "firstResponseBusinessMinutes": 0,
     "resolutionBusinessMinutes": 0,
     "targets": {
@@ -320,11 +64,11 @@
     "breached": false
   },
   {
-    "ticketId": "b2edda74-a627-4193-9071-6c3f32c1e81d",
+    "ticketId": "ef361ba8-0510-4da5-8037-c2a8d64b4707",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-03T13:00:00.000Z",
-    "firstResponseAt": "2026-01-03T13:30:00.000Z",
-    "resolvedAt": "2026-01-03T15:00:00.000Z",
+    "createdAt": "2026-01-24T13:00:00.000Z",
+    "firstResponseAt": "2026-01-24T13:30:00.000Z",
+    "resolvedAt": "2026-01-24T15:00:00.000Z",
     "firstResponseBusinessMinutes": 0,
     "resolutionBusinessMinutes": 0,
     "targets": {
@@ -336,11 +80,11 @@
     "breached": false
   },
   {
-    "ticketId": "23456e86-7d4f-4ecb-a14f-17121efea2ef",
+    "ticketId": "f21defcf-c0a6-41e3-bf23-29d708bf4e63",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-03T13:00:00.000Z",
-    "firstResponseAt": "2026-01-03T13:30:00.000Z",
-    "resolvedAt": "2026-01-03T15:00:00.000Z",
+    "createdAt": "2026-01-24T13:00:00.000Z",
+    "firstResponseAt": "2026-01-24T13:30:00.000Z",
+    "resolvedAt": "2026-01-24T15:00:00.000Z",
     "firstResponseBusinessMinutes": 0,
     "resolutionBusinessMinutes": 0,
     "targets": {
@@ -352,11 +96,11 @@
     "breached": false
   },
   {
-    "ticketId": "b2c07241-de61-4070-85c4-2ef160e8eedb",
+    "ticketId": "41009023-5f0c-4f4e-b34c-5e658e93c980",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-03T13:00:00.000Z",
-    "firstResponseAt": "2026-01-03T13:30:00.000Z",
-    "resolvedAt": "2026-01-03T15:00:00.000Z",
+    "createdAt": "2026-01-24T13:00:00.000Z",
+    "firstResponseAt": "2026-01-24T13:30:00.000Z",
+    "resolvedAt": "2026-01-24T15:00:00.000Z",
     "firstResponseBusinessMinutes": 0,
     "resolutionBusinessMinutes": 0,
     "targets": {
@@ -368,11 +112,11 @@
     "breached": false
   },
   {
-    "ticketId": "5e2f43cc-0cfe-4f0f-854e-230a15459087",
+    "ticketId": "6952c2b0-9f05-44f0-9fbe-53e3bba0d5dd",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-03T13:00:00.000Z",
-    "firstResponseAt": "2026-01-03T13:30:00.000Z",
-    "resolvedAt": "2026-01-03T15:00:00.000Z",
+    "createdAt": "2026-01-24T13:00:00.000Z",
+    "firstResponseAt": "2026-01-24T13:30:00.000Z",
+    "resolvedAt": "2026-01-24T15:00:00.000Z",
     "firstResponseBusinessMinutes": 0,
     "resolutionBusinessMinutes": 0,
     "targets": {
@@ -384,11 +128,11 @@
     "breached": false
   },
   {
-    "ticketId": "8d206c74-0098-4c16-972b-f336ff78ce35",
+    "ticketId": "e915fd6b-bac3-4036-af66-da91adb9d0fb",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-04T13:00:00.000Z",
-    "firstResponseAt": "2026-01-04T13:30:00.000Z",
-    "resolvedAt": "2026-01-04T15:00:00.000Z",
+    "createdAt": "2026-01-25T13:00:00.000Z",
+    "firstResponseAt": "2026-01-25T13:30:00.000Z",
+    "resolvedAt": "2026-01-25T15:00:00.000Z",
     "firstResponseBusinessMinutes": 0,
     "resolutionBusinessMinutes": 0,
     "targets": {
@@ -400,11 +144,11 @@
     "breached": false
   },
   {
-    "ticketId": "6484a820-8726-42de-b095-3f90309315d9",
+    "ticketId": "ba42fba7-4a17-4395-a751-edb9c5fdacb0",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-04T13:00:00.000Z",
-    "firstResponseAt": "2026-01-04T13:30:00.000Z",
-    "resolvedAt": "2026-01-04T15:00:00.000Z",
+    "createdAt": "2026-01-25T13:00:00.000Z",
+    "firstResponseAt": "2026-01-25T13:30:00.000Z",
+    "resolvedAt": "2026-01-25T15:00:00.000Z",
     "firstResponseBusinessMinutes": 0,
     "resolutionBusinessMinutes": 0,
     "targets": {
@@ -416,11 +160,11 @@
     "breached": false
   },
   {
-    "ticketId": "4472b8ca-b4fd-4a38-9676-06150d585ce5",
+    "ticketId": "682536ce-5e16-4b15-a9e9-631d3e21de34",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-04T13:00:00.000Z",
-    "firstResponseAt": "2026-01-04T13:30:00.000Z",
-    "resolvedAt": "2026-01-04T15:00:00.000Z",
+    "createdAt": "2026-01-25T13:00:00.000Z",
+    "firstResponseAt": "2026-01-25T13:30:00.000Z",
+    "resolvedAt": "2026-01-25T15:00:00.000Z",
     "firstResponseBusinessMinutes": 0,
     "resolutionBusinessMinutes": 0,
     "targets": {
@@ -432,11 +176,11 @@
     "breached": false
   },
   {
-    "ticketId": "e91a4e9f-4766-494d-9d08-df7559e05c8e",
+    "ticketId": "d13a7d34-b162-43ce-97a9-fa4038610246",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-04T13:00:00.000Z",
-    "firstResponseAt": "2026-01-04T13:30:00.000Z",
-    "resolvedAt": "2026-01-04T15:00:00.000Z",
+    "createdAt": "2026-01-25T13:00:00.000Z",
+    "firstResponseAt": "2026-01-25T13:30:00.000Z",
+    "resolvedAt": "2026-01-25T15:00:00.000Z",
     "firstResponseBusinessMinutes": 0,
     "resolutionBusinessMinutes": 0,
     "targets": {
@@ -448,11 +192,11 @@
     "breached": false
   },
   {
-    "ticketId": "4ba538cf-3dd0-4540-810d-a13db3bee13d",
+    "ticketId": "7eba0bf1-e24c-4389-95b7-004bcfda855d",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-04T13:00:00.000Z",
-    "firstResponseAt": "2026-01-04T13:30:00.000Z",
-    "resolvedAt": "2026-01-04T15:00:00.000Z",
+    "createdAt": "2026-01-25T13:00:00.000Z",
+    "firstResponseAt": "2026-01-25T13:30:00.000Z",
+    "resolvedAt": "2026-01-25T15:00:00.000Z",
     "firstResponseBusinessMinutes": 0,
     "resolutionBusinessMinutes": 0,
     "targets": {
@@ -464,11 +208,11 @@
     "breached": false
   },
   {
-    "ticketId": "c7b07b77-a748-4e41-ab6f-01b0081cafd1",
+    "ticketId": "456e01ba-ff9d-4e78-a3e4-2186298dfa22",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-04T13:00:00.000Z",
-    "firstResponseAt": "2026-01-04T13:30:00.000Z",
-    "resolvedAt": "2026-01-04T15:00:00.000Z",
+    "createdAt": "2026-01-25T13:00:00.000Z",
+    "firstResponseAt": "2026-01-25T13:30:00.000Z",
+    "resolvedAt": "2026-01-25T15:00:00.000Z",
     "firstResponseBusinessMinutes": 0,
     "resolutionBusinessMinutes": 0,
     "targets": {
@@ -480,11 +224,11 @@
     "breached": false
   },
   {
-    "ticketId": "f673d0cf-9304-4207-80e7-9f65981ad732",
+    "ticketId": "c9a0b6dd-36c5-42e7-b2ce-bd8b59727bab",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-04T13:00:00.000Z",
-    "firstResponseAt": "2026-01-04T13:30:00.000Z",
-    "resolvedAt": "2026-01-04T15:00:00.000Z",
+    "createdAt": "2026-01-25T13:00:00.000Z",
+    "firstResponseAt": "2026-01-25T13:30:00.000Z",
+    "resolvedAt": "2026-01-25T15:00:00.000Z",
     "firstResponseBusinessMinutes": 0,
     "resolutionBusinessMinutes": 0,
     "targets": {
@@ -496,11 +240,11 @@
     "breached": false
   },
   {
-    "ticketId": "c53525be-2022-418c-9910-bb795e916900",
+    "ticketId": "7bb5d336-1ec7-44f5-92c6-34c62a90b87d",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-04T13:00:00.000Z",
-    "firstResponseAt": "2026-01-04T13:30:00.000Z",
-    "resolvedAt": "2026-01-04T15:00:00.000Z",
+    "createdAt": "2026-01-25T13:00:00.000Z",
+    "firstResponseAt": "2026-01-25T13:30:00.000Z",
+    "resolvedAt": "2026-01-25T15:00:00.000Z",
     "firstResponseBusinessMinutes": 0,
     "resolutionBusinessMinutes": 0,
     "targets": {
@@ -512,11 +256,11 @@
     "breached": false
   },
   {
-    "ticketId": "b3c1ec66-707f-4cf4-8e10-e4f3edd63666",
+    "ticketId": "970a2d60-9642-47a4-b078-bd2c44fb50fe",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-05T13:00:00.000Z",
-    "firstResponseAt": "2026-01-05T13:30:00.000Z",
-    "resolvedAt": "2026-01-05T15:00:00.000Z",
+    "createdAt": "2026-01-26T13:00:00.000Z",
+    "firstResponseAt": "2026-01-26T13:30:00.000Z",
+    "resolvedAt": "2026-01-26T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -528,11 +272,11 @@
     "breached": false
   },
   {
-    "ticketId": "ecfcf279-49b9-4b79-8cb4-54959b7bdef3",
+    "ticketId": "54561169-8c7b-4218-9334-b46b06a76855",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-05T13:00:00.000Z",
-    "firstResponseAt": "2026-01-05T13:30:00.000Z",
-    "resolvedAt": "2026-01-05T15:00:00.000Z",
+    "createdAt": "2026-01-26T13:00:00.000Z",
+    "firstResponseAt": "2026-01-26T13:30:00.000Z",
+    "resolvedAt": "2026-01-26T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -544,11 +288,11 @@
     "breached": false
   },
   {
-    "ticketId": "57a6e540-962f-44b6-80e3-2dcb6e874c56",
+    "ticketId": "1029bd9f-9df9-4dd4-a867-863f93020967",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-05T13:00:00.000Z",
-    "firstResponseAt": "2026-01-05T13:30:00.000Z",
-    "resolvedAt": "2026-01-05T15:00:00.000Z",
+    "createdAt": "2026-01-26T13:00:00.000Z",
+    "firstResponseAt": "2026-01-26T13:30:00.000Z",
+    "resolvedAt": "2026-01-26T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -560,11 +304,11 @@
     "breached": false
   },
   {
-    "ticketId": "28f15531-0684-4490-adb6-a601a8072465",
+    "ticketId": "6cd34659-04d1-4c9d-ad33-ac97ff22660e",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-05T13:00:00.000Z",
-    "firstResponseAt": "2026-01-05T13:30:00.000Z",
-    "resolvedAt": "2026-01-05T15:00:00.000Z",
+    "createdAt": "2026-01-26T13:00:00.000Z",
+    "firstResponseAt": "2026-01-26T13:30:00.000Z",
+    "resolvedAt": "2026-01-26T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -576,11 +320,11 @@
     "breached": false
   },
   {
-    "ticketId": "fe5795b8-772a-437d-b5a7-0a955852f01a",
+    "ticketId": "5dabae75-5299-4366-a758-03be6e924439",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-05T13:00:00.000Z",
-    "firstResponseAt": "2026-01-05T13:30:00.000Z",
-    "resolvedAt": "2026-01-05T15:00:00.000Z",
+    "createdAt": "2026-01-26T13:00:00.000Z",
+    "firstResponseAt": "2026-01-26T13:30:00.000Z",
+    "resolvedAt": "2026-01-26T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -592,11 +336,11 @@
     "breached": false
   },
   {
-    "ticketId": "f567941a-d2cc-4de6-afcc-2e1823f5f563",
+    "ticketId": "31bd6d58-dc60-4e31-8da9-699b370d8059",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-05T13:00:00.000Z",
-    "firstResponseAt": "2026-01-05T13:30:00.000Z",
-    "resolvedAt": "2026-01-05T15:00:00.000Z",
+    "createdAt": "2026-01-26T13:00:00.000Z",
+    "firstResponseAt": "2026-01-26T13:30:00.000Z",
+    "resolvedAt": "2026-01-26T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -608,11 +352,11 @@
     "breached": false
   },
   {
-    "ticketId": "bd0790c8-baf7-4198-aef5-349648a0cae8",
+    "ticketId": "da4ec649-1c7c-4460-a6fd-bf007214240a",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-05T13:00:00.000Z",
-    "firstResponseAt": "2026-01-05T13:30:00.000Z",
-    "resolvedAt": "2026-01-05T15:00:00.000Z",
+    "createdAt": "2026-01-26T13:00:00.000Z",
+    "firstResponseAt": "2026-01-26T13:30:00.000Z",
+    "resolvedAt": "2026-01-26T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -624,11 +368,11 @@
     "breached": false
   },
   {
-    "ticketId": "4bee7c24-3d93-4821-a26d-9494aced0c6f",
+    "ticketId": "bf971b2a-6058-47db-8eba-5fa479cb6a8d",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-05T13:00:00.000Z",
-    "firstResponseAt": "2026-01-05T13:30:00.000Z",
-    "resolvedAt": "2026-01-05T15:00:00.000Z",
+    "createdAt": "2026-01-26T13:00:00.000Z",
+    "firstResponseAt": "2026-01-26T13:30:00.000Z",
+    "resolvedAt": "2026-01-26T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -640,11 +384,11 @@
     "breached": false
   },
   {
-    "ticketId": "d8881f12-704c-456d-ae73-fea8c721b6c4",
+    "ticketId": "aa2f4c4d-5581-49d1-94e2-23b1fea6e2ac",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-06T13:00:00.000Z",
-    "firstResponseAt": "2026-01-06T13:30:00.000Z",
-    "resolvedAt": "2026-01-06T15:00:00.000Z",
+    "createdAt": "2026-01-27T13:00:00.000Z",
+    "firstResponseAt": "2026-01-27T13:30:00.000Z",
+    "resolvedAt": "2026-01-27T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -656,11 +400,11 @@
     "breached": false
   },
   {
-    "ticketId": "2e73d321-d21c-4207-bbdc-8524772dd788",
+    "ticketId": "616ff058-e5f6-4f48-b3ce-a59c4d64f775",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-06T13:00:00.000Z",
-    "firstResponseAt": "2026-01-06T13:30:00.000Z",
-    "resolvedAt": "2026-01-06T15:00:00.000Z",
+    "createdAt": "2026-01-27T13:00:00.000Z",
+    "firstResponseAt": "2026-01-27T13:30:00.000Z",
+    "resolvedAt": "2026-01-27T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -672,11 +416,11 @@
     "breached": false
   },
   {
-    "ticketId": "16199e91-f69f-424f-bdc4-282325b6bf7e",
+    "ticketId": "36dbbb6c-c31b-4423-a58e-a1475683026a",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-06T13:00:00.000Z",
-    "firstResponseAt": "2026-01-06T13:30:00.000Z",
-    "resolvedAt": "2026-01-06T15:00:00.000Z",
+    "createdAt": "2026-01-27T13:00:00.000Z",
+    "firstResponseAt": "2026-01-27T13:30:00.000Z",
+    "resolvedAt": "2026-01-27T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -688,11 +432,11 @@
     "breached": false
   },
   {
-    "ticketId": "2011c209-c033-4631-ba8c-3d47857c19a0",
+    "ticketId": "6ce7afd5-78c0-44d4-8701-b76010c1bf70",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-06T13:00:00.000Z",
-    "firstResponseAt": "2026-01-06T13:30:00.000Z",
-    "resolvedAt": "2026-01-06T15:00:00.000Z",
+    "createdAt": "2026-01-27T13:00:00.000Z",
+    "firstResponseAt": "2026-01-27T13:30:00.000Z",
+    "resolvedAt": "2026-01-27T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -704,11 +448,11 @@
     "breached": false
   },
   {
-    "ticketId": "570acaff-a0a1-4842-8d67-4cc84ac2079b",
+    "ticketId": "d6c923fc-cbc8-4b44-9e69-199bdd0ded9e",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-06T13:00:00.000Z",
-    "firstResponseAt": "2026-01-06T13:30:00.000Z",
-    "resolvedAt": "2026-01-06T15:00:00.000Z",
+    "createdAt": "2026-01-27T13:00:00.000Z",
+    "firstResponseAt": "2026-01-27T13:30:00.000Z",
+    "resolvedAt": "2026-01-27T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -720,11 +464,11 @@
     "breached": false
   },
   {
-    "ticketId": "99254402-ff48-4f51-bf54-14941c678684",
+    "ticketId": "e039ddae-e1c1-42d8-a151-0810672fc1ac",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-06T13:00:00.000Z",
-    "firstResponseAt": "2026-01-06T13:30:00.000Z",
-    "resolvedAt": "2026-01-06T15:00:00.000Z",
+    "createdAt": "2026-01-27T13:00:00.000Z",
+    "firstResponseAt": "2026-01-27T13:30:00.000Z",
+    "resolvedAt": "2026-01-27T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -736,11 +480,11 @@
     "breached": false
   },
   {
-    "ticketId": "790429e7-a618-4fed-a0d8-e3260345ec52",
+    "ticketId": "6cb44cda-c9d7-4615-b711-3abe0d113f55",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-06T13:00:00.000Z",
-    "firstResponseAt": "2026-01-06T13:30:00.000Z",
-    "resolvedAt": "2026-01-06T15:00:00.000Z",
+    "createdAt": "2026-01-27T13:00:00.000Z",
+    "firstResponseAt": "2026-01-27T13:30:00.000Z",
+    "resolvedAt": "2026-01-27T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -752,11 +496,11 @@
     "breached": false
   },
   {
-    "ticketId": "ceee036b-95a2-4297-a371-efbfd05cfd2c",
+    "ticketId": "66dfbe80-ad22-4cea-9840-1806c40f1041",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-06T13:00:00.000Z",
-    "firstResponseAt": "2026-01-06T13:30:00.000Z",
-    "resolvedAt": "2026-01-06T15:00:00.000Z",
+    "createdAt": "2026-01-27T13:00:00.000Z",
+    "firstResponseAt": "2026-01-27T13:30:00.000Z",
+    "resolvedAt": "2026-01-27T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -768,11 +512,11 @@
     "breached": false
   },
   {
-    "ticketId": "e669b620-dc51-4801-a543-b7b8c55d14b0",
+    "ticketId": "8a62f2ba-d610-4562-9628-034e0217a608",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-07T13:00:00.000Z",
-    "firstResponseAt": "2026-01-07T13:30:00.000Z",
-    "resolvedAt": "2026-01-07T15:00:00.000Z",
+    "createdAt": "2026-01-28T13:00:00.000Z",
+    "firstResponseAt": "2026-01-28T13:30:00.000Z",
+    "resolvedAt": "2026-01-28T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -784,11 +528,11 @@
     "breached": false
   },
   {
-    "ticketId": "a2e4a44a-b398-4c03-af0b-16944a58df66",
+    "ticketId": "3e043d32-02c5-4559-9abb-fc808f7b7c43",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-07T13:00:00.000Z",
-    "firstResponseAt": "2026-01-07T13:30:00.000Z",
-    "resolvedAt": "2026-01-07T15:00:00.000Z",
+    "createdAt": "2026-01-28T13:00:00.000Z",
+    "firstResponseAt": "2026-01-28T13:30:00.000Z",
+    "resolvedAt": "2026-01-28T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -800,11 +544,11 @@
     "breached": false
   },
   {
-    "ticketId": "b275f88a-c19a-4984-9dda-ae1d490750bd",
+    "ticketId": "11e6fce7-fcdd-42e4-8e70-03ed117b2f65",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-07T13:00:00.000Z",
-    "firstResponseAt": "2026-01-07T13:30:00.000Z",
-    "resolvedAt": "2026-01-07T15:00:00.000Z",
+    "createdAt": "2026-01-28T13:00:00.000Z",
+    "firstResponseAt": "2026-01-28T13:30:00.000Z",
+    "resolvedAt": "2026-01-28T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -816,11 +560,11 @@
     "breached": false
   },
   {
-    "ticketId": "154034e2-7901-4563-9b46-5b34e47159c0",
+    "ticketId": "3abce974-4d8b-4d5b-8607-57e8f38ad18d",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-07T13:00:00.000Z",
-    "firstResponseAt": "2026-01-07T13:30:00.000Z",
-    "resolvedAt": "2026-01-07T15:00:00.000Z",
+    "createdAt": "2026-01-28T13:00:00.000Z",
+    "firstResponseAt": "2026-01-28T13:30:00.000Z",
+    "resolvedAt": "2026-01-28T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -832,11 +576,11 @@
     "breached": false
   },
   {
-    "ticketId": "85a868f1-14ea-4d8f-8166-70cf1bd24b16",
+    "ticketId": "0a368ce1-c644-4b2d-ab16-7b255e79ed55",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-07T13:00:00.000Z",
-    "firstResponseAt": "2026-01-07T13:30:00.000Z",
-    "resolvedAt": "2026-01-07T15:00:00.000Z",
+    "createdAt": "2026-01-28T13:00:00.000Z",
+    "firstResponseAt": "2026-01-28T13:30:00.000Z",
+    "resolvedAt": "2026-01-28T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -848,11 +592,11 @@
     "breached": false
   },
   {
-    "ticketId": "ddeaa928-73c4-4942-af82-0dd94eddd7c7",
+    "ticketId": "2ecde172-c056-4031-adad-0f1ae2d73de4",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-07T13:00:00.000Z",
-    "firstResponseAt": "2026-01-07T13:30:00.000Z",
-    "resolvedAt": "2026-01-07T15:00:00.000Z",
+    "createdAt": "2026-01-28T13:00:00.000Z",
+    "firstResponseAt": "2026-01-28T13:30:00.000Z",
+    "resolvedAt": "2026-01-28T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -864,11 +608,11 @@
     "breached": false
   },
   {
-    "ticketId": "a223ae90-c6bf-41e9-9cc3-649ba4d09647",
+    "ticketId": "674409cf-068c-46c3-aa83-94d1c6df17c8",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-07T13:00:00.000Z",
-    "firstResponseAt": "2026-01-07T13:30:00.000Z",
-    "resolvedAt": "2026-01-07T15:00:00.000Z",
+    "createdAt": "2026-01-28T13:00:00.000Z",
+    "firstResponseAt": "2026-01-28T13:30:00.000Z",
+    "resolvedAt": "2026-01-28T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -880,11 +624,11 @@
     "breached": false
   },
   {
-    "ticketId": "5fe0ffff-8d3d-4b13-82d5-9581f39766a3",
+    "ticketId": "ac26f96d-83a3-4760-9a33-b8b6479db59a",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-07T13:00:00.000Z",
-    "firstResponseAt": "2026-01-07T13:30:00.000Z",
-    "resolvedAt": "2026-01-07T15:00:00.000Z",
+    "createdAt": "2026-01-28T13:00:00.000Z",
+    "firstResponseAt": "2026-01-28T13:30:00.000Z",
+    "resolvedAt": "2026-01-28T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -896,11 +640,11 @@
     "breached": false
   },
   {
-    "ticketId": "e453183d-4d4a-4f3a-b35b-b9b57a27dffa",
+    "ticketId": "a641e9ef-ed55-4e70-a559-8ab16d8491a9",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-08T13:00:00.000Z",
-    "firstResponseAt": "2026-01-08T13:30:00.000Z",
-    "resolvedAt": "2026-01-08T15:00:00.000Z",
+    "createdAt": "2026-01-29T13:00:00.000Z",
+    "firstResponseAt": "2026-01-29T13:30:00.000Z",
+    "resolvedAt": "2026-01-29T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -912,11 +656,11 @@
     "breached": false
   },
   {
-    "ticketId": "2d045c77-b761-474f-88e6-cdbfd1537c79",
+    "ticketId": "6477085c-975c-41ea-be29-8f5f1ed68a75",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-08T13:00:00.000Z",
-    "firstResponseAt": "2026-01-08T13:30:00.000Z",
-    "resolvedAt": "2026-01-08T15:00:00.000Z",
+    "createdAt": "2026-01-29T13:00:00.000Z",
+    "firstResponseAt": "2026-01-29T13:30:00.000Z",
+    "resolvedAt": "2026-01-29T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -928,11 +672,11 @@
     "breached": false
   },
   {
-    "ticketId": "de8f0f47-4d48-4398-af1f-23cda10addcd",
+    "ticketId": "66042c71-16ac-4c77-b6e3-9f5d5d353acb",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-08T13:00:00.000Z",
-    "firstResponseAt": "2026-01-08T13:30:00.000Z",
-    "resolvedAt": "2026-01-08T15:00:00.000Z",
+    "createdAt": "2026-01-29T13:00:00.000Z",
+    "firstResponseAt": "2026-01-29T13:30:00.000Z",
+    "resolvedAt": "2026-01-29T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -944,11 +688,11 @@
     "breached": false
   },
   {
-    "ticketId": "3d537794-e62c-4edf-988b-8ccc15527c65",
+    "ticketId": "6df91381-4124-414a-bbf6-73d4573f81e5",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-08T13:00:00.000Z",
-    "firstResponseAt": "2026-01-08T13:30:00.000Z",
-    "resolvedAt": "2026-01-08T15:00:00.000Z",
+    "createdAt": "2026-01-29T13:00:00.000Z",
+    "firstResponseAt": "2026-01-29T13:30:00.000Z",
+    "resolvedAt": "2026-01-29T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -960,11 +704,11 @@
     "breached": false
   },
   {
-    "ticketId": "ad6b50e8-7c0d-4412-80ff-94e536d6a3e9",
+    "ticketId": "5297f7e5-0d6c-41c8-a50c-2a3789bbce2d",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-08T13:00:00.000Z",
-    "firstResponseAt": "2026-01-08T13:30:00.000Z",
-    "resolvedAt": "2026-01-08T15:00:00.000Z",
+    "createdAt": "2026-01-29T13:00:00.000Z",
+    "firstResponseAt": "2026-01-29T13:30:00.000Z",
+    "resolvedAt": "2026-01-29T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -976,11 +720,11 @@
     "breached": false
   },
   {
-    "ticketId": "c17bf960-01c3-4904-8913-1b71f40b8df7",
+    "ticketId": "1f69814e-77af-4b09-bc00-9a2a65a9bc26",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-08T13:00:00.000Z",
-    "firstResponseAt": "2026-01-08T13:30:00.000Z",
-    "resolvedAt": "2026-01-08T15:00:00.000Z",
+    "createdAt": "2026-01-29T13:00:00.000Z",
+    "firstResponseAt": "2026-01-29T13:30:00.000Z",
+    "resolvedAt": "2026-01-29T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -992,11 +736,11 @@
     "breached": false
   },
   {
-    "ticketId": "8f963ccb-e751-401a-8c69-8251e08bd1a2",
+    "ticketId": "7a768f43-0f2d-4da4-b251-af502d306878",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-08T13:00:00.000Z",
-    "firstResponseAt": "2026-01-08T13:30:00.000Z",
-    "resolvedAt": "2026-01-08T15:00:00.000Z",
+    "createdAt": "2026-01-29T13:00:00.000Z",
+    "firstResponseAt": "2026-01-29T13:30:00.000Z",
+    "resolvedAt": "2026-01-29T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -1008,11 +752,11 @@
     "breached": false
   },
   {
-    "ticketId": "feada04b-e7c0-4c01-9856-498aba75f483",
+    "ticketId": "1d9aab35-a5d4-49f2-bd63-6d27ea1558ed",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-08T13:00:00.000Z",
-    "firstResponseAt": "2026-01-08T13:30:00.000Z",
-    "resolvedAt": "2026-01-08T15:00:00.000Z",
+    "createdAt": "2026-01-29T13:00:00.000Z",
+    "firstResponseAt": "2026-01-29T13:30:00.000Z",
+    "resolvedAt": "2026-01-29T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -1024,11 +768,11 @@
     "breached": false
   },
   {
-    "ticketId": "9c56d8be-65f4-41cb-b07c-5bc8075d6efb",
+    "ticketId": "0dee8207-572e-4f7c-b2ae-22edd2080dae",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-09T13:00:00.000Z",
-    "firstResponseAt": "2026-01-09T13:30:00.000Z",
-    "resolvedAt": "2026-01-09T15:00:00.000Z",
+    "createdAt": "2026-01-30T13:00:00.000Z",
+    "firstResponseAt": "2026-01-30T13:30:00.000Z",
+    "resolvedAt": "2026-01-30T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -1040,11 +784,11 @@
     "breached": false
   },
   {
-    "ticketId": "fe5126c3-45c4-4cfe-845b-399f4a7974f4",
+    "ticketId": "4f0048b0-01a8-40e0-94d7-4f2a8f201011",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-09T13:00:00.000Z",
-    "firstResponseAt": "2026-01-09T13:30:00.000Z",
-    "resolvedAt": "2026-01-09T15:00:00.000Z",
+    "createdAt": "2026-01-30T13:00:00.000Z",
+    "firstResponseAt": "2026-01-30T13:30:00.000Z",
+    "resolvedAt": "2026-01-30T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -1056,11 +800,11 @@
     "breached": false
   },
   {
-    "ticketId": "4400ecb4-c86f-4e37-8484-3765f3d71bd8",
+    "ticketId": "6687e90f-e54a-4180-a919-7e2822c94ec4",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-09T13:00:00.000Z",
-    "firstResponseAt": "2026-01-09T13:30:00.000Z",
-    "resolvedAt": "2026-01-09T15:00:00.000Z",
+    "createdAt": "2026-01-30T13:00:00.000Z",
+    "firstResponseAt": "2026-01-30T13:30:00.000Z",
+    "resolvedAt": "2026-01-30T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -1072,11 +816,11 @@
     "breached": false
   },
   {
-    "ticketId": "e226343b-2dc1-4472-ba4b-ee70dc6f156e",
+    "ticketId": "8ea28ce0-1bb6-4ed7-8683-deb961efbba6",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-09T13:00:00.000Z",
-    "firstResponseAt": "2026-01-09T13:30:00.000Z",
-    "resolvedAt": "2026-01-09T15:00:00.000Z",
+    "createdAt": "2026-01-30T13:00:00.000Z",
+    "firstResponseAt": "2026-01-30T13:30:00.000Z",
+    "resolvedAt": "2026-01-30T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -1088,11 +832,11 @@
     "breached": false
   },
   {
-    "ticketId": "2702d653-fd1f-4678-ac5c-596462478929",
+    "ticketId": "f60ecb2e-3a26-47bb-9831-ed543cf7f811",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-09T13:00:00.000Z",
-    "firstResponseAt": "2026-01-09T13:30:00.000Z",
-    "resolvedAt": "2026-01-09T15:00:00.000Z",
+    "createdAt": "2026-01-30T13:00:00.000Z",
+    "firstResponseAt": "2026-01-30T13:30:00.000Z",
+    "resolvedAt": "2026-01-30T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -1104,11 +848,11 @@
     "breached": false
   },
   {
-    "ticketId": "e09c18b6-901d-449f-9496-4916c320c0df",
+    "ticketId": "79ecb7b7-b9be-463d-a608-b74046d79a61",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-09T13:00:00.000Z",
-    "firstResponseAt": "2026-01-09T13:30:00.000Z",
-    "resolvedAt": "2026-01-09T15:00:00.000Z",
+    "createdAt": "2026-01-30T13:00:00.000Z",
+    "firstResponseAt": "2026-01-30T13:30:00.000Z",
+    "resolvedAt": "2026-01-30T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -1120,11 +864,11 @@
     "breached": false
   },
   {
-    "ticketId": "a982a64a-faa1-4db6-b735-72e774a569ff",
+    "ticketId": "ff228b07-c1c0-450d-8f02-b094f12dacbc",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-09T13:00:00.000Z",
-    "firstResponseAt": "2026-01-09T13:30:00.000Z",
-    "resolvedAt": "2026-01-09T15:00:00.000Z",
+    "createdAt": "2026-01-30T13:00:00.000Z",
+    "firstResponseAt": "2026-01-30T13:30:00.000Z",
+    "resolvedAt": "2026-01-30T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -1136,11 +880,11 @@
     "breached": false
   },
   {
-    "ticketId": "f9b4cf55-688b-4b26-b694-f3f713534e48",
+    "ticketId": "a923ea64-7de5-462e-ad77-852ef5f6db81",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-09T13:00:00.000Z",
-    "firstResponseAt": "2026-01-09T13:30:00.000Z",
-    "resolvedAt": "2026-01-09T15:00:00.000Z",
+    "createdAt": "2026-01-30T13:00:00.000Z",
+    "firstResponseAt": "2026-01-30T13:30:00.000Z",
+    "resolvedAt": "2026-01-30T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -1152,1037 +896,269 @@
     "breached": false
   },
   {
-    "ticketId": "c8958deb-d152-48df-91a3-0a35c01080e7",
+    "ticketId": "e634bdcd-7f19-4342-9e71-848d2ca338c3",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-01-31T13:00:00.000Z",
+    "firstResponseAt": "2026-01-31T13:30:00.000Z",
+    "resolvedAt": "2026-01-31T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 0,
+    "resolutionBusinessMinutes": 0,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "87d561d9-6eb0-4a61-965f-73e3b41db76f",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-01-31T13:00:00.000Z",
+    "firstResponseAt": "2026-01-31T13:30:00.000Z",
+    "resolvedAt": "2026-01-31T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 0,
+    "resolutionBusinessMinutes": 0,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "ab0ff929-496b-434a-9189-1fb54c2c01d4",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-01-31T13:00:00.000Z",
+    "firstResponseAt": "2026-01-31T13:30:00.000Z",
+    "resolvedAt": "2026-01-31T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 0,
+    "resolutionBusinessMinutes": 0,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "7c6945b3-7685-4464-945a-c54b80a928cc",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-01-31T13:00:00.000Z",
+    "firstResponseAt": "2026-01-31T13:30:00.000Z",
+    "resolvedAt": "2026-01-31T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 0,
+    "resolutionBusinessMinutes": 0,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "66735dc2-2aee-40fb-82cd-5d1e53095946",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-01-31T13:00:00.000Z",
+    "firstResponseAt": "2026-01-31T13:30:00.000Z",
+    "resolvedAt": "2026-01-31T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 0,
+    "resolutionBusinessMinutes": 0,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "0744a674-be4b-4d87-b4de-96ac0716494b",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-01-31T13:00:00.000Z",
+    "firstResponseAt": "2026-01-31T13:30:00.000Z",
+    "resolvedAt": "2026-01-31T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 0,
+    "resolutionBusinessMinutes": 0,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "5d8dcc84-f5b2-48c5-97a8-0bb7f32331e4",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-01-31T13:00:00.000Z",
+    "firstResponseAt": "2026-01-31T13:30:00.000Z",
+    "resolvedAt": "2026-01-31T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 0,
+    "resolutionBusinessMinutes": 0,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "95e53e2d-29e1-409a-b0f8-c807c397856c",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-01-31T13:00:00.000Z",
+    "firstResponseAt": "2026-01-31T13:30:00.000Z",
+    "resolvedAt": "2026-01-31T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 0,
+    "resolutionBusinessMinutes": 0,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "17fd602c-be3f-4493-b88a-6dc6b1507eee",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-01T13:00:00.000Z",
+    "firstResponseAt": "2026-02-01T13:30:00.000Z",
+    "resolvedAt": "2026-02-01T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 0,
+    "resolutionBusinessMinutes": 0,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "5673aa4f-0610-49fa-9631-5ed208f1c2d6",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-01T13:00:00.000Z",
+    "firstResponseAt": "2026-02-01T13:30:00.000Z",
+    "resolvedAt": "2026-02-01T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 0,
+    "resolutionBusinessMinutes": 0,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "44095e92-4fa2-4baa-b1b1-6ef366680ed0",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-01T13:00:00.000Z",
+    "firstResponseAt": "2026-02-01T13:30:00.000Z",
+    "resolvedAt": "2026-02-01T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 0,
+    "resolutionBusinessMinutes": 0,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "83ecea15-2e1e-4867-a4fc-702c443bb57e",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-01T13:00:00.000Z",
+    "firstResponseAt": "2026-02-01T13:30:00.000Z",
+    "resolvedAt": "2026-02-01T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 0,
+    "resolutionBusinessMinutes": 0,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "8d216505-e5df-46f2-980b-7990bf31f0b6",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-01T13:00:00.000Z",
+    "firstResponseAt": "2026-02-01T13:30:00.000Z",
+    "resolvedAt": "2026-02-01T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 0,
+    "resolutionBusinessMinutes": 0,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "249605c6-b14d-4465-90fd-48f83f69e9bd",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-01T13:00:00.000Z",
+    "firstResponseAt": "2026-02-01T13:30:00.000Z",
+    "resolvedAt": "2026-02-01T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 0,
+    "resolutionBusinessMinutes": 0,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "97de0764-d604-42ab-b76e-ea3c3323159e",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-01T13:00:00.000Z",
+    "firstResponseAt": "2026-02-01T13:30:00.000Z",
+    "resolvedAt": "2026-02-01T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 0,
+    "resolutionBusinessMinutes": 0,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "1b6a072e-95c2-4e27-b31a-c8e3653c617d",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-01T13:00:00.000Z",
+    "firstResponseAt": "2026-02-01T13:30:00.000Z",
+    "resolvedAt": "2026-02-01T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 0,
+    "resolutionBusinessMinutes": 0,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "a8a8dbc1-a684-4169-b86c-f4a122e4183e",
     "pattern": "BACKLOG_HOLIDAY",
-    "createdAt": "2026-01-10T20:00:00.000Z",
-    "firstResponseAt": "2026-01-12T13:00:00.000Z",
+    "createdAt": "2026-02-02T20:00:00.000Z",
+    "firstResponseAt": "2026-02-04T13:00:00.000Z",
     "resolvedAt": null,
-    "firstResponseBusinessMinutes": 60,
+    "firstResponseBusinessMinutes": 120,
     "resolutionBusinessMinutes": null,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "59be93b9-e1f4-4f0f-a8ae-7e4d6ad5b5b2",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-10T13:00:00.000Z",
-    "firstResponseAt": "2026-01-10T13:30:00.000Z",
-    "resolvedAt": "2026-01-10T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 0,
-    "resolutionBusinessMinutes": 0,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "e91f5a0c-0412-4d80-aea6-2c54a614964d",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-10T13:00:00.000Z",
-    "firstResponseAt": "2026-01-10T13:30:00.000Z",
-    "resolvedAt": "2026-01-10T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 0,
-    "resolutionBusinessMinutes": 0,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "72676b04-9261-4d2f-89c6-928206597eb8",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-10T13:00:00.000Z",
-    "firstResponseAt": "2026-01-10T13:30:00.000Z",
-    "resolvedAt": "2026-01-10T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 0,
-    "resolutionBusinessMinutes": 0,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "00fbda07-d4d7-4209-8cc7-a37fc39c5d66",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-10T13:00:00.000Z",
-    "firstResponseAt": "2026-01-10T13:30:00.000Z",
-    "resolvedAt": "2026-01-10T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 0,
-    "resolutionBusinessMinutes": 0,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "77eb4047-5ac4-4228-a945-2a4732cbcce2",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-10T13:00:00.000Z",
-    "firstResponseAt": "2026-01-10T13:30:00.000Z",
-    "resolvedAt": "2026-01-10T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 0,
-    "resolutionBusinessMinutes": 0,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "6b38ddb7-617a-4a78-b278-b8d262e68f2f",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-10T13:00:00.000Z",
-    "firstResponseAt": "2026-01-10T13:30:00.000Z",
-    "resolvedAt": "2026-01-10T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 0,
-    "resolutionBusinessMinutes": 0,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "f2d966c8-8529-491c-a8c2-b95114ce6c78",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-10T13:00:00.000Z",
-    "firstResponseAt": "2026-01-10T13:30:00.000Z",
-    "resolvedAt": "2026-01-10T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 0,
-    "resolutionBusinessMinutes": 0,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "79c0cbef-f6c7-4e4f-be82-aebad39c12d1",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-11T13:00:00.000Z",
-    "firstResponseAt": "2026-01-11T13:30:00.000Z",
-    "resolvedAt": "2026-01-11T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 0,
-    "resolutionBusinessMinutes": 0,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "b5fb4371-a846-4fd4-aa83-38724fdac878",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-11T13:00:00.000Z",
-    "firstResponseAt": "2026-01-11T13:30:00.000Z",
-    "resolvedAt": "2026-01-11T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 0,
-    "resolutionBusinessMinutes": 0,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "c67d0aaa-cd42-41cf-94e0-e592702bd465",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-11T13:00:00.000Z",
-    "firstResponseAt": "2026-01-11T13:30:00.000Z",
-    "resolvedAt": "2026-01-11T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 0,
-    "resolutionBusinessMinutes": 0,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "f9e3c53d-4f78-433b-82e9-4bfa20963fc8",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-11T13:00:00.000Z",
-    "firstResponseAt": "2026-01-11T13:30:00.000Z",
-    "resolvedAt": "2026-01-11T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 0,
-    "resolutionBusinessMinutes": 0,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "d3613727-0348-40d0-b88e-b89fa8c33b7c",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-11T13:00:00.000Z",
-    "firstResponseAt": "2026-01-11T13:30:00.000Z",
-    "resolvedAt": "2026-01-11T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 0,
-    "resolutionBusinessMinutes": 0,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "853e2d09-6631-4257-a7a1-827b6fa0cd33",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-11T13:00:00.000Z",
-    "firstResponseAt": "2026-01-11T13:30:00.000Z",
-    "resolvedAt": "2026-01-11T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 0,
-    "resolutionBusinessMinutes": 0,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "0abbbe93-68f7-4247-828e-1efd11019c74",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-11T13:00:00.000Z",
-    "firstResponseAt": "2026-01-11T13:30:00.000Z",
-    "resolvedAt": "2026-01-11T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 0,
-    "resolutionBusinessMinutes": 0,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "47c23c96-edfd-4b13-a655-5f4071e36c82",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-11T13:00:00.000Z",
-    "firstResponseAt": "2026-01-11T13:30:00.000Z",
-    "resolvedAt": "2026-01-11T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 0,
-    "resolutionBusinessMinutes": 0,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "c21fd726-e175-48f6-b02d-19a58d516173",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-12T13:00:00.000Z",
-    "firstResponseAt": "2026-01-12T13:30:00.000Z",
-    "resolvedAt": "2026-01-12T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "3e03c6e0-b89d-49f6-abd1-e30f1c7920e7",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-12T13:00:00.000Z",
-    "firstResponseAt": "2026-01-12T13:30:00.000Z",
-    "resolvedAt": "2026-01-12T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "f68d5e3c-f881-4350-a7f1-49ddfc3df72a",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-12T13:00:00.000Z",
-    "firstResponseAt": "2026-01-12T13:30:00.000Z",
-    "resolvedAt": "2026-01-12T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "fc124a65-c64a-49ae-9018-d51e52b3fb5a",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-12T13:00:00.000Z",
-    "firstResponseAt": "2026-01-12T13:30:00.000Z",
-    "resolvedAt": "2026-01-12T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "782f0f55-784c-455c-9f1b-dd2658a15963",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-12T13:00:00.000Z",
-    "firstResponseAt": "2026-01-12T13:30:00.000Z",
-    "resolvedAt": "2026-01-12T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "24858383-26da-4a9c-a58f-3c1295857e16",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-12T13:00:00.000Z",
-    "firstResponseAt": "2026-01-12T13:30:00.000Z",
-    "resolvedAt": "2026-01-12T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "e5a1411b-c297-46d3-84d1-b148e376fbc3",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-12T13:00:00.000Z",
-    "firstResponseAt": "2026-01-12T13:30:00.000Z",
-    "resolvedAt": "2026-01-12T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "783f841e-825c-4755-8008-a04f2a2a8d82",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-12T13:00:00.000Z",
-    "firstResponseAt": "2026-01-12T13:30:00.000Z",
-    "resolvedAt": "2026-01-12T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "8058f402-e13a-4f30-85d9-b0afca6a6dd5",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-13T13:00:00.000Z",
-    "firstResponseAt": "2026-01-13T13:30:00.000Z",
-    "resolvedAt": "2026-01-13T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "6068a4dc-abc9-4e17-9f70-9a1de57efafb",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-13T13:00:00.000Z",
-    "firstResponseAt": "2026-01-13T13:30:00.000Z",
-    "resolvedAt": "2026-01-13T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "abf6cb72-2fb8-4eaf-9012-f29e8d04f3f9",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-13T13:00:00.000Z",
-    "firstResponseAt": "2026-01-13T13:30:00.000Z",
-    "resolvedAt": "2026-01-13T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "4a5b8588-bc88-441f-9f30-a14aa5652247",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-13T13:00:00.000Z",
-    "firstResponseAt": "2026-01-13T13:30:00.000Z",
-    "resolvedAt": "2026-01-13T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "9c59b567-bb50-4805-9065-971c819a3127",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-13T13:00:00.000Z",
-    "firstResponseAt": "2026-01-13T13:30:00.000Z",
-    "resolvedAt": "2026-01-13T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "a92340c1-5741-4774-946b-07ee6320634e",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-13T13:00:00.000Z",
-    "firstResponseAt": "2026-01-13T13:30:00.000Z",
-    "resolvedAt": "2026-01-13T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "60b28421-7610-4bc4-9c13-0a4e8ca85079",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-13T13:00:00.000Z",
-    "firstResponseAt": "2026-01-13T13:30:00.000Z",
-    "resolvedAt": "2026-01-13T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "b768605a-8ed3-4772-8622-871b2e1f8855",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-13T13:00:00.000Z",
-    "firstResponseAt": "2026-01-13T13:30:00.000Z",
-    "resolvedAt": "2026-01-13T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "a2c38ce3-5e19-4cea-8ca6-31069da8b6f9",
-    "pattern": "PARENT_CHILD",
-    "createdAt": "2026-01-14T12:00:00.000Z",
-    "firstResponseAt": "2026-01-14T13:00:00.000Z",
-    "resolvedAt": "2026-01-14T18:00:00.000Z",
-    "firstResponseBusinessMinutes": 60,
-    "resolutionBusinessMinutes": 360,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": true,
-    "breached": true
-  },
-  {
-    "ticketId": "7bdf103e-d04a-4678-8dd4-e2c66c21f36b",
-    "pattern": "PARENT_CHILD",
-    "createdAt": "2026-01-14T12:00:00.000Z",
-    "firstResponseAt": "2026-01-14T13:00:00.000Z",
-    "resolvedAt": "2026-01-14T18:00:00.000Z",
-    "firstResponseBusinessMinutes": 60,
-    "resolutionBusinessMinutes": 360,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": true,
-    "breached": true
-  },
-  {
-    "ticketId": "09cfc62c-d76d-4dc2-8ff9-fbbdd3ec997a",
-    "pattern": "PARENT_CHILD",
-    "createdAt": "2026-01-14T12:00:00.000Z",
-    "firstResponseAt": "2026-01-14T13:00:00.000Z",
-    "resolvedAt": "2026-01-14T18:00:00.000Z",
-    "firstResponseBusinessMinutes": 60,
-    "resolutionBusinessMinutes": 360,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": true,
-    "breached": true
-  },
-  {
-    "ticketId": "9ec8ee86-bfa4-4dac-a6e8-71841157c730",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-14T13:00:00.000Z",
-    "firstResponseAt": "2026-01-14T13:30:00.000Z",
-    "resolvedAt": "2026-01-14T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "6e7b67f0-9d52-468b-af0f-eee1da0afe92",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-14T13:00:00.000Z",
-    "firstResponseAt": "2026-01-14T13:30:00.000Z",
-    "resolvedAt": "2026-01-14T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "c952ba49-a91b-4138-ba3a-e993530d72db",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-14T13:00:00.000Z",
-    "firstResponseAt": "2026-01-14T13:30:00.000Z",
-    "resolvedAt": "2026-01-14T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "ffa3113f-fe67-4457-a92a-6d1641f515eb",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-14T13:00:00.000Z",
-    "firstResponseAt": "2026-01-14T13:30:00.000Z",
-    "resolvedAt": "2026-01-14T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "97f61f82-83fd-47bf-a09d-e714ea58bf77",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-14T13:00:00.000Z",
-    "firstResponseAt": "2026-01-14T13:30:00.000Z",
-    "resolvedAt": "2026-01-14T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "94d52f27-58b1-4b25-a46c-e1a192b2c960",
-    "pattern": "REOPEN",
-    "createdAt": "2026-01-15T13:00:00.000Z",
-    "firstResponseAt": "2026-01-15T14:00:00.000Z",
-    "resolvedAt": "2026-01-16T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 60,
-    "resolutionBusinessMinutes": 420,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": true,
-    "breached": true
-  },
-  {
-    "ticketId": "946e2133-d37b-4a0c-9343-da0bb219d88b",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-15T13:00:00.000Z",
-    "firstResponseAt": "2026-01-15T13:30:00.000Z",
-    "resolvedAt": "2026-01-15T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "b5bb9630-3b7b-4459-9d39-ccab0d476305",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-15T13:00:00.000Z",
-    "firstResponseAt": "2026-01-15T13:30:00.000Z",
-    "resolvedAt": "2026-01-15T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "5b013b92-83d2-4508-9b8b-e2fa808b8622",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-15T13:00:00.000Z",
-    "firstResponseAt": "2026-01-15T13:30:00.000Z",
-    "resolvedAt": "2026-01-15T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "5f84f38a-0136-4389-8606-90e6fcfab29a",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-15T13:00:00.000Z",
-    "firstResponseAt": "2026-01-15T13:30:00.000Z",
-    "resolvedAt": "2026-01-15T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "90182d21-2c6f-4ccf-8de9-50be7a24f689",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-15T13:00:00.000Z",
-    "firstResponseAt": "2026-01-15T13:30:00.000Z",
-    "resolvedAt": "2026-01-15T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "f986aa42-6518-4005-b175-808c82db31ac",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-15T13:00:00.000Z",
-    "firstResponseAt": "2026-01-15T13:30:00.000Z",
-    "resolvedAt": "2026-01-15T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "4bc1b5c3-d017-434c-8b49-fcde6015b4ef",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-15T13:00:00.000Z",
-    "firstResponseAt": "2026-01-15T13:30:00.000Z",
-    "resolvedAt": "2026-01-15T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "fd750a49-56bf-4576-a95b-da37bb1cded2",
-    "pattern": "WAITING_PAUSE",
-    "createdAt": "2026-01-16T12:00:00.000Z",
-    "firstResponseAt": "2026-01-16T12:30:00.000Z",
-    "resolvedAt": "2026-01-16T21:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 180,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "276863af-90a1-42cd-8e10-417b946ef247",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-16T13:00:00.000Z",
-    "firstResponseAt": "2026-01-16T13:30:00.000Z",
-    "resolvedAt": "2026-01-16T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "38efd321-8778-4dc5-8e8f-2e679929dd37",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-16T13:00:00.000Z",
-    "firstResponseAt": "2026-01-16T13:30:00.000Z",
-    "resolvedAt": "2026-01-16T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "f555c7f6-0848-45b8-8df0-dcf234c65857",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-16T13:00:00.000Z",
-    "firstResponseAt": "2026-01-16T13:30:00.000Z",
-    "resolvedAt": "2026-01-16T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "7b7bb250-16cc-4ae4-ad42-fb2ad18b7e2d",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-16T13:00:00.000Z",
-    "firstResponseAt": "2026-01-16T13:30:00.000Z",
-    "resolvedAt": "2026-01-16T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "47405c0d-2d2f-4e36-9333-d305f1c7f6d7",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-16T13:00:00.000Z",
-    "firstResponseAt": "2026-01-16T13:30:00.000Z",
-    "resolvedAt": "2026-01-16T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "7e1f8b00-f49d-4236-8089-273eb1ec239a",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-16T13:00:00.000Z",
-    "firstResponseAt": "2026-01-16T13:30:00.000Z",
-    "resolvedAt": "2026-01-16T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "90228b6c-993a-4796-9718-85109d8ab0fb",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-16T13:00:00.000Z",
-    "firstResponseAt": "2026-01-16T13:30:00.000Z",
-    "resolvedAt": "2026-01-16T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 30,
-    "resolutionBusinessMinutes": 120,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "071a4ee4-80ac-4025-ade5-2f6718071f11",
-    "pattern": "BREACH_RESOLUTION",
-    "createdAt": "2026-01-17T12:30:00.000Z",
-    "firstResponseAt": "2026-01-17T13:00:00.000Z",
-    "resolvedAt": "2026-01-19T20:30:00.000Z",
-    "firstResponseBusinessMinutes": 0,
-    "resolutionBusinessMinutes": 510,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": true,
-    "breached": true
-  },
-  {
-    "ticketId": "763c9861-ede1-4efb-9ca4-f56abd70e161",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-17T13:00:00.000Z",
-    "firstResponseAt": "2026-01-17T13:30:00.000Z",
-    "resolvedAt": "2026-01-17T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 0,
-    "resolutionBusinessMinutes": 0,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "ea1fa110-13d4-43fb-ba88-a64081fdf8e0",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-17T13:00:00.000Z",
-    "firstResponseAt": "2026-01-17T13:30:00.000Z",
-    "resolvedAt": "2026-01-17T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 0,
-    "resolutionBusinessMinutes": 0,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "77324485-97e3-4a56-a9c4-ee6c02247e2f",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-17T13:00:00.000Z",
-    "firstResponseAt": "2026-01-17T13:30:00.000Z",
-    "resolvedAt": "2026-01-17T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 0,
-    "resolutionBusinessMinutes": 0,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "fd85ffa7-a24e-452a-b79e-8fdd09eeef9a",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-17T13:00:00.000Z",
-    "firstResponseAt": "2026-01-17T13:30:00.000Z",
-    "resolvedAt": "2026-01-17T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 0,
-    "resolutionBusinessMinutes": 0,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "b8f8b8cf-9164-4761-b0df-7c250fd69a66",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-17T13:00:00.000Z",
-    "firstResponseAt": "2026-01-17T13:30:00.000Z",
-    "resolvedAt": "2026-01-17T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 0,
-    "resolutionBusinessMinutes": 0,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "4bb47165-7539-4e04-ae9c-452e5df0b895",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-17T13:00:00.000Z",
-    "firstResponseAt": "2026-01-17T13:30:00.000Z",
-    "resolvedAt": "2026-01-17T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 0,
-    "resolutionBusinessMinutes": 0,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "13ed1e31-a4cf-4c3f-9231-adb1711f9cfc",
-    "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-17T13:00:00.000Z",
-    "firstResponseAt": "2026-01-17T13:30:00.000Z",
-    "resolvedAt": "2026-01-17T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 0,
-    "resolutionBusinessMinutes": 0,
-    "targets": {
-      "firstResponseMinutes": 60,
-      "resolutionMinutes": 240
-    },
-    "breachedFirst": false,
-    "breachedRes": false,
-    "breached": false
-  },
-  {
-    "ticketId": "53789100-6e3f-4b9f-994e-d13f4c2e4124",
-    "pattern": "BREACH_FIRST_RESPONSE",
-    "createdAt": "2026-01-18T20:20:00.000Z",
-    "firstResponseAt": "2026-01-19T13:30:00.000Z",
-    "resolvedAt": "2026-01-19T15:00:00.000Z",
-    "firstResponseBusinessMinutes": 90,
-    "resolutionBusinessMinutes": 180,
     "targets": {
       "firstResponseMinutes": 60,
       "resolutionMinutes": 240
@@ -2192,11 +1168,123 @@
     "breached": true
   },
   {
-    "ticketId": "f76d637d-e835-4205-ab91-305fd86a1178",
+    "ticketId": "e09b420b-4c6c-4c7c-8368-2423403ea23a",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-18T13:00:00.000Z",
-    "firstResponseAt": "2026-01-18T13:30:00.000Z",
-    "resolvedAt": "2026-01-18T15:00:00.000Z",
+    "createdAt": "2026-02-02T13:00:00.000Z",
+    "firstResponseAt": "2026-02-02T13:30:00.000Z",
+    "resolvedAt": "2026-02-02T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "30a6ac35-1884-4c69-91f4-34f69661b526",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-02T13:00:00.000Z",
+    "firstResponseAt": "2026-02-02T13:30:00.000Z",
+    "resolvedAt": "2026-02-02T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "ac421528-9127-499c-98f7-5a565f0aad14",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-02T13:00:00.000Z",
+    "firstResponseAt": "2026-02-02T13:30:00.000Z",
+    "resolvedAt": "2026-02-02T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "90384469-b372-4b38-84f4-09a44444125b",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-02T13:00:00.000Z",
+    "firstResponseAt": "2026-02-02T13:30:00.000Z",
+    "resolvedAt": "2026-02-02T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "d4badeb6-99ea-4182-b55b-d722a25642a1",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-02T13:00:00.000Z",
+    "firstResponseAt": "2026-02-02T13:30:00.000Z",
+    "resolvedAt": "2026-02-02T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "270fdd85-75c7-4ea7-b10a-c2458c310bdf",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-02T13:00:00.000Z",
+    "firstResponseAt": "2026-02-02T13:30:00.000Z",
+    "resolvedAt": "2026-02-02T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "ec4caa9c-1707-4970-ac7a-85e779823eda",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-02T13:00:00.000Z",
+    "firstResponseAt": "2026-02-02T13:30:00.000Z",
+    "resolvedAt": "2026-02-02T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "688a8e91-1c67-4d39-83cf-c47109c48b61",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-03T13:00:00.000Z",
+    "firstResponseAt": "2026-02-03T13:30:00.000Z",
+    "resolvedAt": "2026-02-03T15:00:00.000Z",
     "firstResponseBusinessMinutes": 0,
     "resolutionBusinessMinutes": 0,
     "targets": {
@@ -2208,11 +1296,11 @@
     "breached": false
   },
   {
-    "ticketId": "ca5ed208-8096-437a-8909-af62e71e6672",
+    "ticketId": "e3ad7dd8-adf3-4334-b005-a5f7d3a9ea5e",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-18T13:00:00.000Z",
-    "firstResponseAt": "2026-01-18T13:30:00.000Z",
-    "resolvedAt": "2026-01-18T15:00:00.000Z",
+    "createdAt": "2026-02-03T13:00:00.000Z",
+    "firstResponseAt": "2026-02-03T13:30:00.000Z",
+    "resolvedAt": "2026-02-03T15:00:00.000Z",
     "firstResponseBusinessMinutes": 0,
     "resolutionBusinessMinutes": 0,
     "targets": {
@@ -2224,11 +1312,11 @@
     "breached": false
   },
   {
-    "ticketId": "3baf8251-6240-401e-9180-4aacbce05aa6",
+    "ticketId": "c5fd7262-42a9-4e5d-a560-2aecc46879b0",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-18T13:00:00.000Z",
-    "firstResponseAt": "2026-01-18T13:30:00.000Z",
-    "resolvedAt": "2026-01-18T15:00:00.000Z",
+    "createdAt": "2026-02-03T13:00:00.000Z",
+    "firstResponseAt": "2026-02-03T13:30:00.000Z",
+    "resolvedAt": "2026-02-03T15:00:00.000Z",
     "firstResponseBusinessMinutes": 0,
     "resolutionBusinessMinutes": 0,
     "targets": {
@@ -2240,11 +1328,11 @@
     "breached": false
   },
   {
-    "ticketId": "2435c770-609a-4039-8813-b3236c4b4bfd",
+    "ticketId": "7e035ab4-4370-40b6-8802-a2a0287e725b",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-18T13:00:00.000Z",
-    "firstResponseAt": "2026-01-18T13:30:00.000Z",
-    "resolvedAt": "2026-01-18T15:00:00.000Z",
+    "createdAt": "2026-02-03T13:00:00.000Z",
+    "firstResponseAt": "2026-02-03T13:30:00.000Z",
+    "resolvedAt": "2026-02-03T15:00:00.000Z",
     "firstResponseBusinessMinutes": 0,
     "resolutionBusinessMinutes": 0,
     "targets": {
@@ -2256,11 +1344,11 @@
     "breached": false
   },
   {
-    "ticketId": "8c6ebab3-0486-4759-bc54-e98d0915c011",
+    "ticketId": "b143bcb2-8bf4-4a2d-9f45-c6efcc0f141b",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-18T13:00:00.000Z",
-    "firstResponseAt": "2026-01-18T13:30:00.000Z",
-    "resolvedAt": "2026-01-18T15:00:00.000Z",
+    "createdAt": "2026-02-03T13:00:00.000Z",
+    "firstResponseAt": "2026-02-03T13:30:00.000Z",
+    "resolvedAt": "2026-02-03T15:00:00.000Z",
     "firstResponseBusinessMinutes": 0,
     "resolutionBusinessMinutes": 0,
     "targets": {
@@ -2272,11 +1360,11 @@
     "breached": false
   },
   {
-    "ticketId": "3e70f37a-45e3-4330-af2a-aefa7b7e0c6e",
+    "ticketId": "02c65d93-2672-4923-8c4c-15ef6dc0142c",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-18T13:00:00.000Z",
-    "firstResponseAt": "2026-01-18T13:30:00.000Z",
-    "resolvedAt": "2026-01-18T15:00:00.000Z",
+    "createdAt": "2026-02-03T13:00:00.000Z",
+    "firstResponseAt": "2026-02-03T13:30:00.000Z",
+    "resolvedAt": "2026-02-03T15:00:00.000Z",
     "firstResponseBusinessMinutes": 0,
     "resolutionBusinessMinutes": 0,
     "targets": {
@@ -2288,11 +1376,11 @@
     "breached": false
   },
   {
-    "ticketId": "8a91790b-9f2d-4328-adfd-5969c40baf27",
+    "ticketId": "f7232dda-54c2-4e3b-8c0f-df46f493f952",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-18T13:00:00.000Z",
-    "firstResponseAt": "2026-01-18T13:30:00.000Z",
-    "resolvedAt": "2026-01-18T15:00:00.000Z",
+    "createdAt": "2026-02-03T13:00:00.000Z",
+    "firstResponseAt": "2026-02-03T13:30:00.000Z",
+    "resolvedAt": "2026-02-03T15:00:00.000Z",
     "firstResponseBusinessMinutes": 0,
     "resolutionBusinessMinutes": 0,
     "targets": {
@@ -2304,11 +1392,27 @@
     "breached": false
   },
   {
-    "ticketId": "b56ec91c-67c2-414c-9349-59069d993fc2",
+    "ticketId": "a6d7a77d-a3b9-4abb-a257-604c0387527e",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-19T13:00:00.000Z",
-    "firstResponseAt": "2026-01-19T13:30:00.000Z",
-    "resolvedAt": "2026-01-19T15:00:00.000Z",
+    "createdAt": "2026-02-03T13:00:00.000Z",
+    "firstResponseAt": "2026-02-03T13:30:00.000Z",
+    "resolvedAt": "2026-02-03T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 0,
+    "resolutionBusinessMinutes": 0,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "8f7529a9-f4ad-41d8-b843-ff1102dc9347",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-04T13:00:00.000Z",
+    "firstResponseAt": "2026-02-04T13:30:00.000Z",
+    "resolvedAt": "2026-02-04T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -2320,11 +1424,11 @@
     "breached": false
   },
   {
-    "ticketId": "456b9866-c580-41f4-bf8a-c9a21bc3e037",
+    "ticketId": "dd81733d-41f9-4595-a51b-1e61bfd42570",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-19T13:00:00.000Z",
-    "firstResponseAt": "2026-01-19T13:30:00.000Z",
-    "resolvedAt": "2026-01-19T15:00:00.000Z",
+    "createdAt": "2026-02-04T13:00:00.000Z",
+    "firstResponseAt": "2026-02-04T13:30:00.000Z",
+    "resolvedAt": "2026-02-04T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -2336,11 +1440,11 @@
     "breached": false
   },
   {
-    "ticketId": "23119afd-6b10-4d69-a9ee-9868c47b4860",
+    "ticketId": "cd097f91-9684-4288-8863-bcb9b86fa15c",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-19T13:00:00.000Z",
-    "firstResponseAt": "2026-01-19T13:30:00.000Z",
-    "resolvedAt": "2026-01-19T15:00:00.000Z",
+    "createdAt": "2026-02-04T13:00:00.000Z",
+    "firstResponseAt": "2026-02-04T13:30:00.000Z",
+    "resolvedAt": "2026-02-04T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -2352,11 +1456,11 @@
     "breached": false
   },
   {
-    "ticketId": "1dce74e8-153b-425a-995c-1ea689c56256",
+    "ticketId": "d1c10bde-fc66-4603-9e5b-cd234f30a2ad",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-19T13:00:00.000Z",
-    "firstResponseAt": "2026-01-19T13:30:00.000Z",
-    "resolvedAt": "2026-01-19T15:00:00.000Z",
+    "createdAt": "2026-02-04T13:00:00.000Z",
+    "firstResponseAt": "2026-02-04T13:30:00.000Z",
+    "resolvedAt": "2026-02-04T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -2368,11 +1472,11 @@
     "breached": false
   },
   {
-    "ticketId": "110aea0c-eddb-4313-aec7-1b8fe1b5af42",
+    "ticketId": "356e5962-b6fd-4baa-8373-127144820e69",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-19T13:00:00.000Z",
-    "firstResponseAt": "2026-01-19T13:30:00.000Z",
-    "resolvedAt": "2026-01-19T15:00:00.000Z",
+    "createdAt": "2026-02-04T13:00:00.000Z",
+    "firstResponseAt": "2026-02-04T13:30:00.000Z",
+    "resolvedAt": "2026-02-04T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -2384,11 +1488,11 @@
     "breached": false
   },
   {
-    "ticketId": "7fa512a6-0f0d-44b3-85ed-b217072f1efd",
+    "ticketId": "31802f2c-dac6-4bcd-8f20-3ee5b26a0826",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-19T13:00:00.000Z",
-    "firstResponseAt": "2026-01-19T13:30:00.000Z",
-    "resolvedAt": "2026-01-19T15:00:00.000Z",
+    "createdAt": "2026-02-04T13:00:00.000Z",
+    "firstResponseAt": "2026-02-04T13:30:00.000Z",
+    "resolvedAt": "2026-02-04T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -2400,11 +1504,11 @@
     "breached": false
   },
   {
-    "ticketId": "f384981d-39ce-4168-a7b3-6b469e7b854d",
+    "ticketId": "b4dd95a9-95bd-4308-a3a3-d15a28d00ece",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-19T13:00:00.000Z",
-    "firstResponseAt": "2026-01-19T13:30:00.000Z",
-    "resolvedAt": "2026-01-19T15:00:00.000Z",
+    "createdAt": "2026-02-04T13:00:00.000Z",
+    "firstResponseAt": "2026-02-04T13:30:00.000Z",
+    "resolvedAt": "2026-02-04T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -2416,11 +1520,11 @@
     "breached": false
   },
   {
-    "ticketId": "9c876b60-c44a-45c8-892f-a2d59e071d1d",
+    "ticketId": "f216dc03-afef-4381-800d-f58b837b5196",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-19T13:00:00.000Z",
-    "firstResponseAt": "2026-01-19T13:30:00.000Z",
-    "resolvedAt": "2026-01-19T15:00:00.000Z",
+    "createdAt": "2026-02-04T13:00:00.000Z",
+    "firstResponseAt": "2026-02-04T13:30:00.000Z",
+    "resolvedAt": "2026-02-04T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -2432,10 +1536,906 @@
     "breached": false
   },
   {
-    "ticketId": "4f743fa2-52e0-4280-b716-cbbc88827e3f",
+    "ticketId": "b8122ce5-02f0-42f8-a8b0-4385ae0c77d0",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-05T13:00:00.000Z",
+    "firstResponseAt": "2026-02-05T13:30:00.000Z",
+    "resolvedAt": "2026-02-05T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "aa4bb2c4-0709-4982-a183-f86708eae1af",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-05T13:00:00.000Z",
+    "firstResponseAt": "2026-02-05T13:30:00.000Z",
+    "resolvedAt": "2026-02-05T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "a51a0750-6dfa-44e9-b09b-49b423426061",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-05T13:00:00.000Z",
+    "firstResponseAt": "2026-02-05T13:30:00.000Z",
+    "resolvedAt": "2026-02-05T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "620f609d-3cf2-4dd1-8fb7-9a0e4d6e9656",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-05T13:00:00.000Z",
+    "firstResponseAt": "2026-02-05T13:30:00.000Z",
+    "resolvedAt": "2026-02-05T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "3a02d1ae-6e80-4590-b579-04a55754c6bd",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-05T13:00:00.000Z",
+    "firstResponseAt": "2026-02-05T13:30:00.000Z",
+    "resolvedAt": "2026-02-05T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "318e87cd-3709-4170-8386-39d4a932d06c",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-05T13:00:00.000Z",
+    "firstResponseAt": "2026-02-05T13:30:00.000Z",
+    "resolvedAt": "2026-02-05T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "62efad75-4185-467b-9a5b-351c77ed525e",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-05T13:00:00.000Z",
+    "firstResponseAt": "2026-02-05T13:30:00.000Z",
+    "resolvedAt": "2026-02-05T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "e4db6a1f-9062-4b89-9b20-e098462378c0",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-05T13:00:00.000Z",
+    "firstResponseAt": "2026-02-05T13:30:00.000Z",
+    "resolvedAt": "2026-02-05T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "248335a2-08dc-4551-864a-3c19246fcef0",
+    "pattern": "PARENT_CHILD",
+    "createdAt": "2026-02-06T12:00:00.000Z",
+    "firstResponseAt": "2026-02-06T13:00:00.000Z",
+    "resolvedAt": "2026-02-06T18:00:00.000Z",
+    "firstResponseBusinessMinutes": 60,
+    "resolutionBusinessMinutes": 360,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": true,
+    "breached": true
+  },
+  {
+    "ticketId": "4bd1782c-dcc1-4841-b724-abafa7b4a8ea",
+    "pattern": "PARENT_CHILD",
+    "createdAt": "2026-02-06T12:00:00.000Z",
+    "firstResponseAt": "2026-02-06T13:00:00.000Z",
+    "resolvedAt": "2026-02-06T18:00:00.000Z",
+    "firstResponseBusinessMinutes": 60,
+    "resolutionBusinessMinutes": 360,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": true,
+    "breached": true
+  },
+  {
+    "ticketId": "9f3bafef-256e-41b4-977a-55fd89f40ed7",
+    "pattern": "PARENT_CHILD",
+    "createdAt": "2026-02-06T12:00:00.000Z",
+    "firstResponseAt": "2026-02-06T13:00:00.000Z",
+    "resolvedAt": "2026-02-06T18:00:00.000Z",
+    "firstResponseBusinessMinutes": 60,
+    "resolutionBusinessMinutes": 360,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": true,
+    "breached": true
+  },
+  {
+    "ticketId": "6a706305-c95e-4e74-8bf8-abbdca6a4101",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-06T13:00:00.000Z",
+    "firstResponseAt": "2026-02-06T13:30:00.000Z",
+    "resolvedAt": "2026-02-06T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "be538460-a045-4951-9036-b33e0576db08",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-06T13:00:00.000Z",
+    "firstResponseAt": "2026-02-06T13:30:00.000Z",
+    "resolvedAt": "2026-02-06T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "d1189dec-a8f4-4b0f-bba2-30ee0b906683",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-06T13:00:00.000Z",
+    "firstResponseAt": "2026-02-06T13:30:00.000Z",
+    "resolvedAt": "2026-02-06T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "cb88a6e5-d529-4d9c-9318-8f220f2ac054",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-06T13:00:00.000Z",
+    "firstResponseAt": "2026-02-06T13:30:00.000Z",
+    "resolvedAt": "2026-02-06T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "ad03ad7d-61fc-4317-a3d3-bd92aa7c4824",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-06T13:00:00.000Z",
+    "firstResponseAt": "2026-02-06T13:30:00.000Z",
+    "resolvedAt": "2026-02-06T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "d907c847-a2e9-4aa8-b1ea-b0c5a5c1c3fa",
+    "pattern": "REOPEN",
+    "createdAt": "2026-02-07T13:00:00.000Z",
+    "firstResponseAt": "2026-02-07T14:00:00.000Z",
+    "resolvedAt": "2026-02-09T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 0,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "4d070659-3697-4595-b9db-6ad45d383647",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-07T13:00:00.000Z",
+    "firstResponseAt": "2026-02-07T13:30:00.000Z",
+    "resolvedAt": "2026-02-07T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 0,
+    "resolutionBusinessMinutes": 0,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "a96a3ebf-e59f-4dfd-b769-a888945a7e30",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-07T13:00:00.000Z",
+    "firstResponseAt": "2026-02-07T13:30:00.000Z",
+    "resolvedAt": "2026-02-07T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 0,
+    "resolutionBusinessMinutes": 0,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "640ef561-5c07-4191-bb90-033b18e8509a",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-07T13:00:00.000Z",
+    "firstResponseAt": "2026-02-07T13:30:00.000Z",
+    "resolvedAt": "2026-02-07T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 0,
+    "resolutionBusinessMinutes": 0,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "58f70b5c-60c8-4279-ae66-055b497784d2",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-07T13:00:00.000Z",
+    "firstResponseAt": "2026-02-07T13:30:00.000Z",
+    "resolvedAt": "2026-02-07T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 0,
+    "resolutionBusinessMinutes": 0,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "e40ff81e-fce7-48ee-ba8b-6b165baa049e",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-07T13:00:00.000Z",
+    "firstResponseAt": "2026-02-07T13:30:00.000Z",
+    "resolvedAt": "2026-02-07T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 0,
+    "resolutionBusinessMinutes": 0,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "2fc4b2a9-b74f-405c-bd7d-d36b34286f1d",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-07T13:00:00.000Z",
+    "firstResponseAt": "2026-02-07T13:30:00.000Z",
+    "resolvedAt": "2026-02-07T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 0,
+    "resolutionBusinessMinutes": 0,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "2b811b29-c776-46d1-a1e2-701185feefbb",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-07T13:00:00.000Z",
+    "firstResponseAt": "2026-02-07T13:30:00.000Z",
+    "resolvedAt": "2026-02-07T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 0,
+    "resolutionBusinessMinutes": 0,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "82e45ff2-6029-4604-b380-53c6ca207f3b",
+    "pattern": "WAITING_PAUSE",
+    "createdAt": "2026-02-08T12:00:00.000Z",
+    "firstResponseAt": "2026-02-08T12:30:00.000Z",
+    "resolvedAt": "2026-02-08T21:00:00.000Z",
+    "firstResponseBusinessMinutes": 0,
+    "resolutionBusinessMinutes": 0,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "669b6b49-162a-4b6a-ae84-89550aaf3c42",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-08T13:00:00.000Z",
+    "firstResponseAt": "2026-02-08T13:30:00.000Z",
+    "resolvedAt": "2026-02-08T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 0,
+    "resolutionBusinessMinutes": 0,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "c644151d-b91a-432c-a8db-766be22c4ebd",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-08T13:00:00.000Z",
+    "firstResponseAt": "2026-02-08T13:30:00.000Z",
+    "resolvedAt": "2026-02-08T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 0,
+    "resolutionBusinessMinutes": 0,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "a88e64da-d8d8-4550-9817-bdd7c0a76e23",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-08T13:00:00.000Z",
+    "firstResponseAt": "2026-02-08T13:30:00.000Z",
+    "resolvedAt": "2026-02-08T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 0,
+    "resolutionBusinessMinutes": 0,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "e0ce3cec-bc10-4bd7-9435-993adfc75a92",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-08T13:00:00.000Z",
+    "firstResponseAt": "2026-02-08T13:30:00.000Z",
+    "resolvedAt": "2026-02-08T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 0,
+    "resolutionBusinessMinutes": 0,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "72259ea9-fd7c-40a0-8890-86fe81ee9973",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-08T13:00:00.000Z",
+    "firstResponseAt": "2026-02-08T13:30:00.000Z",
+    "resolvedAt": "2026-02-08T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 0,
+    "resolutionBusinessMinutes": 0,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "6c079f05-c970-4f1c-80fe-2e00216be38f",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-08T13:00:00.000Z",
+    "firstResponseAt": "2026-02-08T13:30:00.000Z",
+    "resolvedAt": "2026-02-08T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 0,
+    "resolutionBusinessMinutes": 0,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "b4566007-dfe2-466b-96e4-4133e1ba8663",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-08T13:00:00.000Z",
+    "firstResponseAt": "2026-02-08T13:30:00.000Z",
+    "resolvedAt": "2026-02-08T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 0,
+    "resolutionBusinessMinutes": 0,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "a97d9d48-19f3-4f96-aab5-888a15e14afb",
+    "pattern": "BREACH_RESOLUTION",
+    "createdAt": "2026-02-09T12:30:00.000Z",
+    "firstResponseAt": "2026-02-09T13:00:00.000Z",
+    "resolvedAt": "2026-02-10T20:30:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 1020,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": true,
+    "breached": true
+  },
+  {
+    "ticketId": "e856b121-783c-4878-bf36-bb0ba7d8f722",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-09T13:00:00.000Z",
+    "firstResponseAt": "2026-02-09T13:30:00.000Z",
+    "resolvedAt": "2026-02-09T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "5c77028d-2b70-4cda-a939-ea218e4c714a",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-09T13:00:00.000Z",
+    "firstResponseAt": "2026-02-09T13:30:00.000Z",
+    "resolvedAt": "2026-02-09T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "688b4b01-0ef5-40dd-b51a-3b6dd4c9e371",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-09T13:00:00.000Z",
+    "firstResponseAt": "2026-02-09T13:30:00.000Z",
+    "resolvedAt": "2026-02-09T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "592d7088-55ac-4e9a-9858-2822d903ed45",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-09T13:00:00.000Z",
+    "firstResponseAt": "2026-02-09T13:30:00.000Z",
+    "resolvedAt": "2026-02-09T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "3800f69c-e778-453c-9b6d-e26dcb6ca8d0",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-09T13:00:00.000Z",
+    "firstResponseAt": "2026-02-09T13:30:00.000Z",
+    "resolvedAt": "2026-02-09T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "6132debf-fabc-4234-92e9-85e936ab8d73",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-09T13:00:00.000Z",
+    "firstResponseAt": "2026-02-09T13:30:00.000Z",
+    "resolvedAt": "2026-02-09T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "6a660237-3178-4a42-8596-ec9e8acb615d",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-09T13:00:00.000Z",
+    "firstResponseAt": "2026-02-09T13:30:00.000Z",
+    "resolvedAt": "2026-02-09T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "8b3d84de-a659-4d5b-a5ff-50e8b013d505",
+    "pattern": "BREACH_FIRST_RESPONSE",
+    "createdAt": "2026-02-10T20:20:00.000Z",
+    "firstResponseAt": "2026-02-11T13:30:00.000Z",
+    "resolvedAt": "2026-02-11T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 130,
+    "resolutionBusinessMinutes": 220,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": true,
+    "breachedRes": false,
+    "breached": true
+  },
+  {
+    "ticketId": "87190806-f817-4d80-825f-045bcc169810",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-10T13:00:00.000Z",
+    "firstResponseAt": "2026-02-10T13:30:00.000Z",
+    "resolvedAt": "2026-02-10T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "744f6e8e-b14a-41b9-a89f-494818878f7f",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-10T13:00:00.000Z",
+    "firstResponseAt": "2026-02-10T13:30:00.000Z",
+    "resolvedAt": "2026-02-10T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "bd526f3a-0310-4094-ab74-bccddf0abdbf",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-10T13:00:00.000Z",
+    "firstResponseAt": "2026-02-10T13:30:00.000Z",
+    "resolvedAt": "2026-02-10T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "7894881a-6c43-46bc-8588-d709edd5a43f",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-10T13:00:00.000Z",
+    "firstResponseAt": "2026-02-10T13:30:00.000Z",
+    "resolvedAt": "2026-02-10T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "ebcd6989-2dbd-4133-ab69-efcc6fef0303",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-10T13:00:00.000Z",
+    "firstResponseAt": "2026-02-10T13:30:00.000Z",
+    "resolvedAt": "2026-02-10T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "5f4a363f-79f2-48b3-9b1c-0a50fbbb4cf9",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-10T13:00:00.000Z",
+    "firstResponseAt": "2026-02-10T13:30:00.000Z",
+    "resolvedAt": "2026-02-10T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "354c39d7-c8d8-4c26-83a1-ec6d60aeca3c",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-10T13:00:00.000Z",
+    "firstResponseAt": "2026-02-10T13:30:00.000Z",
+    "resolvedAt": "2026-02-10T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "969ef867-7097-452b-ad8f-0a1dd7805779",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-11T13:00:00.000Z",
+    "firstResponseAt": "2026-02-11T13:30:00.000Z",
+    "resolvedAt": "2026-02-11T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "6d7a70c6-7507-404a-b9ba-79f36053cefd",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-11T13:00:00.000Z",
+    "firstResponseAt": "2026-02-11T13:30:00.000Z",
+    "resolvedAt": "2026-02-11T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "ec2ea97a-d959-4e9f-b873-ecde89d1d434",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-11T13:00:00.000Z",
+    "firstResponseAt": "2026-02-11T13:30:00.000Z",
+    "resolvedAt": "2026-02-11T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "c3fe41f7-d7a6-4acf-82d7-712af74ac320",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-11T13:00:00.000Z",
+    "firstResponseAt": "2026-02-11T13:30:00.000Z",
+    "resolvedAt": "2026-02-11T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "a83c568e-3ba3-49ae-9162-ccb073ca50a9",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-11T13:00:00.000Z",
+    "firstResponseAt": "2026-02-11T13:30:00.000Z",
+    "resolvedAt": "2026-02-11T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "ab719a8e-64ae-48bc-b00d-d765f7f24d71",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-11T13:00:00.000Z",
+    "firstResponseAt": "2026-02-11T13:30:00.000Z",
+    "resolvedAt": "2026-02-11T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "f997c247-2cfb-4dd3-a166-2f10a0aac59a",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-11T13:00:00.000Z",
+    "firstResponseAt": "2026-02-11T13:30:00.000Z",
+    "resolvedAt": "2026-02-11T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "fed821f4-a463-46db-8075-3158d5d6f5e0",
+    "pattern": "MEET_SIMPLE",
+    "createdAt": "2026-02-11T13:00:00.000Z",
+    "firstResponseAt": "2026-02-11T13:30:00.000Z",
+    "resolvedAt": "2026-02-11T15:00:00.000Z",
+    "firstResponseBusinessMinutes": 30,
+    "resolutionBusinessMinutes": 120,
+    "targets": {
+      "firstResponseMinutes": 60,
+      "resolutionMinutes": 240
+    },
+    "breachedFirst": false,
+    "breachedRes": false,
+    "breached": false
+  },
+  {
+    "ticketId": "51d457aa-36a3-4947-b8e4-a72928ccf337",
     "pattern": "BACKLOG_END_OF_DAY",
-    "createdAt": "2026-01-20T20:40:00.000Z",
-    "firstResponseAt": "2026-01-21T12:30:00.000Z",
+    "createdAt": "2026-02-12T20:40:00.000Z",
+    "firstResponseAt": "2026-02-13T12:30:00.000Z",
     "resolvedAt": null,
     "firstResponseBusinessMinutes": 50,
     "resolutionBusinessMinutes": null,
@@ -2448,11 +2448,11 @@
     "breached": false
   },
   {
-    "ticketId": "67d26be7-6199-4240-a44c-46564c372c11",
+    "ticketId": "8f0efa1e-8c26-45f2-a369-330ee18eb3ef",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-20T13:00:00.000Z",
-    "firstResponseAt": "2026-01-20T13:30:00.000Z",
-    "resolvedAt": "2026-01-20T15:00:00.000Z",
+    "createdAt": "2026-02-12T13:00:00.000Z",
+    "firstResponseAt": "2026-02-12T13:30:00.000Z",
+    "resolvedAt": "2026-02-12T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -2464,11 +2464,11 @@
     "breached": false
   },
   {
-    "ticketId": "650a4b62-9d32-4ceb-b25e-1dd41090c9fc",
+    "ticketId": "cc9112e7-56c1-45be-998f-295be07367ff",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-20T13:00:00.000Z",
-    "firstResponseAt": "2026-01-20T13:30:00.000Z",
-    "resolvedAt": "2026-01-20T15:00:00.000Z",
+    "createdAt": "2026-02-12T13:00:00.000Z",
+    "firstResponseAt": "2026-02-12T13:30:00.000Z",
+    "resolvedAt": "2026-02-12T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -2480,11 +2480,11 @@
     "breached": false
   },
   {
-    "ticketId": "2f7b1655-a1b2-4efd-9b2b-d0edeaada4df",
+    "ticketId": "811c8802-3702-43d2-96b0-a3c8f2e6a809",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-20T13:00:00.000Z",
-    "firstResponseAt": "2026-01-20T13:30:00.000Z",
-    "resolvedAt": "2026-01-20T15:00:00.000Z",
+    "createdAt": "2026-02-12T13:00:00.000Z",
+    "firstResponseAt": "2026-02-12T13:30:00.000Z",
+    "resolvedAt": "2026-02-12T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -2496,11 +2496,11 @@
     "breached": false
   },
   {
-    "ticketId": "4090dbfa-4521-42c1-abe0-3ec251f0eebd",
+    "ticketId": "0b73fe93-fbed-4c33-9be8-e84edd20a537",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-20T13:00:00.000Z",
-    "firstResponseAt": "2026-01-20T13:30:00.000Z",
-    "resolvedAt": "2026-01-20T15:00:00.000Z",
+    "createdAt": "2026-02-12T13:00:00.000Z",
+    "firstResponseAt": "2026-02-12T13:30:00.000Z",
+    "resolvedAt": "2026-02-12T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -2512,11 +2512,11 @@
     "breached": false
   },
   {
-    "ticketId": "54b4b913-db1d-4e1a-9d09-2822980dce55",
+    "ticketId": "e2a356bf-f857-479a-8a2e-ebd0eb2110ef",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-20T13:00:00.000Z",
-    "firstResponseAt": "2026-01-20T13:30:00.000Z",
-    "resolvedAt": "2026-01-20T15:00:00.000Z",
+    "createdAt": "2026-02-12T13:00:00.000Z",
+    "firstResponseAt": "2026-02-12T13:30:00.000Z",
+    "resolvedAt": "2026-02-12T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -2528,11 +2528,11 @@
     "breached": false
   },
   {
-    "ticketId": "087c83a2-1e01-4b66-b7d3-76701df3cea9",
+    "ticketId": "da1fd944-8cd4-4782-bfa8-7e8157e70154",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-20T13:00:00.000Z",
-    "firstResponseAt": "2026-01-20T13:30:00.000Z",
-    "resolvedAt": "2026-01-20T15:00:00.000Z",
+    "createdAt": "2026-02-12T13:00:00.000Z",
+    "firstResponseAt": "2026-02-12T13:30:00.000Z",
+    "resolvedAt": "2026-02-12T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -2544,11 +2544,11 @@
     "breached": false
   },
   {
-    "ticketId": "981abc41-9d23-494e-8749-e57b97c39848",
+    "ticketId": "f7379557-ea6e-4d82-9df0-183118a2c077",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-20T13:00:00.000Z",
-    "firstResponseAt": "2026-01-20T13:30:00.000Z",
-    "resolvedAt": "2026-01-20T15:00:00.000Z",
+    "createdAt": "2026-02-12T13:00:00.000Z",
+    "firstResponseAt": "2026-02-12T13:30:00.000Z",
+    "resolvedAt": "2026-02-12T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -2560,11 +2560,11 @@
     "breached": false
   },
   {
-    "ticketId": "9cf0ca93-6819-49ab-b3c5-0a861dc1fac1",
+    "ticketId": "30190596-001a-4441-be8a-503b42ad2f32",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-21T13:00:00.000Z",
-    "firstResponseAt": "2026-01-21T13:30:00.000Z",
-    "resolvedAt": "2026-01-21T15:00:00.000Z",
+    "createdAt": "2026-02-13T13:00:00.000Z",
+    "firstResponseAt": "2026-02-13T13:30:00.000Z",
+    "resolvedAt": "2026-02-13T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -2576,11 +2576,11 @@
     "breached": false
   },
   {
-    "ticketId": "27570518-3714-439d-93fe-124191e9c9ac",
+    "ticketId": "0e47a61c-9011-47ca-9f9e-b23c2a60f20a",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-21T13:00:00.000Z",
-    "firstResponseAt": "2026-01-21T13:30:00.000Z",
-    "resolvedAt": "2026-01-21T15:00:00.000Z",
+    "createdAt": "2026-02-13T13:00:00.000Z",
+    "firstResponseAt": "2026-02-13T13:30:00.000Z",
+    "resolvedAt": "2026-02-13T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -2592,11 +2592,11 @@
     "breached": false
   },
   {
-    "ticketId": "ad2f26c8-2df3-43ec-9732-57201dc15165",
+    "ticketId": "60b1900c-d7bf-458f-b042-a96b80ff19dc",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-21T13:00:00.000Z",
-    "firstResponseAt": "2026-01-21T13:30:00.000Z",
-    "resolvedAt": "2026-01-21T15:00:00.000Z",
+    "createdAt": "2026-02-13T13:00:00.000Z",
+    "firstResponseAt": "2026-02-13T13:30:00.000Z",
+    "resolvedAt": "2026-02-13T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -2608,11 +2608,11 @@
     "breached": false
   },
   {
-    "ticketId": "76221a69-bd14-475c-a121-7ad57d7774a2",
+    "ticketId": "cba8890e-9812-4685-b06c-d089567ded33",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-21T13:00:00.000Z",
-    "firstResponseAt": "2026-01-21T13:30:00.000Z",
-    "resolvedAt": "2026-01-21T15:00:00.000Z",
+    "createdAt": "2026-02-13T13:00:00.000Z",
+    "firstResponseAt": "2026-02-13T13:30:00.000Z",
+    "resolvedAt": "2026-02-13T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -2624,11 +2624,11 @@
     "breached": false
   },
   {
-    "ticketId": "0c2be148-99af-4ad2-adcf-43c8f52de008",
+    "ticketId": "89425d27-e470-488d-a13e-0e645228ed9c",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-21T13:00:00.000Z",
-    "firstResponseAt": "2026-01-21T13:30:00.000Z",
-    "resolvedAt": "2026-01-21T15:00:00.000Z",
+    "createdAt": "2026-02-13T13:00:00.000Z",
+    "firstResponseAt": "2026-02-13T13:30:00.000Z",
+    "resolvedAt": "2026-02-13T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -2640,11 +2640,11 @@
     "breached": false
   },
   {
-    "ticketId": "cedee451-a5a6-49f0-96a4-271d9fbe3438",
+    "ticketId": "79efe602-3ac9-4ad2-a136-c1976f0474e2",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-21T13:00:00.000Z",
-    "firstResponseAt": "2026-01-21T13:30:00.000Z",
-    "resolvedAt": "2026-01-21T15:00:00.000Z",
+    "createdAt": "2026-02-13T13:00:00.000Z",
+    "firstResponseAt": "2026-02-13T13:30:00.000Z",
+    "resolvedAt": "2026-02-13T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -2656,11 +2656,11 @@
     "breached": false
   },
   {
-    "ticketId": "9d9e669d-21c8-4a11-8cc0-a526e5302b9a",
+    "ticketId": "1d525958-8beb-423f-b291-cf19a6e656c6",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-21T13:00:00.000Z",
-    "firstResponseAt": "2026-01-21T13:30:00.000Z",
-    "resolvedAt": "2026-01-21T15:00:00.000Z",
+    "createdAt": "2026-02-13T13:00:00.000Z",
+    "firstResponseAt": "2026-02-13T13:30:00.000Z",
+    "resolvedAt": "2026-02-13T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {
@@ -2672,11 +2672,11 @@
     "breached": false
   },
   {
-    "ticketId": "e6602b0b-1244-46a5-af98-fccdb143a3a6",
+    "ticketId": "0069357e-442b-477e-b8e9-e2bd43a7baab",
     "pattern": "MEET_SIMPLE",
-    "createdAt": "2026-01-21T13:00:00.000Z",
-    "firstResponseAt": "2026-01-21T13:30:00.000Z",
-    "resolvedAt": "2026-01-21T15:00:00.000Z",
+    "createdAt": "2026-02-13T13:00:00.000Z",
+    "firstResponseAt": "2026-02-13T13:30:00.000Z",
+    "resolvedAt": "2026-02-13T15:00:00.000Z",
     "firstResponseBusinessMinutes": 30,
     "resolutionBusinessMinutes": 120,
     "targets": {

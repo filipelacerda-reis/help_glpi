@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { logger } from '../utils/logger';
+import { ZodError } from 'zod';
 
 export enum ErrorType {
   VALIDATION_ERROR = 'VALIDATION_ERROR',
@@ -55,6 +56,21 @@ export const errorHandler = (
   res: Response,
   _next: NextFunction
 ): void => {
+  if (err instanceof ZodError) {
+    const message = err.errors?.[0]?.message || 'Dados inválidos';
+    logger.warn('Erro de validação (Zod)', {
+      correlationId: req.correlationId,
+      userId: req.userId,
+      path: req.path,
+      method: req.method,
+      statusCode: 400,
+      message,
+    });
+
+    res.status(400).json({ error: message });
+    return;
+  }
+
   // Coletar metadados contextuais da requisição
   const requestMeta = {
     correlationId: req.correlationId,
@@ -108,4 +124,3 @@ export const errorHandler = (
     error: 'Erro interno do servidor',
   });
 };
-
