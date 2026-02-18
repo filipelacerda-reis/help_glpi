@@ -1,7 +1,8 @@
 import { env } from './env';
 import { platformSettingsService } from '../services/platformSettings.service';
 import { logger } from '../utils/logger';
-import { UserRole } from '@prisma/client';
+import { AuthProvider, UserRole } from '@prisma/client';
+import { authProviderConfigService } from '../domains/iam/services/authProviderConfig.service';
 
 type SamlRuntimeConfig = {
   enabled: boolean;
@@ -28,6 +29,7 @@ type Auth0RuntimeConfig = {
   clientId: string;
   clientSecret: string;
   callbackUrl: string;
+  audience: string;
   jwtRedirectUrl: string;
   allowedDomains: string;
   rolesClaim: string;
@@ -60,6 +62,7 @@ type PlatformRuntimeConfig = {
 };
 
 export type RuntimeConfig = {
+  activeProvider: AuthProvider | null;
   saml: SamlRuntimeConfig;
   auth0: Auth0RuntimeConfig;
   platform: PlatformRuntimeConfig;
@@ -69,6 +72,11 @@ let cachedConfig: RuntimeConfig | null = null;
 let cacheExpiresAt = 0;
 
 const buildDefaultConfig = (): RuntimeConfig => ({
+  activeProvider: env.SAML_ENABLED && !env.AUTH0_ENABLED
+    ? AuthProvider.SAML_GOOGLE
+    : env.AUTH0_ENABLED && !env.SAML_ENABLED
+      ? AuthProvider.AUTH0
+      : null,
   saml: {
     enabled: env.SAML_ENABLED,
     entryPoint: env.SAML_ENTRY_POINT,
@@ -93,6 +101,7 @@ const buildDefaultConfig = (): RuntimeConfig => ({
     clientId: env.AUTH0_CLIENT_ID,
     clientSecret: env.AUTH0_CLIENT_SECRET,
     callbackUrl: env.AUTH0_CALLBACK_URL,
+    audience: process.env.AUTH0_AUDIENCE || '',
     jwtRedirectUrl: env.AUTH0_JWT_REDIRECT_URL,
     allowedDomains: env.AUTH0_ALLOWED_DOMAINS,
     rolesClaim: env.AUTH0_ROLES_CLAIM,
@@ -119,26 +128,42 @@ export const getRuntimeConfig = async (): Promise<RuntimeConfig> => {
 
   const defaults = buildDefaultConfig();
   try {
-    const [saml, samlSecret, auth0, auth0Secret, platform] = await Promise.all([
+    const [saml, samlSecret, auth0, auth0Secret, platform, activeProviderConfig] = await Promise.all([
       platformSettingsService.getSettingDecrypted('saml'),
       platformSettingsService.getSettingDecrypted('saml.secret'),
       platformSettingsService.getSettingDecrypted('auth0'),
       platformSettingsService.getSettingDecrypted('auth0.secret'),
       platformSettingsService.getSettingDecrypted('platform'),
+      authProviderConfigService.getActiveProviderConfigDecrypted(),
     ]);
 
     const auth0SecretObj = auth0Secret as { clientSecret?: string } | null;
 
+    const activeProvider = activeProviderConfig?.provider || null;
+
     cachedConfig = {
+      activeProvider,
       saml: {
         ...defaults.saml,
         ...(saml || {}),
+        enabled: activeProvider === AuthProvider.SAML_GOOGLE,
+        entryPoint: activeProviderConfig?.samlMetadataUrl || defaults.saml.entryPoint,
+        issuer: activeProviderConfig?.samlEntityId || defaults.saml.issuer,
+        callbackUrl: activeProviderConfig?.samlCallbackUrl || defaults.saml.callbackUrl,
         cert: (samlSecret as { cert?: string } | null)?.cert || defaults.saml.cert,
       },
       auth0: {
         ...defaults.auth0,
         ...(auth0 || {}),
-        clientSecret: auth0SecretObj?.clientSecret || defaults.auth0.clientSecret,
+        enabled: activeProvider === AuthProvider.AUTH0,
+        domain: activeProviderConfig?.auth0Domain || defaults.auth0.domain,
+        clientId: activeProviderConfig?.auth0ClientId || defaults.auth0.clientId,
+        callbackUrl: activeProviderConfig?.auth0CallbackUrl || defaults.auth0.callbackUrl,
+        audience: activeProviderConfig?.auth0Audience || defaults.auth0.audience,
+        clientSecret:
+          activeProviderConfig?.auth0ClientSecret ||
+          auth0SecretObj?.clientSecret ||
+          defaults.auth0.clientSecret,
       },
       platform: {
         ...defaults.platform,
@@ -149,7 +174,7 @@ export const getRuntimeConfig = async (): Promise<RuntimeConfig> => {
     logger.warn('Falha ao carregar runtimeConfig do banco, usando defaults', {
       error: (error as Error).message,
     });
-    cachedConfig = defaults;
+    cachedConfig = { ...defaults, activeProvider: null };
   }
 
   cacheExpiresAt = now + 60 * 1000;

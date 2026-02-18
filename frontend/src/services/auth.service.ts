@@ -1,4 +1,6 @@
 import { api } from './api';
+import { PlatformModule } from '../config/modules';
+import { UserEntitlement } from '../config/entitlements';
 
 export interface LoginDto {
   email: string;
@@ -11,6 +13,7 @@ export interface RegisterDto {
   password: string;
   role?: string;
   department?: string;
+  enabledModules?: PlatformModule[];
 }
 
 export interface AuthResponse {
@@ -20,6 +23,10 @@ export interface AuthResponse {
     email: string;
     role: string;
     department: string | null;
+    enabledModules: PlatformModule[];
+    effectiveModules: PlatformModule[];
+    effectivePermissions?: string[];
+    entitlements?: UserEntitlement[];
   };
   accessToken: string;
   refreshToken: string;
@@ -41,4 +48,3 @@ export const authService = {
     return response.data;
   },
 };
-

@@ -27,8 +27,22 @@ function normalizeCpf(cpf: string) {
   return cpf.replace(/\D/g, '');
 }
 
+function maskCpf(cpf: string) {
+  const digits = cpf.replace(/\D/g, '');
+  if (digits.length < 4) return '***';
+  return `***.***.***-${digits.slice(-2)}`;
+}
+
+function withPiiMask<T extends { cpf: string }>(employee: T, includePii: boolean): T {
+  if (includePii) return employee;
+  return {
+    ...employee,
+    cpf: maskCpf(employee.cpf),
+  };
+}
+
 export const employeeService = {
-  async getAll(filters?: { teamId?: string; active?: boolean; query?: string }) {
+  async getAll(filters?: { teamId?: string; active?: boolean; query?: string }, options?: { includePii?: boolean }) {
     const where: any = {};
 
     if (filters?.teamId) {
@@ -59,13 +73,18 @@ export const employeeService = {
       orderBy: { name: 'asc' },
     });
 
-    return employees.map((employee) => ({
-      ...employee,
-      activeAssignmentsCount: employee.assignments.length,
-    }));
+    return employees.map((employee) =>
+      withPiiMask(
+        {
+          ...employee,
+          activeAssignmentsCount: employee.assignments.length,
+        },
+        Boolean(options?.includePii)
+      )
+    );
   },
 
-  async getById(id: string) {
+  async getById(id: string, options?: { includePii?: boolean }) {
     const employee = await prisma.employee.findUnique({
       where: { id },
       include: {
@@ -85,10 +104,10 @@ export const employeeService = {
       throw new AppError('Funcionário não encontrado', 404);
     }
 
-    return employee;
+    return withPiiMask(employee, Boolean(options?.includePii));
   },
 
-  async getEmployeeWithActiveAssets(id: string) {
+  async getEmployeeWithActiveAssets(id: string, options?: { includePii?: boolean }) {
     const employee = await prisma.employee.findUnique({
       where: { id },
       include: {
@@ -109,7 +128,7 @@ export const employeeService = {
       throw new AppError('Funcionário não encontrado', 404);
     }
 
-    return employee;
+    return withPiiMask(employee, Boolean(options?.includePii));
   },
 
   async getEmployeeWithAssets(
@@ -119,7 +138,8 @@ export const employeeService = {
       sortBy: EmployeeEquipmentsSortBy;
       sortDir: EmployeeEquipmentsSortDir;
       query?: string;
-    }
+    },
+    access?: { includePii?: boolean }
   ) {
     const where =
       options.filter === 'ACTIVE'
@@ -159,7 +179,7 @@ export const employeeService = {
 
     const query = options.query?.trim().toLowerCase();
     if (!query) {
-      return employee;
+      return withPiiMask(employee, Boolean(access?.includePii));
     }
 
     const filteredAssignments = employee.assignments.filter((assignment) => {
@@ -174,10 +194,10 @@ export const employeeService = {
       );
     });
 
-    return {
+    return withPiiMask({
       ...employee,
       assignments: filteredAssignments,
-    };
+    }, Boolean(access?.includePii));
   },
 
   async create(data: CreateEmployeeDto) {

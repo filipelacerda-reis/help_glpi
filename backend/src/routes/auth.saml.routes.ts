@@ -4,12 +4,20 @@ import { env } from '../config/env';
 import { generateAccessToken, generateRefreshToken } from '../utils/jwt';
 import { getSamlStrategy } from '../auth/saml';
 import { getRuntimeConfig } from '../config/runtimeConfig';
+import { AuthProvider } from '@prisma/client';
 
 const router = Router();
 
 router.get('/saml/login', (req, res, next) => {
   getSamlStrategy()
     .then((strategy) => {
+      return getRuntimeConfig().then((runtime) => ({ strategy, runtime }));
+    })
+    .then(({ strategy, runtime }) => {
+      if (runtime.activeProvider && runtime.activeProvider !== AuthProvider.SAML_GOOGLE) {
+        res.status(403).json({ error: 'SAML indisponível. Provedor ativo atual: Auth0' });
+        return;
+      }
       if (!strategy) {
         res.status(404).json({ error: 'SAML desabilitado' });
         return;
@@ -24,13 +32,19 @@ router.get('/saml/login', (req, res, next) => {
 router.post('/saml/acs', (req, res, next) => {
   getSamlStrategy()
     .then((strategy) => {
+      return getRuntimeConfig().then((runtime) => ({ strategy, runtime }));
+    })
+    .then(({ strategy, runtime }) => {
+      if (runtime.activeProvider && runtime.activeProvider !== AuthProvider.SAML_GOOGLE) {
+        res.status(403).json({ error: 'SAML indisponível. Provedor ativo atual: Auth0' });
+        return;
+      }
       if (!strategy) {
         res.status(404).json({ error: 'SAML desabilitado' });
         return;
       }
 
       passport.authenticate('saml', { session: false }, async (err: any, user: any) => {
-        const runtime = await getRuntimeConfig();
         if (err || !user) {
           const redirect = runtime.saml.jwtRedirectUrl || env.FRONTEND_URL;
           res.redirect(`${redirect}?error=saml`);
@@ -90,7 +104,7 @@ router.get('/saml/metadata', (_req, res) => {
 
 router.get('/saml/status', async (_req, res) => {
   const runtime = await getRuntimeConfig();
-  res.json({ enabled: runtime.saml.enabled });
+  res.json({ enabled: runtime.saml.enabled, activeProvider: runtime.activeProvider });
 });
 
 router.post('/saml/logout', (_req, res) => {

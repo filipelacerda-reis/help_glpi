@@ -54,6 +54,7 @@ backups/
 *.zip
 *.tar.gz
 *.sql
+!backend/prisma/migrations/**/*.sql
 
 # Build artifacts
 backend/dist/
@@ -89,4 +90,3 @@ yarn-error.log*
 .next/
 .nuxt/
 .vite/
-

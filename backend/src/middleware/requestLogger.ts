@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from 'express';
-import { v4 as uuidv4 } from 'uuid';
 import { logger } from '../utils/logger';
 
 // Estender a interface Request para incluir o ID de correlação
@@ -12,12 +11,8 @@ declare global {
 }
 
 export const requestLogger = (req: Request, res: Response, next: NextFunction) => {
-  // Gerar ou recuperar ID de correlação
-  const correlationId = (req.headers['x-correlation-id'] as string) || uuidv4();
-  req.correlationId = correlationId;
-
-  // Adicionar ID aos headers da resposta
-  res.setHeader('X-Correlation-ID', correlationId);
+  // request/correlation id é definido pelo middleware de contexto
+  const correlationId = req.requestId || req.correlationId;
 
   // Logar início da requisição
   const startTime = Date.now();
@@ -53,4 +48,3 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction) =
 
   next();
 };
-

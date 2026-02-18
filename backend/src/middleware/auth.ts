@@ -2,12 +2,16 @@ import { Request, Response, NextFunction } from 'express';
 import { verifyAccessToken } from '../utils/jwt';
 import { UserRole } from '@prisma/client';
 import { logger } from '../utils/logger';
+import prisma from '../lib/prisma';
+import { PlatformModule, getEffectiveModules } from '../config/modules';
+import { authorizationService } from '../domains/iam/services/authorization.service';
+import { requestContextStore } from '../shared/http/requestContext.store';
 
-export const authenticate = (
+export const authenticate = async (
   req: Request,
   res: Response,
   next: NextFunction
-): void => {
+): Promise<void> => {
   try {
     const authHeader = req.headers.authorization;
 
@@ -22,6 +26,21 @@ export const authenticate = (
 
     req.userId = payload.userId;
     req.userRole = payload.role as UserRole;
+    const authz = await authorizationService.resolveContext(payload.userId);
+    req.userPermissions = authz?.permissions || [];
+    req.userEntitlements = authz?.entitlements || [];
+    req.userAttributes = authz?.attributes || {};
+    req.auth = {
+      userId: payload.userId,
+      role: payload.role as UserRole,
+      permissions: req.userPermissions,
+      entitlements: req.userEntitlements,
+      attributes: req.userAttributes,
+    };
+    requestContextStore.patch({
+      userId: payload.userId,
+      userEmail: payload.email,
+    });
 
     logger.debug('Autenticação bem-sucedida', {
       userId: payload.userId,
@@ -37,6 +56,58 @@ export const authenticate = (
     });
     res.status(401).json({ error: 'Token inválido ou expirado' });
   }
+};
+
+export const requirePermission = (permission: string) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
+    const permissions = req.userPermissions || [];
+    if (!permissions.includes(permission)) {
+      logger.warn('Acesso negado por permissão', {
+        userId: req.userId,
+        permission,
+        path: req.path,
+        method: req.method,
+      });
+      res.status(403).json({ error: `Permissão insuficiente: ${permission}` });
+      return;
+    }
+    next();
+  };
+};
+
+export const requireAnyPermission = (permissions: string[]) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
+    const currentPermissions = req.userPermissions || [];
+    if (!permissions.some((permission) => currentPermissions.includes(permission))) {
+      logger.warn('Acesso negado por permissão (any)', {
+        userId: req.userId,
+        requiredPermissions: permissions,
+        path: req.path,
+        method: req.method,
+      });
+      res.status(403).json({ error: 'Permissões insuficientes' });
+      return;
+    }
+    next();
+  };
+};
+
+type AbacPolicy = (req: Request) => boolean | Promise<boolean>;
+
+export const requireAbac = (policy: AbacPolicy, errorMessage = 'Acesso negado pela política ABAC') => {
+  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const allowed = await policy(req);
+    if (!allowed) {
+      logger.warn('Acesso negado por ABAC', {
+        userId: req.userId,
+        path: req.path,
+        method: req.method,
+      });
+      res.status(403).json({ error: errorMessage });
+      return;
+    }
+    next();
+  };
 };
 
 export const authorize = (...roles: UserRole[]) => {
@@ -72,6 +143,51 @@ export const requireAdmin = () => {
       res.status(403).json({ error: 'Acesso negado' });
       return;
     }
+    next();
+  };
+};
+
+export const requireModuleAccess = (requiredModule: PlatformModule) => {
+  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    if (!req.userId || !req.userRole) {
+      logger.warn('Tentativa de acesso sem autenticação (módulo)', { path: req.path, module: requiredModule });
+      res.status(401).json({ error: 'Não autenticado' });
+      return;
+    }
+
+    if (req.userRole === UserRole.ADMIN) {
+      next();
+      return;
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: req.userId },
+      select: {
+        role: true,
+        enabledModules: true,
+      },
+    });
+
+    if (!user) {
+      logger.warn('Usuário não encontrado para autorização por módulo', { userId: req.userId, module: requiredModule });
+      res.status(401).json({ error: 'Usuário não encontrado' });
+      return;
+    }
+
+    const effectiveModules = getEffectiveModules(user.role, user.enabledModules);
+    req.userEffectiveModules = effectiveModules;
+
+    if (!effectiveModules.includes(requiredModule)) {
+      logger.warn('Acesso negado por módulo', {
+        userId: req.userId,
+        role: user.role,
+        module: requiredModule,
+        path: req.path,
+      });
+      res.status(403).json({ error: `Acesso negado ao módulo ${requiredModule}` });
+      return;
+    }
+
     next();
   };
 };
@@ -113,4 +229,3 @@ export const authorizeAdminOrTeamLead = () => {
     next();
   };
 };
-

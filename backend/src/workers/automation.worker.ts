@@ -2,6 +2,7 @@ import { Worker, Job } from 'bullmq';
 import { redisConnection, isRedisAvailable } from '../lib/queue';
 import { logger } from '../utils/logger';
 import { automationService } from '../services/automation.service';
+import { registerWorkerTelemetry } from '../shared/observability/queueTelemetry';
 
 // Tipos de jobs de automação
 interface AutomationJobData {
@@ -88,5 +89,6 @@ automationWorker.on('error', (err) => {
   logger.error('Erro no worker de automação', err);
 });
 
-logger.info('✅ Worker de automação inicializado');
+registerWorkerTelemetry('automation', automationWorker);
 
+logger.info('✅ Worker de automação inicializado');

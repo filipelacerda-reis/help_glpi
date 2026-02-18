@@ -1,4 +1,6 @@
 import { api } from './api';
+import { PlatformModule } from '../config/modules';
+import { UserEntitlement } from '../config/entitlements';
 
 export interface User {
   id: string;
@@ -6,6 +8,10 @@ export interface User {
   email: string;
   role: string;
   department: string | null;
+  enabledModules: PlatformModule[];
+  effectiveModules: PlatformModule[];
+  entitlements?: UserEntitlement[];
+  effectivePermissions?: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -16,6 +22,8 @@ export interface CreateUserDto {
   password: string;
   role: 'REQUESTER' | 'TECHNICIAN' | 'TRIAGER' | 'ADMIN';
   department?: string;
+  enabledModules?: PlatformModule[];
+  entitlements?: UserEntitlement[];
 }
 
 export interface UpdateUserDto {
@@ -24,6 +32,8 @@ export interface UpdateUserDto {
   password?: string;
   role?: 'REQUESTER' | 'TECHNICIAN' | 'TRIAGER' | 'ADMIN';
   department?: string | null;
+  enabledModules?: PlatformModule[];
+  entitlements?: UserEntitlement[];
 }
 
 export const userService = {
@@ -56,4 +66,3 @@ export const userService = {
     await api.delete(`/users/${id}`);
   },
 };
-

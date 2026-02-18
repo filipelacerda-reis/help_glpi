@@ -366,6 +366,15 @@ docker compose -f "$PROD_COMPOSE_FILE" exec -T backend sh -c '
 echo -e "${GREEN}✅ Migrations executadas!${NC}"
 echo ""
 
+# Garantir usuário admin padrão (sem reset de senha, a menos que FORCE_RESET_ADMIN_PASSWORD=true no .env)
+echo -e "${YELLOW}👤 Passo 4.1: Garantindo usuário administrador padrão...${NC}"
+docker compose -f "$PROD_COMPOSE_FILE" exec -T backend npm run db:ensure-admin || {
+    echo -e "${RED}⚠️ Erro ao garantir usuário admin padrão${NC}"
+    exit 1
+}
+echo -e "${GREEN}✅ Usuário admin validado/criado${NC}"
+echo ""
+
 # PASSO 6: Verificações
 echo -e "${YELLOW}🔍 Passo 5: Verificando serviços...${NC}"
 cd "$TARGET_DIR"
@@ -401,11 +410,29 @@ else
 fi
 
 echo ""
-echo "   Verificando healthcheck da API..."
-if curl -fsS "http://localhost:8080/health" >/dev/null; then
-    echo -e "   ${GREEN}✅ Healthcheck /health respondeu com sucesso${NC}"
+echo "   Verificando healthchecks da API..."
+if docker compose -f "$PROD_COMPOSE_FILE" exec -T backend sh -lc "curl -fsS http://127.0.0.1:8080/health" >/dev/null 2>&1; then
+    echo -e "   ${GREEN}✅ /health respondeu com sucesso${NC}"
 else
-    echo -e "   ${YELLOW}⚠️  Healthcheck local falhou. Verifique network/proxy da VM.${NC}"
+    echo -e "   ${YELLOW}⚠️  /health falhou dentro do container backend.${NC}"
+fi
+
+if docker compose -f "$PROD_COMPOSE_FILE" exec -T backend sh -lc "curl -fsS http://127.0.0.1:8080/healthz" >/dev/null 2>&1; then
+    echo -e "   ${GREEN}✅ /healthz respondeu com sucesso${NC}"
+else
+    echo -e "   ${YELLOW}⚠️  /healthz falhou dentro do container backend.${NC}"
+fi
+
+if docker compose -f "$PROD_COMPOSE_FILE" exec -T backend sh -lc "curl -fsS http://127.0.0.1:8080/readyz" >/dev/null 2>&1; then
+    echo -e "   ${GREEN}✅ /readyz respondeu com sucesso (DB + Redis prontos)${NC}"
+else
+    echo -e "   ${YELLOW}⚠️  /readyz falhou. Verifique DB/Redis e logs do backend.${NC}"
+fi
+
+if docker compose -f "$PROD_COMPOSE_FILE" exec -T backend sh -lc "curl -fsS http://127.0.0.1:8080/metrics" >/dev/null 2>&1; then
+    echo -e "   ${GREEN}✅ /metrics respondeu com sucesso${NC}"
+else
+    echo -e "   ${YELLOW}⚠️  /metrics falhou (não bloqueante).${NC}"
 fi
 
 echo ""

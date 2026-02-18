@@ -202,6 +202,148 @@ enum EquipmentCondition {
   DAMAGED
 }
 
+enum AuthProvider {
+  SAML_GOOGLE
+  AUTH0
+}
+
+enum HrCaseStatus {
+  OPEN
+  IN_PROGRESS
+  BLOCKED
+  COMPLETED
+  CANCELLED
+}
+
+enum HrCaseType {
+  ONBOARDING
+  OFFBOARDING
+}
+
+enum HrTaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+  BLOCKED
+}
+
+enum PurchaseRequestStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  REJECTED
+  CONVERTED_TO_PO
+}
+
+enum PurchaseOrderStatus {
+  DRAFT
+  APPROVED
+  REJECTED
+  CLOSED
+}
+
+enum InvoiceStatus {
+  REGISTERED
+  APPROVED
+  REJECTED
+  PAID
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ApprovalEntityType {
+  PR
+  PO
+  INVOICE
+}
+
+enum AssetLedgerStatus {
+  ACTIVE
+  TRANSFERRED
+  WRITTEN_OFF
+  LOST
+}
+
+enum AssetMovementType {
+  TRANSFER
+  WRITE_OFF
+  LOSS
+  RETURN
+}
+
+enum DepreciationMethod {
+  STRAIGHT_LINE
+}
+
+enum StockMovementType {
+  IN
+  OUT
+  TRANSFER
+}
+
+enum DeliveryStatus {
+  SCHEDULED
+  IN_TRANSIT
+  DELIVERED
+  RETURNED
+  CANCELLED
+}
+
+enum ModuleKey {
+  ADMIN
+  ITSM
+  HR
+  FINANCE
+  ASSETS
+  COMPLIANCE
+}
+
+enum SubmoduleKey {
+  ADMIN_SETTINGS
+  ADMIN_USERS
+  ADMIN_ROLES_PERMS
+  ADMIN_SSO
+  ADMIN_GROUP_MAPPING
+  ADMIN_AUDIT
+  ITSM_TICKETS
+  ITSM_SLA
+  ITSM_KB
+  ITSM_AUTOMATIONS
+  ITSM_REPORTS
+  HR_EMPLOYEES
+  HR_EMPLOYEES_PII
+  HR_ONBOARDING
+  HR_OFFBOARDING
+  HR_POLICIES
+  HR_REPORTS
+  FINANCE_COST_CENTERS
+  FINANCE_VENDORS
+  FINANCE_PURCHASE_REQUESTS
+  FINANCE_PURCHASE_ORDERS
+  FINANCE_INVOICES
+  FINANCE_APPROVALS
+  FINANCE_ASSETS_LEDGER
+  FINANCE_REPORTS
+  ASSETS_EQUIPMENT
+  ASSETS_ASSIGNMENTS
+  ASSETS_STOCK
+  ASSETS_DELIVERIES
+  ASSETS_MAINTENANCE
+  ASSETS_REPORTS
+  COMPLIANCE_RETENTION
+  COMPLIANCE_ANONYMIZATION
+  COMPLIANCE_AUDIT_VIEW
+}
+
+enum AccessLevel {
+  READ
+  WRITE
+}
+
 model User {
   id           String   @id @default(uuid())
   name         String
@@ -209,6 +351,7 @@ model User {
   passwordHash String
   role         UserRole
   department   String?
+  enabledModules String[] @default([])
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -234,6 +377,22 @@ model User {
   chatSessions      ChatSession[]
   platformSettingsUpdated PlatformSetting[] @relation("PlatformSettingUpdatedBy")
   platformAuditLogs PlatformAuditLog[] @relation("PlatformAuditActor")
+  authProviderConfigsUpdated AuthProviderConfig[] @relation("AuthProviderUpdatedBy")
+  auditEvents AuditEvent[] @relation("AuditEventActor")
+  roleAssignments UserRoleAssignment[]
+  entitlements UserEntitlement[]
+  attributes UserAttribute?
+  managedUserAttributes UserAttribute[] @relation("UserAttributeManager")
+  onboardingCasesOwned OnboardingCase[] @relation("OnboardingOwner")
+  offboardingCasesOwned OffboardingCase[] @relation("OffboardingOwner")
+  caseTasksAssigned CaseTask[] @relation("CaseTaskAssignee")
+  policyAcknowledgements PolicyAcknowledgement[] @relation("PolicyAcknowledgedBy")
+  costCentersOwned CostCenter[] @relation("CostCenterOwner")
+  purchaseRequests PurchaseRequest[] @relation("PurchaseRequestRequester")
+  purchaseOrdersApproved PurchaseOrder[] @relation("PurchaseOrderApprover")
+  approvals Approval[] @relation("ApprovalApprover")
+  assetMovements AssetMovement[] @relation("AssetMovementActor")
+  stockMovements StockMovement[] @relation("StockMovementActor")
 
   @@map("users")
 }
@@ -964,23 +1123,460 @@ model PlatformAuditLog {
   @@map("platform_audit_logs")
 }
 
+model AuditEvent {
+  id           String   @id @default(uuid())
+  ts           DateTime @default(now())
+  actorUserId  String?
+  actorEmail   String?
+  ip           String?
+  userAgent    String?
+  requestId    String?
+  domain       String
+  action       String
+  resourceType String
+  resourceId   String?
+  beforeJson   Json?
+  afterJson    Json?
+  metadataJson Json?
+
+  actor User? @relation("AuditEventActor", fields: [actorUserId], references: [id])
+
+  @@index([ts])
+  @@index([domain, action])
+  @@index([resourceType, resourceId])
+  @@index([requestId])
+  @@map("audit_events")
+}
+
+model AuthProviderConfig {
+  id                String       @id @default(uuid())
+  provider          AuthProvider @unique
+  enabled           Boolean      @default(false)
+  samlMetadataUrl   String?
+  samlEntityId      String?
+  samlCallbackUrl   String?
+  auth0Domain       String?
+  auth0ClientId     String?
+  auth0CallbackUrl  String?
+  auth0Audience     String?
+  auth0ClientSecret String?
+  updatedByUserId   String?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  updatedBy User? @relation("AuthProviderUpdatedBy", fields: [updatedByUserId], references: [id])
+
+  @@index([enabled])
+  @@map("auth_provider_configs")
+}
+
 model Employee {
   id           String   @id @default(uuid())
   name         String
   cpf          String   @unique
   roleTitle    String
   teamId       String?
+  managerId    String?
   hireDate     DateTime?
   active       Boolean  @default(true)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
   team         Team?                 @relation(fields: [teamId], references: [id], onDelete: SetNull)
+  manager      Employee?             @relation("EmployeeManager", fields: [managerId], references: [id], onDelete: SetNull)
+  directReports Employee[]           @relation("EmployeeManager")
   assignments  EquipmentAssignment[]
+  userAttributes UserAttribute[]
+  onboardingCases OnboardingCase[]
+  offboardingCases OffboardingCase[]
+  policyAcknowledgements PolicyAcknowledgement[]
+  deliveries Delivery[]
 
   @@index([teamId])
+  @@index([managerId])
   @@index([active])
   @@map("employees")
+}
+
+model Permission {
+  id          String           @id @default(uuid())
+  key         String           @unique
+  description String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  rolePermissions RolePermission[]
+
+  @@map("permissions")
+}
+
+model Role {
+  id          String     @id @default(uuid())
+  name        String     @unique
+  description String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  rolePermissions RolePermission[]
+  userRoles       UserRoleAssignment[]
+
+  @@map("roles")
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+  createdAt    DateTime   @default(now())
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@index([permissionId])
+  @@map("role_permissions")
+}
+
+model UserRoleAssignment {
+  userId     String
+  roleId     String
+  assignedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+  @@index([roleId])
+  @@map("user_roles")
+}
+
+model UserEntitlement {
+  id        String       @id @default(uuid())
+  userId    String
+  module    ModuleKey
+  submodule SubmoduleKey
+  level     AccessLevel
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, module, submodule])
+  @@index([userId])
+  @@index([module, submodule])
+  @@map("user_entitlements")
+}
+
+model UserAttribute {
+  id            String   @id @default(uuid())
+  userId        String   @unique
+  employeeId    String?
+  businessUnit  String?
+  costCenterId  String?
+  location      String?
+  managerUserId String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user        User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  managerUser User? @relation("UserAttributeManager", fields: [managerUserId], references: [id], onDelete: SetNull)
+  employee    Employee? @relation(fields: [employeeId], references: [id], onDelete: SetNull)
+
+  @@index([employeeId])
+  @@index([costCenterId])
+  @@index([managerUserId])
+  @@map("user_attributes")
+}
+
+model OnboardingCase {
+  id             String       @id @default(uuid())
+  employeeId     String
+  status         HrCaseStatus @default(OPEN)
+  ownerUserId    String?
+  startAt        DateTime     @default(now())
+  dueAt          DateTime?
+  idempotencyKey String?      @unique
+  metadataJson   Json?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  owner    User?    @relation("OnboardingOwner", fields: [ownerUserId], references: [id], onDelete: SetNull)
+  tasks    CaseTask[]
+
+  @@index([employeeId])
+  @@index([ownerUserId])
+  @@index([status])
+  @@map("onboarding_cases")
+}
+
+model OffboardingCase {
+  id                    String       @id @default(uuid())
+  employeeId            String
+  status                HrCaseStatus @default(OPEN)
+  ownerUserId           String?
+  startAt               DateTime     @default(now())
+  dueAt                 DateTime?
+  terminationDate       DateTime
+  idempotencyKey        String?      @unique
+  itsmTicketId          String?
+  metadataJson          Json?
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  owner    User?    @relation("OffboardingOwner", fields: [ownerUserId], references: [id], onDelete: SetNull)
+  tasks    CaseTask[]
+
+  @@index([employeeId])
+  @@index([ownerUserId])
+  @@index([status])
+  @@index([terminationDate])
+  @@map("offboarding_cases")
+}
+
+model CaseTask {
+  id                 String       @id @default(uuid())
+  caseType           HrCaseType
+  caseId             String
+  onboardingCaseId   String?
+  offboardingCaseId  String?
+  title              String
+  status             HrTaskStatus @default(TODO)
+  assigneeUserId     String?
+  dueAt              DateTime?
+  completedAt        DateTime?
+  evidenceUrl        String?
+  notes              String?
+  metadataJson       Json?
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  onboardingCase OnboardingCase? @relation(fields: [onboardingCaseId], references: [id], onDelete: Cascade)
+  offboardingCase OffboardingCase? @relation(fields: [offboardingCaseId], references: [id], onDelete: Cascade)
+  assignee       User?           @relation("CaseTaskAssignee", fields: [assigneeUserId], references: [id], onDelete: SetNull)
+
+  @@index([caseType, caseId])
+  @@index([onboardingCaseId])
+  @@index([offboardingCaseId])
+  @@index([assigneeUserId])
+  @@index([status])
+  @@map("case_tasks")
+}
+
+model Policy {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  title     String
+  version   String
+  contentUrl String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  acknowledgements PolicyAcknowledgement[]
+
+  @@index([active])
+  @@map("policies")
+}
+
+model PolicyAcknowledgement {
+  policyId              String
+  employeeId            String
+  acknowledgedAt        DateTime @default(now())
+  acknowledgedByUserId  String?
+  metadataJson          Json?
+
+  policy          Policy   @relation(fields: [policyId], references: [id], onDelete: Cascade)
+  employee        Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  acknowledgedBy  User?    @relation("PolicyAcknowledgedBy", fields: [acknowledgedByUserId], references: [id], onDelete: SetNull)
+
+  @@id([policyId, employeeId])
+  @@index([employeeId])
+  @@index([acknowledgedByUserId])
+  @@map("policy_acknowledgements")
+}
+
+model CostCenter {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  name        String
+  ownerUserId String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  owner User? @relation("CostCenterOwner", fields: [ownerUserId], references: [id], onDelete: SetNull)
+  purchaseRequests PurchaseRequest[]
+  assetLedgers AssetLedger[]
+  fromAssetMovements AssetMovement[] @relation("MovementFromCostCenter")
+  toAssetMovements AssetMovement[] @relation("MovementToCostCenter")
+
+  @@index([ownerUserId])
+  @@map("cost_centers")
+}
+
+model Vendor {
+  id           String   @id @default(uuid())
+  name         String
+  taxId        String?  @unique
+  contactEmail String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  purchaseOrders PurchaseOrder[]
+  invoices Invoice[]
+
+  @@index([name])
+  @@map("vendors")
+}
+
+model PurchaseRequest {
+  id              String                @id @default(uuid())
+  requesterUserId String
+  costCenterId    String
+  description     String
+  status          PurchaseRequestStatus @default(SUBMITTED)
+  totalAmount     Decimal               @default(0) @db.Decimal(14, 2)
+  idempotencyKey  String?               @unique
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+
+  requester User @relation("PurchaseRequestRequester", fields: [requesterUserId], references: [id], onDelete: Cascade)
+  costCenter CostCenter @relation(fields: [costCenterId], references: [id], onDelete: Restrict)
+  items PurchaseRequestItem[]
+  purchaseOrders PurchaseOrder[]
+
+  @@index([requesterUserId])
+  @@index([costCenterId])
+  @@index([status])
+  @@map("purchase_requests")
+}
+
+model PurchaseRequestItem {
+  id            String  @id @default(uuid())
+  prId          String
+  description   String
+  qty           Int
+  unitPrice     Decimal @db.Decimal(14, 2)
+  assetCategory String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  purchaseRequest PurchaseRequest @relation(fields: [prId], references: [id], onDelete: Cascade)
+
+  @@index([prId])
+  @@map("purchase_request_items")
+}
+
+model PurchaseOrder {
+  id               String              @id @default(uuid())
+  prId             String?
+  vendorId         String
+  status           PurchaseOrderStatus @default(DRAFT)
+  approvedAt       DateTime?
+  approvedByUserId String?
+  totalAmount      Decimal             @default(0) @db.Decimal(14, 2)
+  idempotencyKey   String?             @unique
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+
+  purchaseRequest PurchaseRequest? @relation(fields: [prId], references: [id], onDelete: SetNull)
+  vendor Vendor @relation(fields: [vendorId], references: [id], onDelete: Restrict)
+  approvedBy User? @relation("PurchaseOrderApprover", fields: [approvedByUserId], references: [id], onDelete: SetNull)
+  invoices Invoice[]
+
+  @@index([prId])
+  @@index([vendorId])
+  @@index([status])
+  @@map("purchase_orders")
+}
+
+model Invoice {
+  id             String        @id @default(uuid())
+  poId           String?
+  vendorId       String
+  number         String
+  issueDate      DateTime
+  totalAmount    Decimal       @db.Decimal(14, 2)
+  status         InvoiceStatus @default(REGISTERED)
+  idempotencyKey String?       @unique
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  purchaseOrder PurchaseOrder? @relation(fields: [poId], references: [id], onDelete: SetNull)
+  vendor Vendor @relation(fields: [vendorId], references: [id], onDelete: Restrict)
+
+  @@index([poId])
+  @@index([vendorId])
+  @@index([status])
+  @@unique([vendorId, number])
+  @@map("invoices")
+}
+
+model Approval {
+  id             String             @id @default(uuid())
+  entityType     ApprovalEntityType
+  entityId       String
+  step           Int
+  approverUserId String
+  status         ApprovalStatus     @default(PENDING)
+  decidedAt      DateTime?
+  decisionNotes  String?
+  idempotencyKey String?            @unique
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+
+  approver User @relation("ApprovalApprover", fields: [approverUserId], references: [id], onDelete: Cascade)
+
+  @@index([entityType, entityId, step])
+  @@index([approverUserId, status])
+  @@map("approvals")
+}
+
+model AssetLedger {
+  id                 String             @id @default(uuid())
+  equipmentId        String             @unique
+  acquisitionDate    DateTime
+  acquisitionValue   Decimal            @db.Decimal(14, 2)
+  depreciationMethod DepreciationMethod @default(STRAIGHT_LINE)
+  usefulLifeMonths   Int
+  residualValue      Decimal            @default(0) @db.Decimal(14, 2)
+  status             AssetLedgerStatus  @default(ACTIVE)
+  costCenterId       String
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  equipment Equipment @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+  costCenter CostCenter @relation(fields: [costCenterId], references: [id], onDelete: Restrict)
+  movements AssetMovement[]
+
+  @@index([costCenterId])
+  @@index([status])
+  @@map("asset_ledgers")
+}
+
+model AssetMovement {
+  id               String            @id @default(uuid())
+  equipmentId      String
+  assetLedgerId    String?
+  type             AssetMovementType
+  fromCostCenterId String?
+  toCostCenterId   String?
+  reason           String
+  actorUserId      String?
+  ts               DateTime          @default(now())
+  metadataJson     Json?
+
+  equipment Equipment @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+  assetLedger AssetLedger? @relation(fields: [assetLedgerId], references: [id], onDelete: SetNull)
+  fromCostCenter CostCenter? @relation("MovementFromCostCenter", fields: [fromCostCenterId], references: [id], onDelete: SetNull)
+  toCostCenter CostCenter? @relation("MovementToCostCenter", fields: [toCostCenterId], references: [id], onDelete: SetNull)
+  actor User? @relation("AssetMovementActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([equipmentId])
+  @@index([assetLedgerId])
+  @@index([type])
+  @@index([ts])
+  @@map("asset_movements")
 }
 
 model Equipment {
@@ -1001,6 +1597,10 @@ model Equipment {
   updatedAt        DateTime           @updatedAt
 
   assignments      EquipmentAssignment[]
+  assetLedger      AssetLedger?
+  assetMovements   AssetMovement[]
+  stockMovements   StockMovement[]
+  deliveryItems    DeliveryItem[]
 
   @@index([equipmentType])
   @@index([status])
@@ -1024,10 +1624,90 @@ model EquipmentAssignment {
 
   equipment          Equipment          @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
   employee           Employee           @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  delivery           Delivery?
 
   @@index([equipmentId])
   @@index([employeeId])
   @@index([assignedAt])
   @@index([returnedAt])
   @@map("equipment_assignments")
+}
+
+model StockLocation {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  fromMovements StockMovement[] @relation("StockMovementFromLocation")
+  toMovements   StockMovement[] @relation("StockMovementToLocation")
+
+  @@index([active])
+  @@map("stock_locations")
+}
+
+model StockMovement {
+  id             String            @id @default(uuid())
+  equipmentId    String
+  fromLocationId String?
+  toLocationId   String?
+  type           StockMovementType
+  ts             DateTime          @default(now())
+  actorUserId    String?
+  deliveryId     String?
+  notes          String?
+  metadataJson   Json?
+
+  equipment    Equipment     @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+  fromLocation StockLocation? @relation("StockMovementFromLocation", fields: [fromLocationId], references: [id], onDelete: SetNull)
+  toLocation   StockLocation? @relation("StockMovementToLocation", fields: [toLocationId], references: [id], onDelete: SetNull)
+  actor        User?         @relation("StockMovementActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+  delivery     Delivery?     @relation(fields: [deliveryId], references: [id], onDelete: SetNull)
+
+  @@index([equipmentId])
+  @@index([fromLocationId])
+  @@index([toLocationId])
+  @@index([type])
+  @@index([ts])
+  @@index([deliveryId])
+  @@map("stock_movements")
+}
+
+model Delivery {
+  id           String         @id @default(uuid())
+  employeeId   String
+  assignmentId String?        @unique
+  status       DeliveryStatus @default(SCHEDULED)
+  scheduledAt  DateTime?
+  deliveredAt  DateTime?
+  courier      String?
+  tracking     String?
+  proofUrl     String?
+  notes        String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  employee      Employee            @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  assignment    EquipmentAssignment? @relation(fields: [assignmentId], references: [id], onDelete: SetNull)
+  items         DeliveryItem[]
+  stockMovements StockMovement[]
+
+  @@index([employeeId])
+  @@index([status])
+  @@index([scheduledAt])
+  @@map("deliveries")
+}
+
+model DeliveryItem {
+  deliveryId  String
+  equipmentId String
+  createdAt   DateTime @default(now())
+
+  delivery  Delivery  @relation(fields: [deliveryId], references: [id], onDelete: Cascade)
+  equipment Equipment @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+
+  @@id([deliveryId, equipmentId])
+  @@index([equipmentId])
+  @@map("delivery_items")
 }

@@ -1,4 +1,10 @@
-import { EquipmentCondition, EquipmentStatus, EquipmentType } from '@prisma/client';
+import {
+  DeliveryStatus,
+  EquipmentCondition,
+  EquipmentStatus,
+  EquipmentType,
+  StockMovementType,
+} from '@prisma/client';
 import { Request, Response } from 'express';
 import { z } from 'zod';
 import { equipmentService } from '../services/equipment.service';
@@ -49,6 +55,13 @@ const assignEquipmentSchema = z.object({
     .optional(),
   deliveryCondition: z.nativeEnum(EquipmentCondition).optional(),
   deliveryTermNumber: z.string().optional(),
+  createDelivery: z.coerce.boolean().optional(),
+  deliveryScheduledAt: z
+    .preprocess((value) => (value === null ? null : value ? new Date(String(value)) : undefined), z.date().nullable())
+    .optional(),
+  deliveryCourier: z.string().optional(),
+  deliveryTracking: z.string().optional(),
+  deliveryProofUrl: z.string().url().optional(),
   notes: z.string().optional(),
 });
 
@@ -58,7 +71,36 @@ const returnAssignmentSchema = z.object({
     .optional(),
   returnCondition: z.nativeEnum(EquipmentCondition).optional(),
   finalStatus: z.nativeEnum(EquipmentStatus).optional(),
+  stockLocationId: z.string().uuid().optional(),
   notes: z.string().optional(),
+});
+
+const createStockLocationSchema = z.object({
+  name: z.string().min(2),
+  active: z.boolean().optional(),
+});
+
+const createStockMovementSchema = z.object({
+  equipmentId: z.string().uuid(),
+  type: z.nativeEnum(StockMovementType),
+  fromLocationId: z.string().uuid().nullable().optional(),
+  toLocationId: z.string().uuid().nullable().optional(),
+  notes: z.string().optional(),
+  metadataJson: z.any().optional(),
+});
+
+const updateDeliverySchema = z.object({
+  status: z.nativeEnum(DeliveryStatus).optional(),
+  scheduledAt: z
+    .preprocess((value) => (value === null ? null : value ? new Date(String(value)) : undefined), z.date().nullable())
+    .optional(),
+  deliveredAt: z
+    .preprocess((value) => (value === null ? null : value ? new Date(String(value)) : undefined), z.date().nullable())
+    .optional(),
+  courier: z.string().nullable().optional(),
+  tracking: z.string().nullable().optional(),
+  proofUrl: z.string().url().nullable().optional(),
+  notes: z.string().nullable().optional(),
 });
 
 const alertsQuerySchema = z.object({
@@ -105,7 +147,11 @@ export const equipmentController = {
 
   async assign(req: Request, res: Response) {
     const data = assignEquipmentSchema.parse(req.body) as any;
-    const assignment = await equipmentService.assignEquipment(req.params.id, data);
+    const assignment = await equipmentService.assignEquipment(
+      req.params.id,
+      data,
+      req.userId || undefined
+    );
     res.status(201).json(assignment);
   },
 
@@ -113,7 +159,8 @@ export const equipmentController = {
     const data = returnAssignmentSchema.parse(req.body) as any;
     const assignment = await equipmentService.returnAssignment(
       req.params.assignmentId,
-      data
+      data,
+      req.userId || undefined
     );
     res.json(assignment);
   },
@@ -188,5 +235,45 @@ export const equipmentController = {
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
     res.setHeader('Content-Length', String(pdf.length));
     res.status(200).send(pdf);
+  },
+
+  async listStockLocations(req: Request, res: Response) {
+    const activeOnly = String(req.query.activeOnly) === 'true';
+    const data = await equipmentService.listStockLocations(activeOnly);
+    res.json(data);
+  },
+
+  async createStockLocation(req: Request, res: Response) {
+    const data = createStockLocationSchema.parse(req.body);
+    const result = await equipmentService.createStockLocation(data);
+    res.status(201).json(result);
+  },
+
+  async listStockMovements(req: Request, res: Response) {
+    const result = await equipmentService.getStockMovements({
+      equipmentId: req.query.equipmentId ? String(req.query.equipmentId) : undefined,
+      type: req.query.type ? (String(req.query.type) as StockMovementType) : undefined,
+    });
+    res.json(result);
+  },
+
+  async createStockMovement(req: Request, res: Response) {
+    const data = createStockMovementSchema.parse(req.body);
+    const result = await equipmentService.createStockMovement(data, req.userId || undefined);
+    res.status(201).json(result);
+  },
+
+  async getDeliveries(req: Request, res: Response) {
+    const result = await equipmentService.getDeliveries({
+      employeeId: req.query.employeeId ? String(req.query.employeeId) : undefined,
+      status: req.query.status ? (String(req.query.status) as DeliveryStatus) : undefined,
+    });
+    res.json(result);
+  },
+
+  async updateDelivery(req: Request, res: Response) {
+    const data = updateDeliverySchema.parse(req.body);
+    const result = await equipmentService.updateDelivery(req.params.deliveryId, data);
+    res.json(result);
   },
 };

@@ -4,12 +4,20 @@ import { env } from '../config/env';
 import { generateAccessToken, generateRefreshToken } from '../utils/jwt';
 import { getAuth0Strategy } from '../auth/auth0';
 import { getRuntimeConfig } from '../config/runtimeConfig';
+import { AuthProvider } from '@prisma/client';
 
 const router = Router();
 
 router.get('/auth0/login', (req, res, next) => {
   getAuth0Strategy()
     .then((strategy) => {
+      return getRuntimeConfig().then((runtime) => ({ strategy, runtime }));
+    })
+    .then(({ strategy, runtime }) => {
+      if (runtime.activeProvider && runtime.activeProvider !== AuthProvider.AUTH0) {
+        res.status(403).json({ error: 'Auth0 indisponível. Provedor ativo atual: SAML Google' });
+        return;
+      }
       if (!strategy) {
         res.status(404).json({ error: 'Auth0 desabilitado' });
         return;
@@ -27,6 +35,14 @@ router.get('/auth0/login', (req, res, next) => {
 router.get('/auth0/callback', (req, res, next) => {
   getAuth0Strategy()
     .then((strategy) => {
+      return getRuntimeConfig().then((runtime) => ({ strategy, runtime }));
+    })
+    .then(({ strategy, runtime }) => {
+      if (runtime.activeProvider && runtime.activeProvider !== AuthProvider.AUTH0) {
+        const redirect = env.FRONTEND_URL;
+        res.redirect(`${redirect}/login?error=provider_mismatch`);
+        return;
+      }
       if (!strategy) {
         const redirect = env.FRONTEND_URL;
         res.redirect(`${redirect}/login?error=auth0`);
@@ -34,7 +50,6 @@ router.get('/auth0/callback', (req, res, next) => {
       }
 
       passport.authenticate('auth0', { session: false }, async (err: any, user: any) => {
-        const runtime = await getRuntimeConfig();
         const redirectBase = runtime.auth0.jwtRedirectUrl || env.FRONTEND_URL;
 
         if (err || !user) {
@@ -67,7 +82,7 @@ router.get('/auth0/callback', (req, res, next) => {
 
 router.get('/auth0/status', async (_req, res) => {
   const runtime = await getRuntimeConfig();
-  res.json({ enabled: runtime.auth0.enabled });
+  res.json({ enabled: runtime.auth0.enabled, activeProvider: runtime.activeProvider });
 });
 
 export { router as auth0AuthRoutes };

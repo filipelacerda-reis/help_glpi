@@ -86,7 +86,7 @@ services:
     networks:
       - glpi_etus_network
     restart: unless-stopped
-    command: npm run dev
+    command: sh -lc "npx prisma generate && npm run dev"
 
   frontend:
     build:
@@ -115,4 +115,3 @@ volumes:
 networks:
   glpi_etus_network:
     driver: bridge
-

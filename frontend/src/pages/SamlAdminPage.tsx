@@ -79,6 +79,7 @@ const SamlAdminPage = () => {
           domain: '',
           clientId: '',
           callbackUrl: apiBase ? `${apiBase.replace(/\/$/, '')}/api/auth/auth0/callback` : '',
+          audience: '',
           jwtRedirectUrl: `${appBase.replace(/\/$/, '')}/auth/callback`,
           allowedDomains: '',
           rolesClaim: 'https://glpi.etus.io/roles',
@@ -272,6 +273,16 @@ const SamlAdminPage = () => {
 
         {activeTab === 'sso' && settings && (
           <div className="bg-gray-700/30 backdrop-blur-sm border border-gray-600/50 rounded-lg p-6 space-y-6">
+            <div className="text-sm text-gray-300">
+              Provedor ativo atual:{' '}
+              <span className="font-semibold text-etus-green">
+                {settings.activeProvider === 'SAML_GOOGLE'
+                  ? 'SAML Google Workspace'
+                  : settings.activeProvider === 'AUTH0'
+                    ? 'Auth0'
+                    : 'Nenhum (somente login local)'}
+              </span>
+            </div>
             <div className="grid md:grid-cols-3 gap-4">
               <div className="border border-gray-600/50 rounded-lg p-4 bg-gray-700/20">
                 <p className="text-sm text-gray-200 font-medium">1) Gerar Metadata do SP</p>
@@ -307,7 +318,14 @@ const SamlAdminPage = () => {
                   type="checkbox"
                   checked={Boolean(settings.saml.enabled)}
                   onChange={(e) =>
-                    setSettings({ ...settings, saml: { ...settings.saml, enabled: e.target.checked } })
+                    setSettings({
+                      ...settings,
+                      saml: { ...settings.saml, enabled: e.target.checked },
+                      auth0: {
+                        ...settings.auth0,
+                        enabled: e.target.checked ? false : Boolean(settings.auth0?.enabled),
+                      },
+                    })
                   }
                 />
                 <span>Habilitar SAML</span>
@@ -548,10 +566,17 @@ const SamlAdminPage = () => {
               <div className="flex items-center justify-between gap-4 flex-wrap mb-4">
                 <label className="text-sm text-gray-300 flex items-center gap-2">
                   <input
-                    type="checkbox"
-                    checked={Boolean(settings.auth0?.enabled)}
-                    onChange={(e) =>
-                      setSettings({ ...settings, auth0: { ...settings.auth0, enabled: e.target.checked } })
+                  type="checkbox"
+                  checked={Boolean(settings.auth0?.enabled)}
+                  onChange={(e) =>
+                      setSettings({
+                        ...settings,
+                        auth0: { ...settings.auth0, enabled: e.target.checked },
+                        saml: {
+                          ...settings.saml,
+                          enabled: e.target.checked ? false : Boolean(settings.saml?.enabled),
+                        },
+                      })
                     }
                   />
                   <span>Habilitar Auth0</span>

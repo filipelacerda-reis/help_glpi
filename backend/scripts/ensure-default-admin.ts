@@ -8,18 +8,54 @@ async function main() {
   const password = process.env.DEFAULT_ADMIN_PASSWORD || 'admin123';
   const name = process.env.DEFAULT_ADMIN_NAME || 'Administrador';
   const department = process.env.DEFAULT_ADMIN_DEPARTMENT || 'TI';
+  const forceResetPassword = process.env.FORCE_RESET_ADMIN_PASSWORD === 'true';
 
-  const passwordHash = await hashPassword(password);
-
-  const user = await prisma.user.upsert({
+  const existing = await prisma.user.findUnique({
     where: { email },
-    update: {
+  });
+
+  if (existing) {
+    const updateData: {
+      name: string;
+      role: UserRole;
+      department: string;
+      passwordHash?: string;
+    } = {
       name,
       role: UserRole.ADMIN,
       department,
-      passwordHash,
-    },
-    create: {
+    };
+
+    if (forceResetPassword) {
+      updateData.passwordHash = await hashPassword(password);
+    }
+
+    const user = await prisma.user.update({
+      where: { email },
+      data: updateData,
+    });
+
+    const adminRole = await prisma.role.upsert({
+      where: { name: 'ADMIN' },
+      update: {},
+      create: { name: 'ADMIN', description: 'Administrador da plataforma' },
+    });
+    await prisma.userRoleAssignment.upsert({
+      where: { userId_roleId: { userId: user.id, roleId: adminRole.id } },
+      update: {},
+      create: { userId: user.id, roleId: adminRole.id },
+    });
+
+    console.log(
+      `✅ Admin validado: ${user.email} (${forceResetPassword ? 'senha resetada' : 'senha preservada'})`
+    );
+    return;
+  }
+
+  const passwordHash = await hashPassword(password);
+
+  const user = await prisma.user.create({
+    data: {
       name,
       email,
       role: UserRole.ADMIN,
@@ -28,8 +64,19 @@ async function main() {
     },
   });
 
+  const adminRole = await prisma.role.upsert({
+    where: { name: 'ADMIN' },
+    update: {},
+    create: { name: 'ADMIN', description: 'Administrador da plataforma' },
+  });
+  await prisma.userRoleAssignment.upsert({
+    where: { userId_roleId: { userId: user.id, roleId: adminRole.id } },
+    update: {},
+    create: { userId: user.id, roleId: adminRole.id },
+  });
+
   console.log(
-    `✅ Admin garantido: ${user.email} (senha padrão atual: ${password})`
+    `✅ Admin criado: ${user.email} (senha definida por DEFAULT_ADMIN_PASSWORD ou padrão local)`
   );
 }
 

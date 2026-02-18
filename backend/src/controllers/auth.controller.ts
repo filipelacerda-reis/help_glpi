@@ -14,6 +14,7 @@ const registerSchema = z.object({
   password: z.string().min(6, 'Senha deve ter no mínimo 6 caracteres'),
   role: z.enum(['REQUESTER', 'TECHNICIAN', 'TRIAGER', 'ADMIN']).optional(),
   department: z.string().optional(),
+  enabledModules: z.array(z.string()).optional(),
 });
 
 export const authController = {
@@ -62,4 +63,3 @@ export const authController = {
     res.status(201).json(result);
   },
 };
-

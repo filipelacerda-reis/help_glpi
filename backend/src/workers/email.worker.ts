@@ -2,6 +2,7 @@ import { Worker, Job } from 'bullmq';
 import { redisConnection, isRedisAvailable } from '../lib/queue';
 import { logger } from '../utils/logger';
 import { notificationService } from '../services/notification.service';
+import { registerWorkerTelemetry } from '../shared/observability/queueTelemetry';
 
 // Tipos de jobs de email
 interface EmailJobData {
@@ -117,5 +118,6 @@ emailWorker.on('error', (err) => {
   logger.error('Erro no worker de email', err);
 });
 
-logger.info('✅ Worker de email inicializado');
+registerWorkerTelemetry('email', emailWorker);
 
+logger.info('✅ Worker de email inicializado');

@@ -2,6 +2,7 @@ import { Worker, Job } from 'bullmq';
 import { redisConnection, isRedisAvailable } from '../lib/queue';
 import { logger } from '../utils/logger';
 import { slaService } from '../services/sla.service';
+import { registerWorkerTelemetry } from '../shared/observability/queueTelemetry';
 
 // Tipos de jobs de SLA
 interface SlaJobData {
@@ -113,5 +114,7 @@ slaWorker.on('failed', (job, err) => {
 slaWorker.on('error', (err) => {
   logger.error('Erro no worker de SLA', err);
 });
+
+registerWorkerTelemetry('sla', slaWorker);
 
 logger.info('✅ Worker de SLA inicializado');

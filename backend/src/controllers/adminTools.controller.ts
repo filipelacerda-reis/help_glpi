@@ -34,6 +34,8 @@ export const adminToolsController = {
       type: 'RECALCULATE_SLA',
       ticketId: 'batch',
       data: { from, to, teamId, categoryId },
+      requestId: req.requestId,
+      correlationId: req.correlationId || req.requestId,
     });
 
     await platformAuditService.log(req.userId as string, 'TOOL_EXECUTED', 'SLA', {

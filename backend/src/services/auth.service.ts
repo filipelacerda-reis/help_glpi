@@ -4,6 +4,8 @@ import { hashPassword, comparePassword } from '../utils/password';
 import { generateAccessToken, generateRefreshToken } from '../utils/jwt';
 import { AppError } from '../middleware/errorHandler';
 import { logger } from '../utils/logger';
+import { getDefaultModulesByRole, getEffectiveModules, sanitizeModules } from '../config/modules';
+import { authorizationService } from '../domains/iam/services/authorization.service';
 
 export interface LoginDto {
   email: string;
@@ -16,6 +18,7 @@ export interface RegisterDto {
   password: string;
   role?: UserRole;
   department?: string;
+  enabledModules?: string[];
 }
 
 export interface AuthResponse {
@@ -25,6 +28,14 @@ export interface AuthResponse {
     email: string;
     role: UserRole;
     department: string | null;
+    enabledModules: string[];
+    effectiveModules: string[];
+    effectivePermissions?: string[];
+    entitlements?: Array<{
+      module: string;
+      submodule: string;
+      level: string;
+    }>;
   };
   accessToken: string;
   refreshToken: string;
@@ -45,13 +56,23 @@ export const authService = {
 
     const passwordHash = await hashPassword(data.password);
 
+    const role = data.role || UserRole.REQUESTER;
+    const requestedModules = sanitizeModules(data.enabledModules);
+    const enabledModules =
+      role === UserRole.ADMIN
+        ? getDefaultModulesByRole(UserRole.ADMIN)
+        : requestedModules.length > 0
+          ? requestedModules
+          : getDefaultModulesByRole(role);
+
     const user = await prisma.user.create({
       data: {
         name: data.name,
         email: data.email,
         passwordHash,
-        role: data.role || UserRole.REQUESTER,
+        role,
         department: data.department,
+        enabledModules,
       },
     });
 
@@ -63,6 +84,7 @@ export const authService = {
       role: user.role,
     };
 
+    const authz = await authorizationService.resolveContext(user.id);
     return {
       user: {
         id: user.id,
@@ -70,6 +92,10 @@ export const authService = {
         email: user.email,
         role: user.role,
         department: user.department,
+        enabledModules: user.enabledModules,
+        effectiveModules: getEffectiveModules(user.role, user.enabledModules),
+        effectivePermissions: authz?.permissions || [],
+        entitlements: authz?.entitlements || [],
       },
       accessToken: generateAccessToken(tokenPayload),
       refreshToken: generateRefreshToken(tokenPayload),
@@ -176,6 +202,7 @@ export const authService = {
         throw new AppError('Erro ao gerar token de autenticação', 500);
       }
 
+      const authz = await authorizationService.resolveContext(user.id);
       return {
         user: {
           id: user.id,
@@ -183,6 +210,10 @@ export const authService = {
           email: user.email,
           role: user.role,
           department: user.department,
+          enabledModules: user.enabledModules,
+          effectiveModules: getEffectiveModules(user.role, user.enabledModules),
+          effectivePermissions: authz?.permissions || [],
+          entitlements: authz?.entitlements || [],
         },
         accessToken,
         refreshToken,
@@ -205,4 +236,3 @@ export const authService = {
     }
   },
 };
-

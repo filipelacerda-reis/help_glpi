@@ -22,7 +22,12 @@ import {
   LogOut,
   BookOpen,
   Settings,
+  Wallet,
+  Users,
+  ShoppingCart,
 } from 'lucide-react';
+import { PlatformModule } from '../config/modules';
+import { ModuleKey, SubmoduleKey } from '../config/entitlements';
 
 interface ModernLayoutProps {
   children: ReactNode;
@@ -38,6 +43,9 @@ type MenuItem = {
   label: string;
   icon: any;
   roles: string[];
+  module: PlatformModule;
+  moduleKey?: ModuleKey;
+  submoduleKey?: SubmoduleKey;
   allowTeamLead?: boolean;
 };
 
@@ -55,7 +63,7 @@ const ModernLayout = ({
   rightSidebar,
   showRightSidebar = false,
 }: ModernLayoutProps) => {
-  const { user, logout } = useAuth();
+  const { user, logout, hasModule, hasEntitlement } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -63,6 +71,7 @@ const ModernLayout = ({
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     operations: true,
     assets: true,
+    corporate: true,
     governance: true,
     admin: true,
   });
@@ -108,25 +117,33 @@ const ModernLayout = ({
   };
 
   const menuItems: MenuItem[] = [
-    { path: '/', label: 'Dashboard', icon: Home, roles: ['ADMIN', 'TRIAGER', 'TECHNICIAN', 'REQUESTER'] },
-    { path: '/tickets', label: 'Tickets', icon: FileText, roles: ['ADMIN', 'TRIAGER', 'TECHNICIAN', 'REQUESTER'] },
-    { path: '/my/journal', label: 'Meu Diário', icon: BookOpen, roles: ['ADMIN', 'TRIAGER', 'TECHNICIAN'] },
-    { path: '/notifications', label: 'Notificações', icon: Bell, roles: ['ADMIN', 'TRIAGER', 'TECHNICIAN', 'REQUESTER'] },
-    { path: '/employees', label: 'Funcionários', icon: Briefcase, roles: ['ADMIN', 'TRIAGER', 'TECHNICIAN'] },
-    { path: '/equipments', label: 'Equipamentos', icon: Laptop, roles: ['ADMIN', 'TRIAGER', 'TECHNICIAN'] },
-    { path: '/metrics', label: 'Métricas', icon: BarChart3, roles: ['ADMIN'], allowTeamLead: true },
-    { path: '/kb', label: 'Base de Conhecimento', icon: FolderKanban, roles: ['ADMIN', 'TRIAGER'] },
-    { path: '/sla', label: 'SLA', icon: Target, roles: ['ADMIN'] },
-    { path: '/teams', label: 'Times', icon: UsersRound, roles: ['ADMIN'] },
-    { path: '/users', label: 'Usuários', icon: UserCog, roles: ['ADMIN'] },
-    { path: '/tags', label: 'Tags', icon: Tag, roles: ['ADMIN'] },
-    { path: '/categories', label: 'Categorias', icon: Layers, roles: ['ADMIN'] },
-    { path: '/automations', label: 'Automações', icon: Zap, roles: ['ADMIN'] },
-    { path: '/admin/sso', label: 'Administração', icon: Settings, roles: ['ADMIN'] },
+    { path: '/', label: 'Dashboard', icon: Home, roles: ['ADMIN', 'TRIAGER', 'TECHNICIAN', 'REQUESTER'], module: 'DASHBOARD' },
+    { path: '/tickets', label: 'Tickets', icon: FileText, roles: ['ADMIN', 'TRIAGER', 'TECHNICIAN', 'REQUESTER'], module: 'TICKETS' },
+    { path: '/my/journal', label: 'Meu Diário', icon: BookOpen, roles: ['ADMIN', 'TRIAGER', 'TECHNICIAN'], module: 'JOURNAL' },
+    { path: '/notifications', label: 'Notificações', icon: Bell, roles: ['ADMIN', 'TRIAGER', 'TECHNICIAN', 'REQUESTER'], module: 'NOTIFICATIONS' },
+    { path: '/employees', label: 'Funcionários', icon: Briefcase, roles: ['ADMIN', 'TRIAGER', 'TECHNICIAN'], module: 'EMPLOYEES', moduleKey: 'HR', submoduleKey: 'HR_EMPLOYEES' },
+    { path: '/equipments', label: 'Equipamentos', icon: Laptop, roles: ['ADMIN', 'TRIAGER', 'TECHNICIAN'], module: 'EQUIPMENTS', moduleKey: 'ASSETS', submoduleKey: 'ASSETS_EQUIPMENT' },
+    { path: '/metrics', label: 'Métricas', icon: BarChart3, roles: ['ADMIN'], module: 'METRICS', allowTeamLead: true },
+    { path: '/kb', label: 'Base de Conhecimento', icon: FolderKanban, roles: ['ADMIN', 'TRIAGER'], module: 'KB' },
+    { path: '/sla', label: 'SLA', icon: Target, roles: ['ADMIN'], module: 'SLA' },
+    { path: '/teams', label: 'Times', icon: UsersRound, roles: ['ADMIN'], module: 'TEAMS' },
+    { path: '/users', label: 'Usuários', icon: UserCog, roles: ['ADMIN'], module: 'USERS', moduleKey: 'ADMIN', submoduleKey: 'ADMIN_USERS' },
+    { path: '/tags', label: 'Tags', icon: Tag, roles: ['ADMIN'], module: 'TAGS' },
+    { path: '/categories', label: 'Categorias', icon: Layers, roles: ['ADMIN'], module: 'CATEGORIES' },
+    { path: '/automations', label: 'Automações', icon: Zap, roles: ['ADMIN'], module: 'AUTOMATIONS' },
+    { path: '/admin/sso', label: 'Administração', icon: Settings, roles: ['ADMIN'], module: 'ADMIN', moduleKey: 'ADMIN', submoduleKey: 'ADMIN_SSO' },
+    { path: '/finance', label: 'Financeiro', icon: Wallet, roles: ['ADMIN', 'TRIAGER'], module: 'FINANCE', moduleKey: 'FINANCE', submoduleKey: 'FINANCE_REPORTS' },
+    { path: '/hr', label: 'RH', icon: Users, roles: ['ADMIN', 'TRIAGER'], module: 'HR', moduleKey: 'HR', submoduleKey: 'HR_REPORTS' },
+    { path: '/procurement', label: 'Compras', icon: ShoppingCart, roles: ['ADMIN', 'TRIAGER'], module: 'PROCUREMENT', moduleKey: 'FINANCE', submoduleKey: 'FINANCE_PURCHASE_REQUESTS' },
   ];
 
   const hasAccess = (item: MenuItem) => {
     if (!user?.role) return false;
+    const entitlementAllowed =
+      item.moduleKey && item.submoduleKey
+        ? hasEntitlement(item.moduleKey, item.submoduleKey, 'READ')
+        : false;
+    if (!hasModule(item.module) && !entitlementAllowed) return false;
     if (item.allowTeamLead && !item.roles.includes(user.role)) {
       return isTeamLead;
     }
@@ -150,6 +167,11 @@ const ModernLayout = ({
       id: 'governance',
       label: 'Conhecimento e Qualidade',
       items: [getItem('/kb'), getItem('/sla'), getItem('/metrics')],
+    },
+    {
+      id: 'corporate',
+      label: 'Corporativo',
+      items: [getItem('/finance'), getItem('/hr'), getItem('/procurement')],
     },
     {
       id: 'admin',

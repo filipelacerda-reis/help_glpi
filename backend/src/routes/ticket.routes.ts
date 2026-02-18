@@ -1,37 +1,35 @@
 import { Router } from 'express';
 import { ticketController } from '../controllers/ticket.controller';
 import { attachmentController } from '../controllers/attachment.controller';
-import { authenticate, authorize } from '../middleware/auth';
-import { UserRole } from '@prisma/client';
+import { authenticate, requireModuleAccess } from '../middleware/auth';
 import { uploadMultiple } from '../utils/upload';
 
 const router = Router();
 
 // Permitir que todos os níveis de perfil possam criar tickets
-router.post('/', authenticate, uploadMultiple, ticketController.createTicket);
-router.get('/', authenticate, ticketController.getTickets);
-router.get('/:id', authenticate, ticketController.getTicketById);
-router.patch('/:id', authenticate, ticketController.updateTicket);
-router.post('/:id/comments', authenticate, uploadMultiple, ticketController.addComment);
-router.get('/:id/comments', authenticate, ticketController.getComments);
+router.post('/', authenticate, requireModuleAccess('TICKETS'), uploadMultiple, ticketController.createTicket);
+router.get('/', authenticate, requireModuleAccess('TICKETS'), ticketController.getTickets);
+router.get('/:id', authenticate, requireModuleAccess('TICKETS'), ticketController.getTicketById);
+router.patch('/:id', authenticate, requireModuleAccess('TICKETS'), ticketController.updateTicket);
+router.post('/:id/comments', authenticate, requireModuleAccess('TICKETS'), uploadMultiple, ticketController.addComment);
+router.get('/:id/comments', authenticate, requireModuleAccess('TICKETS'), ticketController.getComments);
 
 // Rotas de anexos
-router.get('/:id/attachments', authenticate, attachmentController.getTicketAttachments);
-router.delete('/attachments/:id', authenticate, attachmentController.deleteAttachment);
+router.get('/:id/attachments', authenticate, requireModuleAccess('TICKETS'), attachmentController.getTicketAttachments);
+router.delete('/attachments/:id', authenticate, requireModuleAccess('TICKETS'), attachmentController.deleteAttachment);
 
 // Rotas de tags
-router.post('/:id/tags', authenticate, ticketController.addTagsToTicket);
-router.delete('/:id/tags/:tagId', authenticate, ticketController.removeTagFromTicket);
+router.post('/:id/tags', authenticate, requireModuleAccess('TICKETS'), ticketController.addTagsToTicket);
+router.delete('/:id/tags/:tagId', authenticate, requireModuleAccess('TICKETS'), ticketController.removeTagFromTicket);
 
 // Rotas de observadores
-router.post('/:id/observers', authenticate, ticketController.addObserver);
-router.delete('/:id/observers/:observerId', authenticate, ticketController.removeObserver);
-router.get('/:id/observers', authenticate, ticketController.getObservers);
+router.post('/:id/observers', authenticate, requireModuleAccess('TICKETS'), ticketController.addObserver);
+router.delete('/:id/observers/:observerId', authenticate, requireModuleAccess('TICKETS'), ticketController.removeObserver);
+router.get('/:id/observers', authenticate, requireModuleAccess('TICKETS'), ticketController.getObservers);
 
 // Rotas de KB (importadas do kb.controller)
 import { kbController } from '../controllers/kb.controller';
-router.post('/:ticketId/kb-articles', authenticate, kbController.linkArticleToTicket);
-router.get('/:ticketId/kb-articles', authenticate, kbController.getTicketArticles);
+router.post('/:ticketId/kb-articles', authenticate, requireModuleAccess('TICKETS'), kbController.linkArticleToTicket);
+router.get('/:ticketId/kb-articles', authenticate, requireModuleAccess('TICKETS'), kbController.getTicketArticles);
 
 export { router as ticketRoutes };
-

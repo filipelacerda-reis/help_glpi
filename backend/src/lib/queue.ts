@@ -81,6 +81,10 @@ redisConnection = redisClient
 export let emailQueue: Queue | null = null;
 export let slaQueue: Queue | null = null;
 export let automationQueue: Queue | null = null;
+export let auditQueue: Queue | null = null;
+export let auditDlqQueue: Queue | null = null;
+export let hrWorkflowQueue: Queue | null = null;
+export let hrWorkflowDlqQueue: Queue | null = null;
 
 // Função para criar filas (Redis é obrigatório)
 function createQueues(): void {
@@ -110,11 +114,19 @@ function createQueues(): void {
     emailQueue = new Queue('email', queueOptions);
     slaQueue = new Queue('sla', queueOptions);
     automationQueue = new Queue('automation', queueOptions);
+    auditQueue = new Queue('audit-log', queueOptions);
+    auditDlqQueue = new Queue('audit-log-dlq', queueOptions);
+    hrWorkflowQueue = new Queue('hr-workflow', queueOptions);
+    hrWorkflowDlqQueue = new Queue('hr-workflow-dlq', queueOptions);
     
     logger.info('✅ Filas criadas com sucesso', {
       email: !!emailQueue,
       sla: !!slaQueue,
       automation: !!automationQueue,
+      audit: !!auditQueue,
+      auditDlq: !!auditDlqQueue,
+      hrWorkflow: !!hrWorkflowQueue,
+      hrWorkflowDlq: !!hrWorkflowDlqQueue,
     });
   } catch (error) {
     logger.error('❌ Erro ao criar filas', error);
@@ -140,7 +152,8 @@ export async function initializeQueues(): Promise<void> {
       redisAvailable = true;
       createQueues();
       logger.info('✅ Filas inicializadas com sucesso', {
-        queues: ['email', 'sla', 'automation'],
+        queues: ['email', 'sla', 'automation', 'audit-log', 'hr-workflow'],
+        auditQueue: 'audit-log',
         redis: `${env.REDIS_HOST}:${env.REDIS_PORT}`,
       });
     } else {
@@ -186,6 +199,10 @@ export async function closeQueues(): Promise<void> {
     if (emailQueue) promises.push(emailQueue.close());
     if (slaQueue) promises.push(slaQueue.close());
     if (automationQueue) promises.push(automationQueue.close());
+    if (auditQueue) promises.push(auditQueue.close());
+    if (auditDlqQueue) promises.push(auditDlqQueue.close());
+    if (hrWorkflowQueue) promises.push(hrWorkflowQueue.close());
+    if (hrWorkflowDlqQueue) promises.push(hrWorkflowDlqQueue.close());
     if (redisClient) {
       promises.push(
         redisClient.quit().then(() => undefined).catch(() => undefined)
@@ -204,6 +221,10 @@ export const queues = {
   email: emailQueue,
   sla: slaQueue,
   automation: automationQueue,
+  audit: auditQueue,
+  auditDlq: auditDlqQueue,
+  hrWorkflow: hrWorkflowQueue,
+  hrWorkflowDlq: hrWorkflowDlqQueue,
 };
 
 // Exportar flag de disponibilidade
@@ -214,3 +235,30 @@ export function isRedisAvailable(): boolean {
 // Exportar cliente Redis (pode ser null)
 export { redisClient, redisConnection };
 
+export async function getQueueJobCountsSnapshot() {
+  const entries: Array<{ queue: string; counts: Record<string, number> }> = [];
+  const queueRefs: Array<{ name: string; queue: Queue | null }> = [
+    { name: 'email', queue: emailQueue },
+    { name: 'sla', queue: slaQueue },
+    { name: 'automation', queue: automationQueue },
+    { name: 'audit-log', queue: auditQueue },
+    { name: 'audit-log-dlq', queue: auditDlqQueue },
+    { name: 'hr-workflow', queue: hrWorkflowQueue },
+    { name: 'hr-workflow-dlq', queue: hrWorkflowDlqQueue },
+  ];
+
+  for (const ref of queueRefs) {
+    if (!ref.queue) continue;
+    const counts = await ref.queue.getJobCounts(
+      'waiting',
+      'active',
+      'completed',
+      'failed',
+      'delayed',
+      'paused'
+    );
+    entries.push({ queue: ref.name, counts });
+  }
+
+  return entries;
+}

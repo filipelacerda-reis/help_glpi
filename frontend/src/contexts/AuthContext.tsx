@@ -1,5 +1,13 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { authService, AuthResponse } from '../services/auth.service';
+import { PlatformModule } from '../config/modules';
+import {
+  AccessLevel,
+  ModuleKey,
+  SubmoduleKey,
+  UserEntitlement,
+  hasEntitlement as checkEntitlement,
+} from '../config/entitlements';
 
 interface User {
   id: string;
@@ -7,6 +15,10 @@ interface User {
   email: string;
   role: string;
   department: string | null;
+  enabledModules: PlatformModule[];
+  effectiveModules: PlatformModule[];
+  effectivePermissions?: string[];
+  entitlements?: UserEntitlement[];
 }
 
 interface AuthContextType {
@@ -16,6 +28,9 @@ interface AuthContextType {
   register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
+  hasModule: (module: PlatformModule) => boolean;
+  hasPermission: (permission: string) => boolean;
+  hasEntitlement: (module: ModuleKey, submodule: SubmoduleKey, level?: AccessLevel) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -68,6 +83,24 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setUser(null);
   };
 
+  const hasModule = (module: PlatformModule) => {
+    if (!user) return false;
+    if (user.role === 'ADMIN') return true;
+    return user.effectiveModules?.includes(module) ?? false;
+  };
+
+  const hasPermission = (permission: string) => {
+    if (!user) return false;
+    if (user.role === 'ADMIN') return true;
+    return user.effectivePermissions?.includes(permission) ?? false;
+  };
+
+  const hasEntitlement = (module: ModuleKey, submodule: SubmoduleKey, level: AccessLevel = 'READ') => {
+    if (!user) return false;
+    if (user.role === 'ADMIN') return true;
+    return checkEntitlement(user.entitlements, module, submodule, level);
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -77,6 +110,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         register,
         logout,
         isAuthenticated: !!user,
+        hasModule,
+        hasPermission,
+        hasEntitlement,
       }}
     >
       {children}
@@ -91,4 +127,3 @@ export const useAuth = () => {
   }
   return context;
 };
-

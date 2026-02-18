@@ -5,9 +5,7 @@ module.exports = {
   testMatch: ['**/__tests__/**/*.test.ts', '**/?(*.)+(spec|test).ts'],
   testPathIgnorePatterns: ['/node_modules/', '/__tests__/setup.ts'],
   transform: {
-    '^.+\\.ts$': ['ts-jest', {
-      isolatedModules: true,
-    }],
+    '^.+\\.ts$': 'ts-jest',
   },
   transformIgnorePatterns: [
     'node_modules/(?!(uuid|@jest|jest-runtime)/)',
@@ -21,5 +19,5 @@ module.exports = {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
   setupFilesAfterEnv: ['<rootDir>/src/__tests__/setup.ts'],
+  maxWorkers: 1,
 };
-

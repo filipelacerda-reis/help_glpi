@@ -11,39 +11,69 @@ export async function resetDatabase(): Promise<void> {
     throw new Error('resetDatabase só pode ser usado em ambiente de teste!');
   }
 
-  // Deletar em ordem para respeitar constraints de foreign key
-  await prisma.ticketAttachment.deleteMany();
-  await prisma.ticketComment.deleteMany();
-  await prisma.ticketTag.deleteMany();
-  await prisma.ticketObserver.deleteMany();
-  await prisma.ticketRelation.deleteMany();
-  await prisma.ticketStatusHistory.deleteMany();
-  await prisma.ticket.deleteMany();
-  await prisma.notification.deleteMany();
-  await prisma.technicianJournalEntry.deleteMany();
-  await prisma.ticketKbArticle.deleteMany();
-  await prisma.kbArticleUsage.deleteMany();
-  await prisma.kbArticle.deleteMany();
-  await prisma.kbCategory.deleteMany();
-  await prisma.userTeam.deleteMany();
-  await prisma.reportPreset.deleteMany();
-  await prisma.chatMessage.deleteMany();
-  await prisma.chatSession.deleteMany();
-  await prisma.ticketSlaStats.deleteMany();
-  await prisma.ticketSlaInstance.deleteMany();
-  await prisma.equipmentAssignment.deleteMany();
-  await prisma.equipment.deleteMany();
-  await prisma.employee.deleteMany();
-  await prisma.platformAuditLog.deleteMany();
-  await prisma.platformSetting.deleteMany();
-  await prisma.team.deleteMany();
-  await prisma.tag.deleteMany();
-  await prisma.category.deleteMany();
-  await prisma.user.deleteMany();
-  await prisma.slaPolicy.deleteMany();
-  await prisma.automationRule.deleteMany();
-  await prisma.businessCalendarException.deleteMany();
-  await prisma.businessCalendar.deleteMany();
+  // Evita depender de delegates do Prisma Client gerado no momento do teste.
+  // TRUNCATE CASCADE limpa tudo de forma consistente e rápida.
+  await prisma.$executeRawUnsafe(`
+    TRUNCATE TABLE
+      "ticket_attachments",
+      "ticket_comments",
+      "ticket_tags",
+      "ticket_observers",
+      "ticket_relations",
+      "ticket_status_history",
+      "tickets",
+      "notifications",
+      "technician_journal_entries",
+      "ticket_kb_articles",
+      "kb_article_usage",
+      "kb_articles",
+      "kb_categories",
+      "user_teams",
+      "report_presets",
+      "chat_messages",
+      "chat_sessions",
+      "ticket_sla_stats",
+      "ticket_sla_instances",
+      "asset_movements",
+      "asset_ledgers",
+      "stock_movements",
+      "delivery_items",
+      "deliveries",
+      "stock_locations",
+      "approvals",
+      "invoices",
+      "purchase_orders",
+      "purchase_request_items",
+      "purchase_requests",
+      "vendors",
+      "cost_centers",
+      "equipment_assignments",
+      "equipments",
+      "case_tasks",
+      "onboarding_cases",
+      "offboarding_cases",
+      "policy_acknowledgements",
+      "policies",
+      "employees",
+      "user_attributes",
+      "user_roles",
+      "role_permissions",
+      "roles",
+      "permissions",
+      "auth_provider_configs",
+      "audit_events",
+      "platform_audit_logs",
+      "platform_settings",
+      "teams",
+      "tags",
+      "categories",
+      "users",
+      "sla_policies",
+      "automation_rules",
+      "business_calendar_exceptions",
+      "business_calendars"
+    RESTART IDENTITY CASCADE
+  `);
 }
 
 /**

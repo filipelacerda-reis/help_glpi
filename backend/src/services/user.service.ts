@@ -1,8 +1,10 @@
-import { UserRole } from '@prisma/client';
+import { AccessLevel, ModuleKey, SubmoduleKey, UserRole } from '@prisma/client';
 import prisma from '../lib/prisma';
 import { hashPassword } from '../utils/password';
 import { AppError } from '../middleware/errorHandler';
 import { logger } from '../utils/logger';
+import { getDefaultModulesByRole, getEffectiveModules, PlatformModule, sanitizeModules } from '../config/modules';
+import { authorizationService } from '../domains/iam/services/authorization.service';
 
 export interface CreateUserDto {
   name: string;
@@ -10,6 +12,12 @@ export interface CreateUserDto {
   password: string;
   role: UserRole;
   department?: string;
+  enabledModules?: string[];
+  entitlements?: Array<{
+    module: ModuleKey;
+    submodule: SubmoduleKey;
+    level: AccessLevel;
+  }>;
 }
 
 export interface UpdateUserDto {
@@ -18,65 +26,81 @@ export interface UpdateUserDto {
   password?: string;
   role?: UserRole;
   department?: string | null;
+  enabledModules?: string[];
+  entitlements?: Array<{
+    module: ModuleKey;
+    submodule: SubmoduleKey;
+    level: AccessLevel;
+  }>;
+}
+
+function selectUserFields() {
+  return {
+    id: true,
+    name: true,
+    email: true,
+    role: true,
+    department: true,
+    enabledModules: true,
+    entitlements: {
+      select: {
+        module: true,
+        submodule: true,
+        level: true,
+      },
+    },
+    createdAt: true,
+    updatedAt: true,
+  };
+}
+
+function withEffectiveModules<T extends { role: UserRole; enabledModules: string[] }>(user: T) {
+  return {
+    ...user,
+    effectiveModules: getEffectiveModules(user.role, user.enabledModules),
+  };
 }
 
 export const userService = {
   async getCurrentUser(userId: string) {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        department: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+      select: selectUserFields(),
     });
 
     if (!user) {
       throw new AppError('Usuário não encontrado', 404);
     }
 
-    return user;
+    const authz = await authorizationService.resolveContext(userId);
+    return {
+      ...withEffectiveModules(user),
+      effectivePermissions: authz?.permissions || [],
+      entitlements: authz?.entitlements || [],
+      attributes: authz?.attributes || {},
+    };
   },
 
   async getAllUsers(filters?: { role?: UserRole; department?: string }) {
-    return prisma.user.findMany({
+    const users = await prisma.user.findMany({
       where: filters,
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        department: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+      select: selectUserFields(),
       orderBy: { createdAt: 'desc' },
     });
+    return users.map(withEffectiveModules);
   },
 
   async getUserById(id: string) {
     const user = await prisma.user.findUnique({
       where: { id },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        department: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+      select: selectUserFields(),
     });
 
     if (!user) {
       throw new AppError('Usuário não encontrado', 404);
     }
 
-    return user;
+    return withEffectiveModules(user);
   },
 
   async createUser(data: CreateUserDto) {
@@ -89,25 +113,44 @@ export const userService = {
     }
 
     const passwordHash = await hashPassword(data.password);
+    const enabledModules = sanitizeModules(data.enabledModules);
+    const finalModules: PlatformModule[] =
+      data.role === UserRole.ADMIN
+        ? getDefaultModulesByRole(UserRole.ADMIN)
+        : enabledModules.length > 0
+          ? enabledModules
+          : getDefaultModulesByRole(data.role);
 
-    return prisma.user.create({
-      data: {
-        name: data.name,
-        email: data.email,
-        passwordHash,
-        role: data.role,
-        department: data.department,
-      },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        department: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+    const user = await prisma.$transaction(async (tx) => {
+      const created = await tx.user.create({
+        data: {
+          name: data.name,
+          email: data.email,
+          passwordHash,
+          role: data.role,
+          department: data.department,
+          enabledModules: finalModules,
+        },
+        select: selectUserFields(),
+      });
+
+      if (data.entitlements?.length) {
+        await tx.userEntitlement.createMany({
+          data: data.entitlements.map((entitlement) => ({
+            userId: created.id,
+            module: entitlement.module,
+            submodule: entitlement.submodule,
+            level: entitlement.level,
+          })),
+        });
+      }
+
+      return tx.user.findUniqueOrThrow({
+        where: { id: created.id },
+        select: selectUserFields(),
+      });
     });
+    return withEffectiveModules(user);
   },
 
   async updateUser(id: string, data: UpdateUserDto) {
@@ -120,6 +163,7 @@ export const userService = {
     }
 
     const updateData: any = { ...data };
+    const targetRole = data.role || user.role;
 
     if (data.email && data.email !== user.email) {
       const existingUser = await prisma.user.findUnique({
@@ -138,22 +182,46 @@ export const userService = {
       logger.info('Senha do usuário atualizada', { userId: id });
     }
 
-    const updatedUser = await prisma.user.update({
-      where: { id },
-      data: updateData,
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        department: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+    if (data.enabledModules !== undefined || data.role !== undefined) {
+      if (targetRole === UserRole.ADMIN) {
+        updateData.enabledModules = getDefaultModulesByRole(UserRole.ADMIN);
+      } else if (data.enabledModules !== undefined) {
+        const sanitized = sanitizeModules(data.enabledModules);
+        updateData.enabledModules = sanitized.length > 0 ? sanitized : getDefaultModulesByRole(targetRole);
+      } else if (data.role !== undefined) {
+        updateData.enabledModules = getDefaultModulesByRole(targetRole);
+      }
+    }
+
+    const updatedUser = await prisma.$transaction(async (tx) => {
+      const updated = await tx.user.update({
+        where: { id },
+        data: updateData,
+        select: selectUserFields(),
+      });
+
+      if (data.entitlements !== undefined) {
+        await tx.userEntitlement.deleteMany({ where: { userId: id } });
+        if (data.entitlements.length > 0) {
+          await tx.userEntitlement.createMany({
+            data: data.entitlements.map((entitlement) => ({
+              userId: id,
+              module: entitlement.module,
+              submodule: entitlement.submodule,
+              level: entitlement.level,
+            })),
+          });
+        }
+      }
+
+      return tx.user.findUniqueOrThrow({
+        where: { id: updated.id },
+        select: selectUserFields(),
+      });
     });
 
     logger.info('Usuário atualizado com sucesso', { userId: id, email: updatedUser.email });
-    return updatedUser;
+    return withEffectiveModules(updatedUser);
   },
 
   async deleteUser(id: string) {
@@ -203,4 +271,3 @@ export const userService = {
     logger.info('Usuário excluído com sucesso', { userId: id, email: user.email });
   },
 };
-

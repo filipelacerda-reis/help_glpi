@@ -1,7 +1,10 @@
 import {
+  DeliveryStatus,
   EquipmentCondition,
   EquipmentStatus,
   EquipmentType,
+  Prisma,
+  StockMovementType,
 } from '@prisma/client';
 import prisma from '../lib/prisma';
 import { AppError } from '../middleware/errorHandler';
@@ -42,6 +45,11 @@ export interface AssignEquipmentDto {
   expectedReturnAt?: Date | null;
   deliveryCondition?: EquipmentCondition;
   deliveryTermNumber?: string;
+  createDelivery?: boolean;
+  deliveryScheduledAt?: Date | null;
+  deliveryCourier?: string;
+  deliveryTracking?: string;
+  deliveryProofUrl?: string;
   notes?: string;
 }
 
@@ -49,7 +57,32 @@ export interface ReturnAssignmentDto {
   returnedAt?: Date;
   returnCondition?: EquipmentCondition;
   finalStatus?: EquipmentStatus;
+  stockLocationId?: string;
   notes?: string;
+}
+
+export interface CreateStockLocationDto {
+  name: string;
+  active?: boolean;
+}
+
+export interface CreateStockMovementDto {
+  equipmentId: string;
+  type: StockMovementType;
+  fromLocationId?: string | null;
+  toLocationId?: string | null;
+  notes?: string;
+  metadataJson?: unknown;
+}
+
+export interface UpdateDeliveryDto {
+  status?: DeliveryStatus;
+  scheduledAt?: Date | null;
+  deliveredAt?: Date | null;
+  courier?: string | null;
+  tracking?: string | null;
+  proofUrl?: string | null;
+  notes?: string | null;
 }
 
 export interface EquipmentDashboardData {
@@ -87,6 +120,17 @@ export interface EquipmentAlertsData {
     daysOverdue: number;
   }>;
 }
+
+const ensureDefaultStockLocation = async (tx: Prisma.TransactionClient | typeof prisma) => {
+  return tx.stockLocation.upsert({
+    where: { name: 'Estoque Principal' },
+    update: {},
+    create: {
+      name: 'Estoque Principal',
+      active: true,
+    },
+  });
+};
 
 export const equipmentService = {
   async getAll(filters?: {
@@ -218,7 +262,7 @@ export const equipmentService = {
     await prisma.equipment.delete({ where: { id } });
   },
 
-  async assignEquipment(equipmentId: string, data: AssignEquipmentDto) {
+  async assignEquipment(equipmentId: string, data: AssignEquipmentDto, actorUserId?: string) {
     const equipment = await prisma.equipment.findUnique({
       where: { id: equipmentId },
     });
@@ -253,6 +297,7 @@ export const equipmentService = {
     const assignedAt = data.assignedAt || new Date();
 
     return prisma.$transaction(async (tx) => {
+      const stockLocation = await ensureDefaultStockLocation(tx);
       const assignment = await tx.equipmentAssignment.create({
         data: {
           equipmentId,
@@ -281,11 +326,52 @@ export const equipmentService = {
         },
       });
 
+      let deliveryId: string | undefined;
+      if (data.createDelivery || data.deliveryScheduledAt || data.deliveryCourier || data.deliveryTracking || data.deliveryProofUrl) {
+        const delivery = await tx.delivery.create({
+          data: {
+            employeeId: data.employeeId,
+            assignmentId: assignment.id,
+            status: data.deliveryProofUrl ? DeliveryStatus.DELIVERED : DeliveryStatus.SCHEDULED,
+            scheduledAt: data.deliveryScheduledAt || assignedAt,
+            deliveredAt: data.deliveryProofUrl ? assignedAt : null,
+            courier: data.deliveryCourier || null,
+            tracking: data.deliveryTracking || null,
+            proofUrl: data.deliveryProofUrl || null,
+            notes: data.notes || null,
+          },
+        });
+        deliveryId = delivery.id;
+
+        await tx.deliveryItem.create({
+          data: {
+            deliveryId: delivery.id,
+            equipmentId,
+          },
+        });
+      }
+
+      await tx.stockMovement.create({
+        data: {
+          equipmentId,
+          fromLocationId: stockLocation.id,
+          toLocationId: null,
+          type: StockMovementType.OUT,
+          actorUserId: actorUserId || null,
+          deliveryId: deliveryId || null,
+          notes: data.notes || 'Saída para entrega de equipamento',
+          metadataJson: {
+            assignmentId: assignment.id,
+            employeeId: data.employeeId,
+          },
+        },
+      });
+
       return assignment;
     });
   },
 
-  async returnAssignment(assignmentId: string, data: ReturnAssignmentDto) {
+  async returnAssignment(assignmentId: string, data: ReturnAssignmentDto, actorUserId?: string) {
     const assignment = await prisma.equipmentAssignment.findUnique({
       where: { id: assignmentId },
       include: { equipment: true },
@@ -304,6 +390,9 @@ export const equipmentService = {
         : EquipmentStatus.IN_STOCK;
 
     return prisma.$transaction(async (tx) => {
+      const defaultStock = await ensureDefaultStockLocation(tx);
+      const targetStockLocationId = data.stockLocationId || defaultStock.id;
+
       const updatedAssignment = await tx.equipmentAssignment.update({
         where: { id: assignmentId },
         data: {
@@ -328,6 +417,34 @@ export const equipmentService = {
           condition: data.returnCondition || assignment.equipment.condition,
         },
       });
+
+      await tx.stockMovement.create({
+        data: {
+          equipmentId: assignment.equipmentId,
+          fromLocationId: null,
+          toLocationId: targetStockLocationId,
+          type: StockMovementType.IN,
+          actorUserId: actorUserId || null,
+          notes: data.notes || 'Entrada por devolução de equipamento',
+          metadataJson: {
+            assignmentId,
+            employeeId: assignment.employeeId,
+          },
+        },
+      });
+
+      const linkedDelivery = await tx.delivery.findFirst({
+        where: { assignmentId },
+      });
+      if (linkedDelivery) {
+        await tx.delivery.update({
+          where: { id: linkedDelivery.id },
+          data: {
+            status: DeliveryStatus.RETURNED,
+            deliveredAt: linkedDelivery.deliveredAt || returnedAt,
+          },
+        });
+      }
 
       return updatedAssignment;
     });
@@ -516,5 +633,117 @@ export const equipmentService = {
     }
 
     return assignment;
+  },
+
+  async listStockLocations(activeOnly = false) {
+    return prisma.stockLocation.findMany({
+      where: activeOnly ? { active: true } : undefined,
+      orderBy: { name: 'asc' },
+    });
+  },
+
+  async createStockLocation(data: CreateStockLocationDto) {
+    return prisma.stockLocation.create({
+      data: {
+        name: data.name,
+        active: data.active ?? true,
+      },
+    });
+  },
+
+  async getStockMovements(filters?: { equipmentId?: string; type?: StockMovementType }) {
+    return prisma.stockMovement.findMany({
+      where: {
+        equipmentId: filters?.equipmentId,
+        type: filters?.type,
+      },
+      include: {
+        equipment: true,
+        fromLocation: true,
+        toLocation: true,
+      },
+      orderBy: { ts: 'desc' },
+    });
+  },
+
+  async createStockMovement(data: CreateStockMovementDto, actorUserId?: string) {
+    const equipment = await prisma.equipment.findUnique({ where: { id: data.equipmentId } });
+    if (!equipment) throw new AppError('Equipamento não encontrado', 404);
+
+    if (data.fromLocationId) {
+      const fromLocation = await prisma.stockLocation.findUnique({ where: { id: data.fromLocationId } });
+      if (!fromLocation) throw new AppError('Local de origem não encontrado', 404);
+    }
+    if (data.toLocationId) {
+      const toLocation = await prisma.stockLocation.findUnique({ where: { id: data.toLocationId } });
+      if (!toLocation) throw new AppError('Local de destino não encontrado', 404);
+    }
+
+    return prisma.stockMovement.create({
+      data: {
+        equipmentId: data.equipmentId,
+        type: data.type,
+        fromLocationId: data.fromLocationId || null,
+        toLocationId: data.toLocationId || null,
+        notes: data.notes || null,
+        metadataJson: (data.metadataJson as any) || null,
+        actorUserId: actorUserId || null,
+      },
+      include: {
+        equipment: true,
+        fromLocation: true,
+        toLocation: true,
+      },
+    });
+  },
+
+  async getDeliveries(filters?: { employeeId?: string; status?: DeliveryStatus }) {
+    return prisma.delivery.findMany({
+      where: {
+        employeeId: filters?.employeeId,
+        status: filters?.status,
+      },
+      include: {
+        employee: true,
+        items: {
+          include: {
+            equipment: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  },
+
+  async updateDelivery(id: string, data: UpdateDeliveryDto) {
+    const current = await prisma.delivery.findUnique({ where: { id } });
+    if (!current) throw new AppError('Entrega não encontrada', 404);
+
+    const nextStatus = data.status || current.status;
+    const deliveredAt =
+      data.deliveredAt !== undefined
+        ? data.deliveredAt
+        : nextStatus === DeliveryStatus.DELIVERED && !current.deliveredAt
+          ? new Date()
+          : current.deliveredAt;
+
+    return prisma.delivery.update({
+      where: { id },
+      data: {
+        status: nextStatus,
+        scheduledAt: data.scheduledAt !== undefined ? data.scheduledAt : current.scheduledAt,
+        deliveredAt,
+        courier: data.courier !== undefined ? data.courier : current.courier,
+        tracking: data.tracking !== undefined ? data.tracking : current.tracking,
+        proofUrl: data.proofUrl !== undefined ? data.proofUrl : current.proofUrl,
+        notes: data.notes !== undefined ? data.notes : current.notes,
+      },
+      include: {
+        employee: true,
+        items: {
+          include: { equipment: true },
+        },
+      },
+    });
   },
 };

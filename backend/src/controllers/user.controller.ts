@@ -1,7 +1,13 @@
 import { Request, Response } from 'express';
 import { userService } from '../services/user.service';
 import { z } from 'zod';
-import { UserRole } from '@prisma/client';
+import { AccessLevel, ModuleKey, SubmoduleKey, UserRole } from '@prisma/client';
+
+const entitlementSchema = z.object({
+  module: z.nativeEnum(ModuleKey),
+  submodule: z.nativeEnum(SubmoduleKey),
+  level: z.nativeEnum(AccessLevel),
+});
 
 const createUserSchema = z.object({
   name: z.string().min(2, 'Nome deve ter no mínimo 2 caracteres'),
@@ -9,6 +15,8 @@ const createUserSchema = z.object({
   password: z.string().min(6, 'Senha deve ter no mínimo 6 caracteres'),
   role: z.nativeEnum(UserRole),
   department: z.string().optional(),
+  enabledModules: z.array(z.string()).optional(),
+  entitlements: z.array(entitlementSchema).optional(),
 });
 
 const updateUserSchema = z.object({
@@ -17,6 +25,8 @@ const updateUserSchema = z.object({
   password: z.string().min(6).optional(),
   role: z.nativeEnum(UserRole).optional(),
   department: z.string().optional().nullable(),
+  enabledModules: z.array(z.string()).optional(),
+  entitlements: z.array(entitlementSchema).optional(),
 });
 
 export const userController = {
@@ -68,4 +78,3 @@ export const userController = {
     res.status(204).send();
   },
 };
-

@@ -13,5 +13,6 @@ if (!isRedisAvailable() || !redisConnection) {
 import('./email.worker');
 import('./sla.worker');
 import('./automation.worker');
+import('./audit.worker');
+import('./hr.workflow.worker');
 logger.info('✅ Todos os workers inicializados');
-

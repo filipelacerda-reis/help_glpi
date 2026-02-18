@@ -3,8 +3,9 @@ import { z } from 'zod';
 import { platformSettingsService } from '../services/platformSettings.service';
 import { platformAuditService } from '../services/platformAudit.service';
 import { getRuntimeConfig, refreshRuntimeConfig } from '../config/runtimeConfig';
-import { TicketPriority, TicketType, UserRole } from '@prisma/client';
+import { AuthProvider, TicketPriority, TicketType, UserRole } from '@prisma/client';
 import { logger } from '../utils/logger';
+import { authProviderConfigService } from '../domains/iam/services/authProviderConfig.service';
 
 const roleEnum = z.nativeEnum(UserRole);
 
@@ -63,6 +64,7 @@ const auth0Schema = z.object({
   clientId: z.string().optional(),
   clientSecret: z.string().optional(),
   callbackUrl: z.string().url().optional(),
+  audience: z.string().optional(),
   jwtRedirectUrl: z.string().optional(),
   allowedDomains: z.string().optional(),
   rolesClaim: z.string().optional(),
@@ -140,6 +142,8 @@ export const adminSettingsController = {
     });
 
     res.json({
+      activeProvider: runtime.activeProvider,
+      authProviders: await authProviderConfigService.list(),
       saml: samlMasked,
       auth0: auth0Masked,
       platform: runtime.platform,
@@ -150,6 +154,13 @@ export const adminSettingsController = {
     const payload = settingsSchema.parse(req.body);
     const actorUserId = req.userId as string;
     const runtime = await getRuntimeConfig();
+
+    if (payload.saml?.enabled && payload.auth0?.enabled) {
+      res.status(400).json({
+        error: 'Apenas um provedor SSO pode estar ativo por vez.',
+      });
+      return;
+    }
 
     const mergedSaml = payload.saml
       ? {
@@ -223,18 +234,58 @@ export const adminSettingsController = {
     }
 
     if (updates.length === 0) {
-      res.status(400).json({ error: 'Nenhuma configuração para atualizar' });
-      return;
+      if (!payload.saml && !payload.auth0) {
+        res.status(400).json({ error: 'Nenhuma configuração para atualizar' });
+        return;
+      }
     }
 
     try {
-      await platformSettingsService.setMany(updates, actorUserId);
+      if (updates.length > 0) {
+        await platformSettingsService.setMany(updates, actorUserId);
+      }
+
+      if (payload.saml) {
+        await authProviderConfigService.upsert(
+          {
+            provider: AuthProvider.SAML_GOOGLE,
+            enabled: Boolean(mergedSaml.enabled),
+            samlMetadataUrl: mergedSaml.entryPoint,
+            samlEntityId: mergedSaml.issuer,
+            samlCallbackUrl: mergedSaml.callbackUrl,
+          },
+          actorUserId
+        );
+      }
+
+      if (payload.auth0) {
+        await authProviderConfigService.upsert(
+          {
+            provider: AuthProvider.AUTH0,
+            enabled: Boolean(mergedAuth0.enabled),
+            auth0Domain: mergedAuth0.domain,
+            auth0ClientId: mergedAuth0.clientId,
+            auth0CallbackUrl: mergedAuth0.callbackUrl,
+            auth0Audience: mergedAuth0.audience,
+            auth0ClientSecret:
+              payload.auth0.clientSecret && payload.auth0.clientSecret !== '***'
+                ? payload.auth0.clientSecret
+                : undefined,
+          },
+          actorUserId
+        );
+      }
+
       await platformAuditService.log(actorUserId, 'SETTING_UPDATED', 'PLATFORM', {
         keys: updates.map((u) => u.key),
+        activeProvider: (await authProviderConfigService.getActiveProvider()) || null,
       });
 
       refreshRuntimeConfig();
-      logger.info('Settings atualizados via admin', { actorUserId, keys: updates.map((u) => u.key) });
+      logger.info('Settings atualizados via admin', {
+        actorUserId,
+        keys: updates.map((u) => u.key),
+      });
 
       res.json({ success: true });
     } catch (error: any) {
@@ -259,9 +310,24 @@ export const adminSettingsController = {
       return;
     }
 
+    let metadataReachable = false;
+    let metadataStatus: number | null = null;
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 5000);
+      const response = await fetch(saml.entryPoint, { signal: controller.signal });
+      clearTimeout(timeout);
+      metadataStatus = response.status;
+      metadataReachable = response.ok;
+    } catch {
+      metadataReachable = false;
+    }
+
     res.json({
       ok: true,
       metadataUrl: '/api/auth/saml/metadata',
+      metadataReachable,
+      metadataStatus,
       message: 'Configuração SAML válida',
     });
   },
@@ -281,9 +347,30 @@ export const adminSettingsController = {
       return;
     }
 
+    const baseDomain = auth0.domain?.startsWith('http')
+      ? auth0.domain.replace(/\/$/, '')
+      : `https://${auth0.domain?.replace(/\/$/, '')}`;
+    const jwksUrl = `${baseDomain}/.well-known/jwks.json`;
+
+    let jwksReachable = false;
+    let jwksStatus: number | null = null;
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 5000);
+      const response = await fetch(jwksUrl, { signal: controller.signal });
+      clearTimeout(timeout);
+      jwksStatus = response.status;
+      jwksReachable = response.ok;
+    } catch {
+      jwksReachable = false;
+    }
+
     res.json({
       ok: true,
       loginUrl: '/api/auth/auth0/login',
+      jwksUrl,
+      jwksReachable,
+      jwksStatus,
       message: 'Configuração Auth0 válida',
     });
   },

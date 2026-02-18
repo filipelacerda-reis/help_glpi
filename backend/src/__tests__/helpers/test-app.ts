@@ -6,6 +6,9 @@ import 'express-async-errors';
 import { errorHandler } from '../../middleware/errorHandler';
 import { requestLogger } from '../../middleware/requestLogger';
 import { attachIo } from '../../middleware/socket';
+import { requestContextMiddleware } from '../../shared/http/requestContext.middleware';
+import { httpObservabilityMiddleware } from '../../shared/http/httpObservability.middleware';
+import { metricsRegistry } from '../../shared/observability/metrics.registry';
 import { authRoutes } from '../../routes/auth.routes';
 import { userRoutes } from '../../routes/user.routes';
 import { ticketRoutes } from '../../routes/ticket.routes';
@@ -27,6 +30,9 @@ import { technicianJournalRoutes } from '../../routes/technicianJournal.routes';
 import { assistantRouter } from '../../routes/assistant.routes';
 import { employeeRoutes } from '../../routes/employee.routes';
 import { equipmentRoutes } from '../../routes/equipment.routes';
+import { financeRoutes } from '../../routes/finance.routes';
+import { hrRoutes } from '../../routes/hr.routes';
+import { procurementRoutes } from '../../routes/procurement.routes';
 import path from 'path';
 
 /**
@@ -51,6 +57,8 @@ export function createTestApp(): express.Application {
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
+  app.use(requestContextMiddleware);
+  app.use(httpObservabilityMiddleware);
   app.use(requestLogger);
   app.use(attachIo);
 
@@ -60,6 +68,23 @@ export function createTestApp(): express.Application {
   // Health check
   app.get('/health', (_req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  });
+  app.get('/healthz', (_req, res) => {
+    res.status(200).json({ status: 'ok', service: 'backend-test', timestamp: new Date().toISOString() });
+  });
+  app.get('/readyz', (_req, res) => {
+    res.status(200).json({
+      status: 'ready',
+      timestamp: new Date().toISOString(),
+      checks: {
+        db: { ok: true },
+        redis: { ok: true },
+      },
+    });
+  });
+  app.get('/metrics', (_req, res) => {
+    res.setHeader('Content-Type', 'text/plain; version=0.0.4');
+    res.status(200).send(metricsRegistry.renderPrometheus());
   });
 
   // Routes
@@ -84,6 +109,9 @@ export function createTestApp(): express.Application {
   app.use('/api/assistant', assistantRouter);
   app.use('/api/employees', employeeRoutes);
   app.use('/api/equipments', equipmentRoutes);
+  app.use('/api/finance', financeRoutes);
+  app.use('/api/hr', hrRoutes);
+  app.use('/api/procurement', procurementRoutes);
 
   // Error handler
   app.use(errorHandler);

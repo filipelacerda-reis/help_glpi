@@ -158,6 +158,10 @@ export const env = {
   MAX_FILES: parseInt(process.env.MAX_FILES || '10', 10),
   // Logging
   LOG_LEVEL: process.env.LOG_LEVEL || 'info',
+  // Observability / OpenTelemetry
+  OTEL_ENABLED: process.env.OTEL_ENABLED === 'true',
+  OTEL_SERVICE_NAME: process.env.OTEL_SERVICE_NAME || 'glpi-backend',
+  OTEL_EXPORTER_OTLP_ENDPOINT: process.env.OTEL_EXPORTER_OTLP_ENDPOINT || '',
   // OpenAI
   OPENAI_API_KEY: process.env.OPENAI_API_KEY!,
   // Google Gemini
@@ -200,4 +204,3 @@ export const env = {
   AUTH0_UPDATE_ROLE_ON_LOGIN: process.env.AUTH0_UPDATE_ROLE_ON_LOGIN === 'true',
   AUTH0_REQUIRE_ROLE: process.env.AUTH0_REQUIRE_ROLE !== 'false',
 };
-

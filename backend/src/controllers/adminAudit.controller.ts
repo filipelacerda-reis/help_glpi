@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { z } from 'zod';
-import { platformAuditService } from '../services/platformAudit.service';
+import { auditEventReadService } from '../domains/compliance/services/auditEventRead.service';
 
 const listAuditSchema = z.object({
   limit: z.coerce.number().int().min(1).max(200).optional(),
@@ -23,7 +23,7 @@ const listAuditSchema = z.object({
 export const adminAuditController = {
   async list(req: Request, res: Response) {
     const query = listAuditSchema.parse(req.query);
-    const result = await platformAuditService.list(query.limit || 50, query.cursor, {
+    const result = await auditEventReadService.list(query.limit || 50, query.cursor, {
       actorUserId: query.actorUserId,
       action: query.action,
       resource: query.resource,
@@ -40,7 +40,7 @@ export const adminAuditController = {
     const pageSize = 200;
 
     for (let i = 0; i < 100; i += 1) {
-      const result = await platformAuditService.list(pageSize, cursor, {
+      const result = await auditEventReadService.list(pageSize, cursor, {
         actorUserId: query.actorUserId,
         action: query.action,
         resource: query.resource,

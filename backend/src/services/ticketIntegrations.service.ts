@@ -11,6 +11,7 @@ import { logger } from '../utils/logger';
 import { slaQueue, automationQueue, emailQueue, isRedisAvailable } from '../lib/queue';
 import { env } from '../config/env';
 import axios from 'axios';
+import { requestContextStore } from '../shared/http/requestContext.store';
 
 // Função auxiliar para adicionar job na fila
 // Redis é obrigatório - se não estiver disponível, lança erro
@@ -21,7 +22,12 @@ async function safeAddToQueue(queue: any, jobName: string, data: any): Promise<v
   }
 
   try {
-    await queue.add(jobName, data);
+    const context = requestContextStore.get();
+    await queue.add(jobName, {
+      ...data,
+      requestId: data.requestId || context?.requestId,
+      correlationId: data.correlationId || context?.correlationId || context?.requestId,
+    });
     logger.debug(`Job adicionado na fila: ${jobName}`, { ticketId: data.ticketId });
   } catch (error: any) {
     logger.error(`Erro ao adicionar job na fila: ${jobName}`, { 
@@ -437,4 +443,3 @@ export async function recordTagRemoved(ticketId: string, userId: string, tagId: 
     logger.error('Erro ao registrar tag removida', { ticketId, error: error.message });
   }
 }
-

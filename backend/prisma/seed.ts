@@ -1,5 +1,19 @@
-import { PrismaClient, UserRole, TagGroup, TicketStatus, TicketPriority, TicketType, InfraType, TeamRole, TechnicianJournalEntryType } from '@prisma/client';
+import {
+  AccessLevel,
+  ModuleKey,
+  PrismaClient,
+  SubmoduleKey,
+  UserRole,
+  TagGroup,
+  TicketStatus,
+  TicketPriority,
+  TicketType,
+  InfraType,
+  TeamRole,
+  TechnicianJournalEntryType,
+} from '@prisma/client';
 import { hashPassword } from '../src/utils/password';
+import { PERMISSION_CATALOG } from '../src/domains/iam/entitlements/permissionCatalog';
 
 const prisma = new PrismaClient();
 
@@ -57,6 +71,316 @@ async function main() {
       passwordHash: requesterPassword,
       role: UserRole.REQUESTER,
       department: 'Vendas',
+    },
+  });
+
+  // RBAC + catálogo enterprise de permissões
+  const permissionKeys = PERMISSION_CATALOG.map((key) => ({
+    key,
+    description: `Permission ${key}`,
+  }));
+
+  const permissionsByKey = new Map<string, { id: string }>();
+  for (const permission of permissionKeys) {
+    const created = await prisma.permission.upsert({
+      where: { key: permission.key },
+      update: { description: permission.description },
+      create: { key: permission.key, description: permission.description },
+      select: { id: true, key: true },
+    });
+    permissionsByKey.set(permission.key, { id: created.id });
+  }
+
+  const roleNames = [
+    { name: 'ADMIN', description: 'Administrador da plataforma' },
+    { name: 'SRE_IT', description: 'Operações de ITSM e Ativos' },
+    { name: 'RH', description: 'Operações de RH' },
+    { name: 'HR_ADMIN', description: 'Operações de RH com PII estendida' },
+    { name: 'FINANCE', description: 'Operações de Financeiro' },
+    { name: 'FINANCE_APPROVER', description: 'Aprovador financeiro' },
+    { name: 'MANAGER', description: 'Gestor de equipe' },
+    { name: 'EMPLOYEE', description: 'Colaborador padrão' },
+  ] as const;
+
+  const rolesByName = new Map<string, { id: string }>();
+  for (const role of roleNames) {
+    const created = await prisma.role.upsert({
+      where: { name: role.name },
+      update: { description: role.description },
+      create: { name: role.name, description: role.description },
+      select: { id: true, name: true },
+    });
+    rolesByName.set(role.name, { id: created.id });
+  }
+
+  const byPrefix = (prefix: string) => permissionKeys.map((p) => p.key).filter((key) => key.startsWith(prefix));
+  const without = (items: string[], excluded: string[]) => items.filter((item) => !excluded.includes(item));
+  const uniq = (items: string[]) => [...new Set(items)];
+
+  const rolePermissions: Record<string, string[]> = {
+    ADMIN: permissionKeys.map((permission) => permission.key),
+    SRE_IT: uniq([
+      ...byPrefix('itsm.'),
+      ...byPrefix('assets.'),
+      'audit.read',
+      'platform.users.read',
+    ]),
+    RH: uniq([
+      ...without(byPrefix('hr.'), ['hr.employee.write_pii']),
+      'assets.assignment.read',
+      'assets.equipment.read',
+      'itsm.ticket.read',
+    ]),
+    HR_ADMIN: byPrefix('hr.'),
+    FINANCE: uniq([
+      ...without(byPrefix('finance.'), ['finance.approval.approve']),
+      'assets.equipment.read',
+    ]),
+    FINANCE_APPROVER: uniq([...byPrefix('finance.'), 'finance.approval.approve', 'assets.equipment.read']),
+    MANAGER: uniq(['hr.employee.read', 'assets.assignment.read', 'itsm.ticket.read']),
+    EMPLOYEE: uniq(['itsm.view', 'itsm.ticket.read', 'itsm.ticket.write', 'hr.policy.read', 'hr.ack.write', 'assets.assignment.read']),
+  };
+
+  for (const [roleName, keys] of Object.entries(rolePermissions)) {
+    const role = rolesByName.get(roleName);
+    if (!role) continue;
+    for (const key of keys) {
+      const permission = permissionsByKey.get(key);
+      if (!permission) continue;
+      await prisma.rolePermission.upsert({
+        where: {
+          roleId_permissionId: {
+            roleId: role.id,
+            permissionId: permission.id,
+          },
+        },
+        update: {},
+        create: {
+          roleId: role.id,
+          permissionId: permission.id,
+        },
+      });
+    }
+  }
+
+  await prisma.userRoleAssignment.upsert({
+    where: { userId_roleId: { userId: admin.id, roleId: rolesByName.get('ADMIN')!.id } },
+    update: {},
+    create: { userId: admin.id, roleId: rolesByName.get('ADMIN')!.id },
+  });
+  await prisma.userRoleAssignment.upsert({
+    where: { userId_roleId: { userId: triager.id, roleId: rolesByName.get('SRE_IT')!.id } },
+    update: {},
+    create: { userId: triager.id, roleId: rolesByName.get('SRE_IT')!.id },
+  });
+  await prisma.userRoleAssignment.upsert({
+    where: { userId_roleId: { userId: technician.id, roleId: rolesByName.get('EMPLOYEE')!.id } },
+    update: {},
+    create: { userId: technician.id, roleId: rolesByName.get('EMPLOYEE')!.id },
+  });
+  await prisma.userRoleAssignment.upsert({
+    where: { userId_roleId: { userId: requester.id, roleId: rolesByName.get('EMPLOYEE')!.id } },
+    update: {},
+    create: { userId: requester.id, roleId: rolesByName.get('EMPLOYEE')!.id },
+  });
+
+  const setEntitlements = async (
+    userId: string,
+    entries: Array<{ module: ModuleKey; submodule: SubmoduleKey; level: AccessLevel }>
+  ) => {
+    await prisma.userEntitlement.deleteMany({ where: { userId } });
+    if (entries.length) {
+      await prisma.userEntitlement.createMany({
+        data: entries.map((entry) => ({
+          userId,
+          module: entry.module,
+          submodule: entry.submodule,
+          level: entry.level,
+        })),
+      });
+    }
+  };
+
+  const allSubmodules = Object.values(SubmoduleKey);
+  const adminEntitlements = allSubmodules.map((submodule) => ({
+    module: (submodule.startsWith('ADMIN_')
+      ? 'ADMIN'
+      : submodule.startsWith('ITSM_')
+        ? 'ITSM'
+        : submodule.startsWith('HR_')
+          ? 'HR'
+          : submodule.startsWith('FINANCE_')
+            ? 'FINANCE'
+            : submodule.startsWith('ASSETS_')
+              ? 'ASSETS'
+              : 'COMPLIANCE') as ModuleKey,
+    submodule,
+    level: AccessLevel.WRITE,
+  }));
+
+  await setEntitlements(admin.id, adminEntitlements);
+  await setEntitlements(
+    triager.id,
+    Object.values(SubmoduleKey)
+      .filter((submodule) => submodule.startsWith('ITSM_') || submodule.startsWith('ASSETS_'))
+      .map((submodule) => ({
+        module: submodule.startsWith('ITSM_') ? ModuleKey.ITSM : ModuleKey.ASSETS,
+        submodule,
+        level: AccessLevel.WRITE,
+      }))
+  );
+  await setEntitlements(
+    technician.id,
+    [
+      SubmoduleKey.ITSM_TICKETS,
+      SubmoduleKey.ASSETS_ASSIGNMENTS,
+      SubmoduleKey.ASSETS_EQUIPMENT,
+    ].map((submodule) => ({
+      module: submodule.startsWith('ITSM_') ? ModuleKey.ITSM : ModuleKey.ASSETS,
+      submodule,
+      level: AccessLevel.READ,
+    }))
+  );
+  await setEntitlements(requester.id, [
+    { module: ModuleKey.ITSM, submodule: SubmoduleKey.ITSM_TICKETS, level: AccessLevel.WRITE },
+    { module: ModuleKey.HR, submodule: SubmoduleKey.HR_POLICIES, level: AccessLevel.READ },
+    { module: ModuleKey.ASSETS, submodule: SubmoduleKey.ASSETS_ASSIGNMENTS, level: AccessLevel.READ },
+  ]);
+
+  // Dados base de financeiro/procurement
+  await prisma.costCenter.upsert({
+    where: { code: 'CC-TI-001' },
+    update: { name: 'Tecnologia da Informação', ownerUserId: admin.id },
+    create: {
+      code: 'CC-TI-001',
+      name: 'Tecnologia da Informação',
+      ownerUserId: admin.id,
+    },
+  });
+  await prisma.costCenter.upsert({
+    where: { code: 'CC-RH-001' },
+    update: { name: 'Recursos Humanos', ownerUserId: admin.id },
+    create: {
+      code: 'CC-RH-001',
+      name: 'Recursos Humanos',
+      ownerUserId: admin.id,
+    },
+  });
+  await prisma.costCenter.upsert({
+    where: { code: 'CC-OPS-001' },
+    update: { name: 'Operações', ownerUserId: admin.id },
+    create: {
+      code: 'CC-OPS-001',
+      name: 'Operações',
+      ownerUserId: admin.id,
+    },
+  });
+
+  await prisma.vendor.upsert({
+    where: { taxId: '12.345.678/0001-90' },
+    update: {
+      name: 'Tech Distribuidora Ltda',
+      contactEmail: 'compras@techdistribuidora.example',
+    },
+    create: {
+      name: 'Tech Distribuidora Ltda',
+      taxId: '12.345.678/0001-90',
+      contactEmail: 'compras@techdistribuidora.example',
+    },
+  });
+  await prisma.vendor.upsert({
+    where: { taxId: '98.765.432/0001-10' },
+    update: {
+      name: 'Office Solutions SA',
+      contactEmail: 'vendas@officesolutions.example',
+    },
+    create: {
+      name: 'Office Solutions SA',
+      taxId: '98.765.432/0001-10',
+      contactEmail: 'vendas@officesolutions.example',
+    },
+  });
+
+  await prisma.stockLocation.upsert({
+    where: { name: 'Estoque Principal' },
+    update: { active: true },
+    create: {
+      name: 'Estoque Principal',
+      active: true,
+    },
+  });
+
+  // Políticas e templates operacionais de RH (base)
+  await prisma.policy.upsert({
+    where: { key: 'hr.code-of-conduct' },
+    update: {
+      title: 'Código de Conduta',
+      version: '1.0',
+      contentUrl: 'https://intranet.local/policies/code-of-conduct',
+      active: true,
+    },
+    create: {
+      key: 'hr.code-of-conduct',
+      title: 'Código de Conduta',
+      version: '1.0',
+      contentUrl: 'https://intranet.local/policies/code-of-conduct',
+      active: true,
+    },
+  });
+
+  await prisma.policy.upsert({
+    where: { key: 'hr.security-awareness' },
+    update: {
+      title: 'Política de Segurança da Informação',
+      version: '1.0',
+      contentUrl: 'https://intranet.local/policies/security-awareness',
+      active: true,
+    },
+    create: {
+      key: 'hr.security-awareness',
+      title: 'Política de Segurança da Informação',
+      version: '1.0',
+      contentUrl: 'https://intranet.local/policies/security-awareness',
+      active: true,
+    },
+  });
+
+  await prisma.platformSetting.upsert({
+    where: { key: 'hr.caseTemplates' },
+    update: {
+      valueJson: {
+        onboarding: [
+          'Provisionar conta corporativa e acessos iniciais',
+          'Entregar kit de equipamentos e registrar aceite',
+          'Aplicar treinamentos obrigatórios e políticas',
+        ],
+        offboarding: [
+          'Revogar acessos corporativos (SSO, email, VPN)',
+          'Encerrar pendências administrativas e financeiras',
+          'Coletar evidências/documentos do desligamento',
+          'Recolher todos os equipamentos atribuídos',
+        ],
+      },
+      isSecret: false,
+      updatedById: admin.id,
+    },
+    create: {
+      key: 'hr.caseTemplates',
+      valueJson: {
+        onboarding: [
+          'Provisionar conta corporativa e acessos iniciais',
+          'Entregar kit de equipamentos e registrar aceite',
+          'Aplicar treinamentos obrigatórios e políticas',
+        ],
+        offboarding: [
+          'Revogar acessos corporativos (SSO, email, VPN)',
+          'Encerrar pendências administrativas e financeiras',
+          'Coletar evidências/documentos do desligamento',
+          'Recolher todos os equipamentos atribuídos',
+        ],
+      },
+      isSecret: false,
+      updatedById: admin.id,
     },
   });
 
@@ -1331,4 +1655,3 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
-

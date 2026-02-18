@@ -14,6 +14,10 @@ import passport from 'passport';
 import { errorHandler } from './middleware/errorHandler';
 import { requestLogger } from './middleware/requestLogger';
 import { attachIo } from './middleware/socket';
+import { requestContextMiddleware } from './shared/http/requestContext.middleware';
+import { httpObservabilityMiddleware } from './shared/http/httpObservability.middleware';
+import { metricsRegistry } from './shared/observability/metrics.registry';
+import { initializeTelemetry } from './shared/observability/tracing';
 import { authRoutes } from './routes/auth.routes';
 import { samlAuthRoutes } from './routes/auth.saml.routes';
 import { auth0AuthRoutes } from './routes/auth.auth0.routes';
@@ -37,9 +41,13 @@ import { technicianJournalRoutes } from './routes/technicianJournal.routes';
 import { assistantRouter } from './routes/assistant.routes';
 import { employeeRoutes } from './routes/employee.routes';
 import { equipmentRoutes } from './routes/equipment.routes';
+import { financeRoutes } from './routes/finance.routes';
+import { hrRoutes } from './routes/hr.routes';
+import { procurementRoutes } from './routes/procurement.routes';
 import { logger } from './utils/logger';
-import { initializeQueues, closeQueues } from './lib/queue';
+import { initializeQueues, closeQueues, getQueueJobCountsSnapshot, isRedisAvailable, redisClient } from './lib/queue';
 import { initSocket } from './lib/socket';
+import prisma from './lib/prisma';
 
 import { env } from './config/env';
 
@@ -77,6 +85,8 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(requestContextMiddleware);
+app.use(httpObservabilityMiddleware);
 app.use(requestLogger);
 app.use(attachIo);
 
@@ -97,6 +107,65 @@ uploadsDirs.forEach((dir) => {
 // Health check
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+app.get('/healthz', (_req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    service: 'backend',
+    timestamp: new Date().toISOString(),
+  });
+});
+app.get('/readyz', async (_req, res) => {
+  const checks: Record<string, { ok: boolean; error?: string }> = {
+    db: { ok: false },
+    redis: { ok: false },
+  };
+
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    checks.db.ok = true;
+  } catch (error: any) {
+    checks.db = { ok: false, error: error?.message || String(error) };
+  }
+
+  try {
+    if (!redisClient || !isRedisAvailable()) {
+      checks.redis = { ok: false, error: 'redis-not-available' };
+    } else {
+      const pong = await redisClient.ping();
+      checks.redis.ok = pong === 'PONG';
+      if (pong !== 'PONG') checks.redis.error = `unexpected-ping:${pong}`;
+    }
+  } catch (error: any) {
+    checks.redis = { ok: false, error: error?.message || String(error) };
+  }
+
+  const ready = checks.db.ok && checks.redis.ok;
+  res.status(ready ? 200 : 503).json({
+    status: ready ? 'ready' : 'not_ready',
+    timestamp: new Date().toISOString(),
+    checks,
+  });
+});
+app.get('/metrics', async (_req, res) => {
+  try {
+    const queueSnapshots = await getQueueJobCountsSnapshot();
+    for (const entry of queueSnapshots) {
+      for (const [state, value] of Object.entries(entry.counts)) {
+        metricsRegistry.setGauge(
+          'queue_jobs',
+          'Queue jobs by state',
+          { queue: entry.queue, state },
+          Number(value || 0)
+        );
+      }
+    }
+
+    res.setHeader('Content-Type', 'text/plain; version=0.0.4');
+    res.status(200).send(metricsRegistry.renderPrometheus());
+  } catch (error: any) {
+    res.status(500).json({ error: error?.message || 'metrics_error' });
+  }
 });
 
 // Routes
@@ -123,6 +192,9 @@ app.use('/api', technicianJournalRoutes);
 app.use('/api/assistant', assistantRouter);
 app.use('/api/employees', employeeRoutes);
 app.use('/api/equipments', equipmentRoutes);
+app.use('/api/finance', financeRoutes);
+app.use('/api/hr', hrRoutes);
+app.use('/api/procurement', procurementRoutes);
 
 // Error handler
 app.use(errorHandler);
@@ -132,6 +204,8 @@ let server: http.Server;
 
 async function startServer() {
   try {
+    initializeTelemetry();
+
     // Inicializar filas (obrigatório - se falhar, servidor não inicia)
     await initializeQueues();
 

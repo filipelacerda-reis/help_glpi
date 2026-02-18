@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { employeeService } from '../services/employee.service';
 import { buildSimplePdfFromLines } from '../utils/simplePdf';
 import { EquipmentCondition } from '@prisma/client';
+import { PERMISSIONS } from '../domains/iam/services/authorization.service';
 
 const cpfSchema = z
   .string()
@@ -59,12 +60,14 @@ export const employeeController = {
       filters.query = String(req.query.query);
     }
 
-    const employees = await employeeService.getAll(filters);
+    const includePii = Boolean(req.userPermissions?.includes(PERMISSIONS.HR_EMPLOYEE_READ_PII));
+    const employees = await employeeService.getAll(filters, { includePii });
     res.json(employees);
   },
 
   async getById(req: Request, res: Response) {
-    const employee = await employeeService.getById(req.params.id);
+    const includePii = Boolean(req.userPermissions?.includes(PERMISSIONS.HR_EMPLOYEE_READ_PII));
+    const employee = await employeeService.getById(req.params.id, { includePii });
     res.json(employee);
   },
 
@@ -87,7 +90,8 @@ export const employeeController = {
 
   async downloadEquipmentsPdf(req: Request, res: Response) {
     const query = pdfQuerySchema.parse(req.query);
-    const employee = await employeeService.getEmployeeWithAssets(req.params.id, query);
+    const includePii = Boolean(req.userPermissions?.includes(PERMISSIONS.HR_EMPLOYEE_READ_PII));
+    const employee = await employeeService.getEmployeeWithAssets(req.params.id, query, { includePii });
     const scopeLabel =
       query.filter === 'ALL'
         ? 'todos'
