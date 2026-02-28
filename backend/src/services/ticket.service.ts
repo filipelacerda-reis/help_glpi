@@ -662,6 +662,70 @@ export const ticketService = {
     }
   },
 
+  async getStaleTickets(
+    userId: string,
+    userRole: UserRole,
+    daysThreshold: number = 5,
+    take: number = 10
+  ) {
+    const where: any = {
+      status: {
+        in: [TicketStatus.OPEN, TicketStatus.IN_PROGRESS],
+      },
+      updatedAt: {
+        lt: new Date(Date.now() - daysThreshold * 24 * 60 * 60 * 1000),
+      },
+    };
+
+    if (userRole === UserRole.REQUESTER) {
+      const observedTickets = await prisma.ticketObserver.findMany({
+        where: { observerId: userId },
+        select: { ticketId: true },
+      });
+      const observedTicketIds = observedTickets.map((ot) => ot.ticketId);
+      if (observedTicketIds.length > 0) {
+        where.OR = [{ requesterId: userId }, { id: { in: observedTicketIds } }];
+      } else {
+        where.requesterId = userId;
+      }
+    } else if (userRole === UserRole.TECHNICIAN) {
+      const userTeams = await prisma.userTeam.findMany({
+        where: { userId },
+        select: { teamId: true },
+      });
+      const teamIds = userTeams.map((ut) => ut.teamId);
+      const observedTickets = await prisma.ticketObserver.findMany({
+        where: { observerId: userId },
+        select: { ticketId: true },
+      });
+      const observedTicketIds = observedTickets.map((ot) => ot.ticketId);
+      const orConditions: any[] = [{ assignedTechnicianId: userId }];
+      if (teamIds.length > 0) orConditions.push({ teamId: { in: teamIds } });
+      if (observedTicketIds.length > 0) orConditions.push({ id: { in: observedTicketIds } });
+      where.OR = orConditions;
+    }
+
+    return prisma.ticket.findMany({
+      where,
+      include: {
+        requester: {
+          select: { id: true, name: true, email: true },
+        },
+        assignedTechnician: {
+          select: { id: true, name: true, email: true },
+        },
+        category: {
+          select: { id: true, name: true },
+        },
+        team: {
+          select: { id: true, name: true },
+        },
+      },
+      orderBy: { updatedAt: 'asc' },
+      take: Math.max(1, Math.min(take, 50)),
+    });
+  },
+
   async getTicketById(id: string, userId: string, userRole: UserRole) {
     const ticket = await prisma.ticket.findUnique({
       where: { id },

@@ -1,30 +1,26 @@
-import { useState, ReactNode, useEffect } from 'react';
+import { ReactNode, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { teamService } from '../services/team.service';
 import NotificationBell from './NotificationBell';
+import { FloatingChatWidget } from './FloatingChatWidget';
 import {
-  ChevronDown,
-  ChevronRight,
   Home,
-  FileText,
+  Ticket,
   BarChart3,
-  FolderKanban,
-  Target,
-  Tag,
-  Layers,
-  UserCog,
-  UsersRound,
-  Briefcase,
-  Laptop,
-  Zap,
-  Bell,
-  LogOut,
-  BookOpen,
-  Settings,
-  Wallet,
   Users,
+  Tags,
+  FolderKanban,
+  Bell,
+  BookOpen,
+  Building2,
+  Laptop,
+  Wallet,
   ShoppingCart,
+  Shield,
+  LogOut,
+  ChevronRight,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from 'lucide-react';
 import { PlatformModule } from '../config/modules';
 import { ModuleKey, SubmoduleKey } from '../config/entitlements';
@@ -41,360 +37,150 @@ interface ModernLayoutProps {
 type MenuItem = {
   path: string;
   label: string;
-  icon: any;
-  roles: string[];
+  icon: React.ComponentType<{ className?: string }>;
   module: PlatformModule;
+  roles: Array<'REQUESTER' | 'TECHNICIAN' | 'TRIAGER' | 'ADMIN'>;
   moduleKey?: ModuleKey;
   submoduleKey?: SubmoduleKey;
-  allowTeamLead?: boolean;
 };
 
-type MenuSection = {
-  id: string;
-  label: string;
-  items: MenuItem[];
-};
+const menuItems: MenuItem[] = [
+  { path: '/', label: 'Dashboard', icon: Home, module: 'DASHBOARD', roles: ['REQUESTER', 'TECHNICIAN', 'TRIAGER', 'ADMIN'] },
+  { path: '/tickets', label: 'Tickets', icon: Ticket, module: 'TICKETS', roles: ['REQUESTER', 'TECHNICIAN', 'TRIAGER', 'ADMIN'] },
+  { path: '/metrics', label: 'Métricas', icon: BarChart3, module: 'METRICS', roles: ['TECHNICIAN', 'TRIAGER', 'ADMIN'] },
+  { path: '/teams', label: 'Times', icon: Users, module: 'TEAMS', roles: ['ADMIN'] },
+  { path: '/users', label: 'Usuários', icon: Shield, module: 'USERS', roles: ['ADMIN'], moduleKey: 'ADMIN', submoduleKey: 'ADMIN_USERS' },
+  { path: '/categories', label: 'Categorias', icon: FolderKanban, module: 'CATEGORIES', roles: ['ADMIN'] },
+  { path: '/tags', label: 'Tags', icon: Tags, module: 'TAGS', roles: ['ADMIN'] },
+  { path: '/notifications', label: 'Notificações', icon: Bell, module: 'NOTIFICATIONS', roles: ['REQUESTER', 'TECHNICIAN', 'TRIAGER', 'ADMIN'] },
+  { path: '/my/journal', label: 'Meu Diário', icon: BookOpen, module: 'JOURNAL', roles: ['TECHNICIAN', 'TRIAGER', 'ADMIN'] },
+  { path: '/employees', label: 'Funcionários', icon: Building2, module: 'EMPLOYEES', roles: ['TECHNICIAN', 'TRIAGER', 'ADMIN'], moduleKey: 'HR', submoduleKey: 'HR_EMPLOYEES' },
+  { path: '/equipments', label: 'Equipamentos', icon: Laptop, module: 'EQUIPMENTS', roles: ['TECHNICIAN', 'TRIAGER', 'ADMIN'], moduleKey: 'ASSETS', submoduleKey: 'ASSETS_EQUIPMENT' },
+  { path: '/finance', label: 'Financeiro', icon: Wallet, module: 'FINANCE', roles: ['TRIAGER', 'ADMIN'], moduleKey: 'FINANCE', submoduleKey: 'FINANCE_REPORTS' },
+  { path: '/procurement', label: 'Compras', icon: ShoppingCart, module: 'PROCUREMENT', roles: ['TRIAGER', 'ADMIN'], moduleKey: 'FINANCE', submoduleKey: 'FINANCE_PURCHASE_REQUESTS' },
+  { path: '/admin/sso', label: 'Administração', icon: Shield, module: 'ADMIN', roles: ['ADMIN'], moduleKey: 'ADMIN', submoduleKey: 'ADMIN_SSO' },
+];
 
-const ModernLayout = ({
-  children,
-  title,
-  subtitle,
-  headerActions,
-  rightSidebar,
-  showRightSidebar = false,
-}: ModernLayoutProps) => {
+const ModernLayout = ({ children, title, subtitle, headerActions, rightSidebar, showRightSidebar = false }: ModernLayoutProps) => {
   const { user, logout, hasModule, hasEntitlement } = useAuth();
-  const navigate = useNavigate();
   const location = useLocation();
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [isTeamLead, setIsTeamLead] = useState(false);
-  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
-    operations: true,
-    assets: true,
-    corporate: true,
-    governance: true,
-    admin: true,
-  });
+  const navigate = useNavigate();
+  const [collapsed, setCollapsed] = useState(false);
 
-  // Verificar se o usuário é líder de algum time
-  useEffect(() => {
-    const checkTeamLead = async () => {
-      if (user?.role === 'ADMIN') {
-        setIsTeamLead(true);
-        return;
-      }
-      try {
-        const leadTeamIds = await teamService.getUserLeadTeams();
-        setIsTeamLead(leadTeamIds.length > 0);
-      } catch (error) {
-        console.error('Erro ao verificar times do líder:', error);
-        setIsTeamLead(false);
-      }
-    };
-
-    if (user) {
-      checkTeamLead();
-    }
-  }, [user]);
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
-
-  const getRoleLabel = (role: string) => {
-    const labels: Record<string, string> = {
-      REQUESTER: 'Solicitante',
-      TECHNICIAN: 'Técnico',
-      TRIAGER: 'Triagista',
-      ADMIN: 'Administrador',
-    };
-    return labels[role] || role;
-  };
-
-  const isActive = (path: string) => {
-    return location.pathname === path || location.pathname.startsWith(path + '/');
-  };
-
-  const menuItems: MenuItem[] = [
-    { path: '/', label: 'Dashboard', icon: Home, roles: ['ADMIN', 'TRIAGER', 'TECHNICIAN', 'REQUESTER'], module: 'DASHBOARD' },
-    { path: '/tickets', label: 'Tickets', icon: FileText, roles: ['ADMIN', 'TRIAGER', 'TECHNICIAN', 'REQUESTER'], module: 'TICKETS' },
-    { path: '/my/journal', label: 'Meu Diário', icon: BookOpen, roles: ['ADMIN', 'TRIAGER', 'TECHNICIAN'], module: 'JOURNAL' },
-    { path: '/notifications', label: 'Notificações', icon: Bell, roles: ['ADMIN', 'TRIAGER', 'TECHNICIAN', 'REQUESTER'], module: 'NOTIFICATIONS' },
-    { path: '/employees', label: 'Funcionários', icon: Briefcase, roles: ['ADMIN', 'TRIAGER', 'TECHNICIAN'], module: 'EMPLOYEES', moduleKey: 'HR', submoduleKey: 'HR_EMPLOYEES' },
-    { path: '/equipments', label: 'Equipamentos', icon: Laptop, roles: ['ADMIN', 'TRIAGER', 'TECHNICIAN'], module: 'EQUIPMENTS', moduleKey: 'ASSETS', submoduleKey: 'ASSETS_EQUIPMENT' },
-    { path: '/metrics', label: 'Métricas', icon: BarChart3, roles: ['ADMIN'], module: 'METRICS', allowTeamLead: true },
-    { path: '/kb', label: 'Base de Conhecimento', icon: FolderKanban, roles: ['ADMIN', 'TRIAGER'], module: 'KB' },
-    { path: '/sla', label: 'SLA', icon: Target, roles: ['ADMIN'], module: 'SLA' },
-    { path: '/teams', label: 'Times', icon: UsersRound, roles: ['ADMIN'], module: 'TEAMS' },
-    { path: '/users', label: 'Usuários', icon: UserCog, roles: ['ADMIN'], module: 'USERS', moduleKey: 'ADMIN', submoduleKey: 'ADMIN_USERS' },
-    { path: '/tags', label: 'Tags', icon: Tag, roles: ['ADMIN'], module: 'TAGS' },
-    { path: '/categories', label: 'Categorias', icon: Layers, roles: ['ADMIN'], module: 'CATEGORIES' },
-    { path: '/automations', label: 'Automações', icon: Zap, roles: ['ADMIN'], module: 'AUTOMATIONS' },
-    { path: '/admin/sso', label: 'Administração', icon: Settings, roles: ['ADMIN'], module: 'ADMIN', moduleKey: 'ADMIN', submoduleKey: 'ADMIN_SSO' },
-    { path: '/finance', label: 'Financeiro', icon: Wallet, roles: ['ADMIN', 'TRIAGER'], module: 'FINANCE', moduleKey: 'FINANCE', submoduleKey: 'FINANCE_REPORTS' },
-    { path: '/hr', label: 'RH', icon: Users, roles: ['ADMIN', 'TRIAGER'], module: 'HR', moduleKey: 'HR', submoduleKey: 'HR_REPORTS' },
-    { path: '/procurement', label: 'Compras', icon: ShoppingCart, roles: ['ADMIN', 'TRIAGER'], module: 'PROCUREMENT', moduleKey: 'FINANCE', submoduleKey: 'FINANCE_PURCHASE_REQUESTS' },
-  ];
-
-  const hasAccess = (item: MenuItem) => {
-    if (!user?.role) return false;
-    const entitlementAllowed =
-      item.moduleKey && item.submoduleKey
-        ? hasEntitlement(item.moduleKey, item.submoduleKey, 'READ')
-        : false;
-    if (!hasModule(item.module) && !entitlementAllowed) return false;
-    if (item.allowTeamLead && !item.roles.includes(user.role)) {
-      return isTeamLead;
-    }
-    return item.roles.includes(user.role);
-  };
-
-  const getItem = (path: string) => menuItems.find((item) => item.path === path)!;
-
-  const menuSections: MenuSection[] = [
-    {
-      id: 'operations',
-      label: 'Operação',
-      items: [getItem('/'), getItem('/tickets'), getItem('/my/journal'), getItem('/notifications')],
-    },
-    {
-      id: 'assets',
-      label: 'Ativos e Pessoas',
-      items: [getItem('/employees'), getItem('/equipments')],
-    },
-    {
-      id: 'governance',
-      label: 'Conhecimento e Qualidade',
-      items: [getItem('/kb'), getItem('/sla'), getItem('/metrics')],
-    },
-    {
-      id: 'corporate',
-      label: 'Corporativo',
-      items: [getItem('/finance'), getItem('/hr'), getItem('/procurement')],
-    },
-    {
-      id: 'admin',
-      label: 'Administração da Plataforma',
-      items: [
-        getItem('/teams'),
-        getItem('/users'),
-        getItem('/tags'),
-        getItem('/categories'),
-        getItem('/automations'),
-        getItem('/admin/sso'),
-      ],
-    },
-  ];
-
-  const filteredMenuItems = menuItems.filter(hasAccess);
-  const visibleSections = menuSections
-    .map((section) => ({
-      ...section,
-      items: section.items.filter(hasAccess),
-    }))
-    .filter((section) => section.items.length > 0);
-
-  useEffect(() => {
-    setOpenSections((prev) => {
-      const next = { ...prev };
-      for (const section of visibleSections) {
-        if (section.items.some((item) => isActive(item.path))) {
-          next[section.id] = true;
-        }
-      }
-      return next;
+  const allowedItems = useMemo(() => {
+    if (!user) return [];
+    return menuItems.filter((item) => {
+      const roleAllowed = item.roles.includes(user.role as (typeof item.roles)[number]);
+      const entitlementAllowed =
+        item.moduleKey && item.submoduleKey ? hasEntitlement(item.moduleKey, item.submoduleKey, 'READ') : false;
+      return roleAllowed && (hasModule(item.module) || entitlementAllowed);
     });
-  }, [location.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [user, hasEntitlement, hasModule]);
 
-  const toggleSection = (sectionId: string) => {
-    setOpenSections((prev) => ({ ...prev, [sectionId]: !prev[sectionId] }));
-  };
+  const active = (path: string) => location.pathname === path || (path !== '/' && location.pathname.startsWith(`${path}/`));
+
+  const breadcrumb = location.pathname
+    .split('/')
+    .filter(Boolean)
+    .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1));
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white overflow-hidden">
-      {/* Sidebar Esquerda */}
-      <div
-        className={`${
-          sidebarCollapsed ? 'w-16' : 'w-64'
-        } bg-gray-800/50 backdrop-blur-sm border-r border-gray-700/50 transition-all duration-300 flex flex-col`}
+    <div className="flex h-[100dvh] overflow-hidden bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100">
+      <aside
+        className={`h-full shrink-0 border-r border-slate-200 bg-white/90 backdrop-blur-xl transition-all duration-300 dark:border-slate-700 dark:bg-slate-800/80 ${
+          collapsed ? 'w-20' : 'w-72'
+        }`}
       >
-        {/* Logo/Header */}
-        <div className="p-4 border-b border-gray-700/50">
-          {!sidebarCollapsed ? (
-            <div className="flex items-center justify-between">
-              <Link to="/" className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-etus-green rounded-lg flex items-center justify-center">
-                  <span className="text-gray-900 font-bold text-sm">E</span>
-                </div>
-                <span className="text-lg font-bold text-white">GLPI ETUS</span>
-              </Link>
-              <button
-                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                className="p-2 rounded-lg hover:bg-gray-700/50 transition-colors"
-              >
-                <div className="w-5 h-5 flex flex-col justify-center space-y-1">
-                  <div className="w-full h-0.5 bg-gray-300"></div>
-                  <div className="w-full h-0.5 bg-gray-300"></div>
-                  <div className="w-full h-0.5 bg-gray-300"></div>
-                </div>
-              </button>
-            </div>
-          ) : (
-            <button
-              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className="w-full flex items-center justify-center p-2 rounded-lg hover:bg-gray-700/50 transition-colors"
-            >
-              <div className="w-6 h-6 flex flex-col justify-center space-y-1">
-                <div className="w-full h-0.5 bg-gray-300"></div>
-                <div className="w-full h-0.5 bg-gray-300"></div>
-                <div className="w-full h-0.5 bg-gray-300"></div>
-              </div>
+        <div className="flex h-16 items-center justify-between border-b border-slate-200 px-4 dark:border-slate-700">
+          {!collapsed && (
+            <button onClick={() => navigate('/')} className="text-left">
+              <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">Help GLPI</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Service Desk</p>
             </button>
           )}
+          <button
+            onClick={() => setCollapsed((prev) => !prev)}
+            className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100"
+          >
+            {collapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
+          </button>
         </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 p-3 overflow-y-auto">
-          {sidebarCollapsed ? (
-            <div className="space-y-1">
-              {filteredMenuItems.map((item) => {
-                const Icon = item.icon;
-                const active = isActive(item.path);
-                return (
+        <nav className="h-[calc(100%-8rem)] overflow-y-auto p-3">
+          <ul className="space-y-1.5">
+            {allowedItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <li key={item.path}>
                   <Link
-                    key={item.path}
                     to={item.path}
-                    className={`flex items-center justify-center p-3 rounded-lg transition-colors ${
-                      active
-                        ? 'bg-etus-green/30 text-etus-green'
-                        : 'hover:bg-etus-green/20 hover:text-etus-green text-gray-300'
+                    className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
+                      active(item.path)
+                        ? 'bg-indigo-600 text-white shadow-sm'
+                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-700/70 dark:hover:text-slate-100'
                     }`}
-                    title={item.label}
                   >
-                    <Icon className="w-5 h-5 flex-shrink-0" />
+                    <Icon className="h-4 w-4" />
+                    {!collapsed && <span>{item.label}</span>}
                   </Link>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {visibleSections.map((section) => {
-                const sectionOpen = openSections[section.id] ?? true;
-                return (
-                  <div key={section.id} className="rounded-lg border border-gray-700/50 bg-gray-800/40">
-                    <button
-                      type="button"
-                      onClick={() => toggleSection(section.id)}
-                      className="w-full flex items-center justify-between px-3 py-2 text-xs uppercase tracking-wide text-gray-400 hover:text-gray-200 transition-colors"
-                    >
-                      <span>{section.label}</span>
-                      {sectionOpen ? (
-                        <ChevronDown className="h-3.5 w-3.5" />
-                      ) : (
-                        <ChevronRight className="h-3.5 w-3.5" />
-                      )}
-                    </button>
-                    {sectionOpen && (
-                      <div className="px-2 pb-2 space-y-1">
-                        {section.items.map((item) => {
-                          const Icon = item.icon;
-                          const active = isActive(item.path);
-                          return (
-                            <Link
-                              key={item.path}
-                              to={item.path}
-                              className={`flex items-center gap-3 p-2.5 rounded-lg transition-colors ${
-                                active
-                                  ? 'bg-etus-green/25 text-etus-green border border-etus-green/25'
-                                  : 'text-gray-300 hover:bg-etus-green/15 hover:text-etus-green'
-                              }`}
-                              title={item.label}
-                            >
-                              <Icon className="w-4.5 h-4.5 flex-shrink-0" />
-                              <span className="text-sm">{item.label}</span>
-                            </Link>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          )}
+                </li>
+              );
+            })}
+          </ul>
         </nav>
 
-        {/* User Section */}
-        <div className="p-4 border-t border-gray-700/50">
-          {!sidebarCollapsed ? (
-            <div className="flex items-center space-x-3 mb-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-etus-green to-etus-green-dark flex items-center justify-center text-gray-900 font-bold text-sm">
-                {user?.name?.charAt(0).toUpperCase() || 'U'}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-white truncate">{user?.name || 'Usuário'}</p>
-                <p className="text-xs text-gray-400 truncate">{getRoleLabel(user?.role || '')}</p>
-              </div>
-            </div>
-          ) : (
-            <div className="flex justify-center mb-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-etus-green to-etus-green-dark flex items-center justify-center text-gray-900 font-bold text-sm">
-                {user?.name?.charAt(0).toUpperCase() || 'U'}
-              </div>
-            </div>
-          )}
-          <div className="flex items-center space-x-2">
-            <NotificationBell />
-            {!sidebarCollapsed && (
-              <button
-                onClick={handleLogout}
-                className="flex-1 flex items-center justify-center space-x-2 px-3 py-2 bg-gray-700/50 hover:bg-gray-700 rounded-lg text-sm text-gray-300 hover:text-white transition-colors"
-              >
-                <LogOut className="w-4 h-4" />
-                <span>Sair</span>
-              </button>
-            )}
-            {sidebarCollapsed && (
-              <button
-                onClick={handleLogout}
-                className="w-full p-2 bg-gray-700/50 hover:bg-gray-700 rounded-lg text-gray-300 hover:text-white transition-colors"
-                title="Sair"
-              >
-                <LogOut className="w-4 h-4 mx-auto" />
-              </button>
-            )}
-          </div>
+        <div className="border-t border-slate-200 p-3 dark:border-slate-700">
+          <button
+            onClick={logout}
+            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-rose-50 hover:text-rose-700 dark:text-slate-300 dark:hover:bg-rose-500/10 dark:hover:text-rose-300"
+          >
+            <LogOut className="h-4 w-4" />
+            {!collapsed && <span>Sair</span>}
+          </button>
         </div>
-      </div>
+      </aside>
 
-      {/* Área Central */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Header */}
-        {(title || headerActions) && (
-          <div className="bg-gray-800/30 backdrop-blur-sm border-b border-gray-700/50 p-4">
-            <div className="flex justify-between items-center">
-              <div>
-                {title && <h1 className="text-2xl font-bold text-white">{title}</h1>}
-                {subtitle && <p className="text-sm text-gray-400 mt-1">{subtitle}</p>}
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+        <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/80 backdrop-blur-md dark:border-slate-700 dark:bg-slate-800/80">
+          <div className="flex h-16 items-center justify-between px-6">
+            <div className="min-w-0">
+              <div className="mb-1 flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
+                <span>Início</span>
+                {breadcrumb.map((b, index) => (
+                  <span key={`${b}-${index}`} className="inline-flex items-center gap-1">
+                    <ChevronRight className="h-3 w-3" />
+                    <span>{b}</span>
+                  </span>
+                ))}
               </div>
-              {headerActions && <div className="flex gap-2">{headerActions}</div>}
+              <h1 className="truncate text-lg font-semibold text-slate-900 dark:text-slate-100">{title || 'Help GLPI'}</h1>
+              {subtitle && <p className="truncate text-sm text-slate-500 dark:text-slate-400">{subtitle}</p>}
+            </div>
+
+            <div className="ml-4 flex items-center gap-3">
+              {headerActions}
+              <NotificationBell />
+              <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-2.5 py-1.5 dark:border-slate-700 dark:bg-slate-800">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300">
+                  {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+                </div>
+                <div className="hidden text-left sm:block">
+                  <p className="max-w-[120px] truncate text-xs font-medium text-slate-700 dark:text-slate-200">{user?.name}</p>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">{user?.role}</p>
+                </div>
+              </div>
             </div>
           </div>
-        )}
+        </header>
 
-        {/* Conteúdo */}
-        <div className="flex-1 overflow-y-auto">
-          <div className="p-6">{children}</div>
-        </div>
+        <main className="min-h-0 flex-1 overflow-y-auto">
+          <div className={`mx-auto w-full max-w-[1600px] p-6 ${showRightSidebar ? 'grid grid-cols-1 gap-6 xl:grid-cols-[1fr_320px]' : ''}`}>
+            <div className="min-w-0">{children}</div>
+            {showRightSidebar && rightSidebar && <aside className="hidden xl:block">{rightSidebar}</aside>}
+          </div>
+        </main>
       </div>
-
-      {/* Sidebar Direita (opcional) */}
-      {showRightSidebar && rightSidebar && (
-        <div className="w-80 bg-gray-800/50 backdrop-blur-sm border-l border-gray-700/50 p-6 overflow-y-auto">
-          {rightSidebar}
-        </div>
-      )}
+      <FloatingChatWidget />
     </div>
   );
 };

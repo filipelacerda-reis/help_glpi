@@ -11,6 +11,14 @@ const createManualEntrySchema = z.object({
   tagIds: z.array(z.string()).optional(), // IDs das tags da plataforma
 });
 
+const updateManualEntrySchema = z.object({
+  title: z.string().optional(),
+  description: z.string().min(1, 'Descrição é obrigatória'),
+  contentHtml: z.string().optional(),
+  tagIds: z.array(z.string()).optional(),
+  reason: z.string().max(300).optional(),
+});
+
 export const technicianJournalController = {
   /**
    * GET /api/me/journal
@@ -135,6 +143,48 @@ export const technicianJournalController = {
   },
 
   /**
+   * PATCH /api/me/journal/:id/manual
+   * Edita uma entrada manual do diário
+   */
+  async updateMyManualEntry(req: Request, res: Response) {
+    try {
+      if (!req.userId) {
+        return res.status(401).json({ error: 'Não autenticado' });
+      }
+
+      const { id } = req.params;
+      const body = updateManualEntrySchema.parse(req.body);
+      const entry = await technicianJournalService.updateManualEntry(req.userId, id, body);
+
+      res.json(entry);
+    } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors[0].message });
+      }
+      logger.error('Erro ao editar entrada manual no diário', { error: error.message });
+      res.status(error.statusCode || 500).json({ error: error.message || 'Erro ao editar entrada no diário' });
+    }
+  },
+
+  /**
+   * GET /api/me/journal/:id/edit-logs
+   * Histórico de edições da entrada
+   */
+  async getEntryEditLogs(req: Request, res: Response) {
+    try {
+      if (!req.userId || !req.userRole) {
+        return res.status(401).json({ error: 'Não autenticado' });
+      }
+      const { id } = req.params;
+      const logs = await technicianJournalService.getEntryEditLogs(id, req.userId, req.userRole);
+      res.json(logs);
+    } catch (error: any) {
+      logger.error('Erro ao buscar histórico de edição do diário', { error: error.message });
+      res.status(error.statusCode || 500).json({ error: error.message || 'Erro ao buscar histórico de edição' });
+    }
+  },
+
+  /**
    * GET /api/me/journal/summary
    * Busca resumo diário do técnico
    */
@@ -164,4 +214,3 @@ export const technicianJournalController = {
     }
   },
 };
-

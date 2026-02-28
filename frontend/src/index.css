@@ -159,3 +159,22 @@ code {
   background-color: rgba(75, 85, 99, 0.5);
 }
 
+/* Suaviza hovers claros no dark mode para manter estética SaaS moderna */
+.dark .hover\:bg-white:hover {
+  background-color: rgba(51, 65, 85, 0.35) !important;
+}
+
+/* Unifica hover no padrão da lista de tickets em todo o dark mode */
+.dark [class*='hover:bg-white']:hover,
+.dark [class*='hover:bg-gray-700']:hover,
+.dark [class*='hover:bg-gray-600']:hover,
+.dark [class*='hover:bg-slate-50']:hover,
+.dark [class*='hover:bg-slate-100']:hover {
+  background-color: rgba(51, 65, 85, 0.3) !important;
+}
+
+/* Padroniza focus ring global com contorno mais suave (evita branco estourado) */
+:where(a, button, input, select, textarea, [role='button']):focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.35);
+}

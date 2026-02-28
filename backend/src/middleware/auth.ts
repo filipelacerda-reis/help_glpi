@@ -37,6 +37,17 @@ export const authenticate = async (
       entitlements: req.userEntitlements,
       attributes: req.userAttributes,
     };
+
+    const authUser = await prisma.user.findUnique({
+      where: { id: payload.userId },
+      select: { active: true },
+    });
+    if (!authUser || !authUser.active) {
+      logger.warn('Token válido para usuário desativado/inexistente', { userId: payload.userId, path: req.path });
+      res.status(401).json({ error: 'Usuário desativado' });
+      return;
+    }
+
     requestContextStore.patch({
       userId: payload.userId,
       userEmail: payload.email,

@@ -25,6 +25,11 @@ export interface MetricsResponse {
     mttr: number | null;
     slaCompliancePercent: number; // 0–100
     reopenRatePercent: number;
+    fcrPercent: number;
+    worklogByCategory: Array<{
+      categoryName: string;
+      totalMinutes: number;
+    }>;
     trendCreatedVsResolved: Array<{
       date: string; // yyyy-mm-dd
       created: number;
@@ -156,4 +161,3 @@ export interface MetricsResponse {
     };
   };
 }
-

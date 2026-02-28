@@ -141,6 +141,8 @@ export const getAuth0Strategy = async (): Promise<Auth0Strategy | null> => {
               department: profile._json?.department ?? null,
             },
           });
+        } else if (!user.active) {
+          return done(new AppError('Usuário desativado. Contate um administrador.', 403));
         } else if (auth0.updateRoleOnLogin && role !== user.role) {
           user = await prisma.user.update({
             where: { id: user.id },

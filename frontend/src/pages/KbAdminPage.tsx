@@ -173,7 +173,7 @@ const KbAdminPage = () => {
           setCategoryFormData({ name: '', description: '', parentId: '' });
           setShowCategoryModal(true);
         }}
-        className="inline-flex items-center space-x-2 px-4 py-2 bg-gray-700/50 hover:bg-gray-700 rounded-lg text-sm font-medium text-white transition-colors"
+        className="inline-flex items-center space-x-2 px-4 py-2 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-700/30 rounded-lg text-sm font-medium text-white transition-colors"
       >
         <FolderKanban className="w-4 h-4" />
         <span>Nova Categoria</span>
@@ -190,7 +190,7 @@ const KbAdminPage = () => {
           });
           setShowArticleModal(true);
         }}
-        className="inline-flex items-center space-x-2 px-4 py-2 bg-etus-green hover:bg-etus-green-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
+        className="inline-flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-600-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
       >
         <Plus className="w-4 h-4" />
         <span>Novo Artigo</span>
@@ -203,7 +203,7 @@ const KbAdminPage = () => {
       <ModernLayout title="Base de Conhecimento" subtitle="Gerenciar artigos e categorias" headerActions={headerActions}>
         <div className="text-center py-12">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-etus-green"></div>
-          <p className="mt-4 text-gray-400">Carregando...</p>
+          <p className="mt-4 text-slate-500 dark:text-slate-400">Carregando...</p>
         </div>
       </ModernLayout>
     );
@@ -228,14 +228,14 @@ const KbAdminPage = () => {
       )}
 
       {/* Tabs */}
-      <div className="mb-6 border-b border-gray-600/50">
+      <div className="mb-6 border-b border-slate-200 dark:border-slate-700">
         <nav className="-mb-px flex space-x-8">
           <button
             onClick={() => setActiveTab('articles')}
             className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${
               activeTab === 'articles'
-                ? 'border-etus-green text-etus-green'
-                : 'border-transparent text-gray-400 hover:text-gray-200 hover:border-gray-500'
+                ? 'border-etus-green text-indigo-600 dark:text-indigo-400'
+                : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-gray-200 hover:border-gray-500'
             }`}
           >
             <FileText className="w-4 h-4" />
@@ -245,8 +245,8 @@ const KbAdminPage = () => {
             onClick={() => setActiveTab('categories')}
             className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${
               activeTab === 'categories'
-                ? 'border-etus-green text-etus-green'
-                : 'border-transparent text-gray-400 hover:text-gray-200 hover:border-gray-500'
+                ? 'border-etus-green text-indigo-600 dark:text-indigo-400'
+                : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-gray-200 hover:border-gray-500'
             }`}
           >
             <FolderKanban className="w-4 h-4" />
@@ -258,24 +258,24 @@ const KbAdminPage = () => {
       {/* Artigos */}
       {activeTab === 'articles' && (
         <div className="space-y-4">
-          <div className="bg-gray-700/30 backdrop-blur-sm border border-gray-600/50 rounded-lg p-4">
+          <div className="bg-white dark:bg-slate-800 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-lg p-4">
             <input
               type="text"
               placeholder="Buscar artigos..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-400 focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+              className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
-          <div className="bg-gray-700/30 backdrop-blur-sm border border-gray-600/50 rounded-lg p-6">
+          <div className="bg-white dark:bg-slate-800 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-lg p-6">
             <div className="space-y-4">
               {articles.map((article) => (
-                <div key={article.id} className="border border-gray-600/50 rounded-lg p-4 bg-gray-700/20 hover:bg-gray-700/30 transition-colors">
+                <div key={article.id} className="border border-slate-200 dark:border-slate-700 rounded-lg p-4 bg-slate-50 dark:bg-slate-900/30 hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
                       <h3 className="font-medium text-white">{article.title}</h3>
                       {article.category && (
-                        <p className="text-sm text-gray-400 mt-1">{article.category.name}</p>
+                        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{article.category.name}</p>
                       )}
                       <div className="mt-2 flex items-center space-x-2">
                         <span
@@ -283,7 +283,7 @@ const KbAdminPage = () => {
                             article.status === 'PUBLISHED'
                               ? 'bg-green-500/30 text-green-400'
                               : article.status === 'ARCHIVED'
-                              ? 'bg-gray-600/50 text-gray-400'
+                              ? 'bg-gray-600/50 text-slate-500 dark:text-slate-400'
                               : 'bg-yellow-500/30 text-yellow-400'
                           }`}
                         >
@@ -292,7 +292,7 @@ const KbAdminPage = () => {
                         {article.tags && article.tags.length > 0 && (
                           <div className="flex flex-wrap gap-1">
                             {article.tags.map((tag) => (
-                              <span key={tag} className="px-2 py-1 text-xs bg-gray-600/50 text-gray-300 rounded">
+                              <span key={tag} className="px-2 py-1 text-xs bg-gray-600/50 text-slate-600 dark:text-slate-300 rounded">
                                 {tag}
                               </span>
                             ))}
@@ -347,7 +347,7 @@ const KbAdminPage = () => {
                 </div>
               ))}
               {articles.length === 0 && (
-                <p className="text-sm text-gray-400 text-center py-8">Nenhum artigo encontrado</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400 text-center py-8">Nenhum artigo encontrado</p>
               )}
             </div>
           </div>
@@ -356,21 +356,21 @@ const KbAdminPage = () => {
 
       {/* Categorias */}
       {activeTab === 'categories' && (
-        <div className="bg-gray-700/30 backdrop-blur-sm border border-gray-600/50 rounded-lg p-6">
+        <div className="bg-white dark:bg-slate-800 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-lg p-6">
           <div className="space-y-4">
             {categories.map((category) => (
-              <div key={category.id} className="border border-gray-600/50 rounded-lg p-4 bg-gray-700/20 hover:bg-gray-700/30 transition-colors">
+              <div key={category.id} className="border border-slate-200 dark:border-slate-700 rounded-lg p-4 bg-slate-50 dark:bg-slate-900/30 hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
                 <div className="flex justify-between items-start">
                   <div>
                     <h3 className="font-medium text-white">{category.name}</h3>
                     {category.description && (
-                      <p className="text-sm text-gray-400 mt-1">{category.description}</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{category.description}</p>
                     )}
                     {category.parent && (
-                      <p className="text-xs text-gray-500 mt-1">Categoria pai: {category.parent.name}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Categoria pai: {category.parent.name}</p>
                     )}
                     {category._count && (
-                      <p className="text-xs text-gray-500 mt-1">{category._count.articles} artigos</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{category._count.articles} artigos</p>
                     )}
                   </div>
                   <div className="flex space-x-2">
@@ -403,7 +403,7 @@ const KbAdminPage = () => {
               </div>
             ))}
             {categories.length === 0 && (
-              <p className="text-sm text-gray-400 text-center py-8">Nenhuma categoria encontrada</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 text-center py-8">Nenhuma categoria encontrada</p>
             )}
           </div>
         </div>
@@ -421,30 +421,30 @@ const KbAdminPage = () => {
         <form onSubmit={handleCreateCategory}>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Nome <span className="text-red-400">*</span></label>
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Nome <span className="text-red-400">*</span></label>
               <input
                 type="text"
                 required
                 value={categoryFormData.name}
                 onChange={(e) => setCategoryFormData({ ...categoryFormData, name: e.target.value })}
-                className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Descrição</label>
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Descrição</label>
               <textarea
                 value={categoryFormData.description}
                 onChange={(e) => setCategoryFormData({ ...categoryFormData, description: e.target.value })}
-                className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 rows={2}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Categoria Pai</label>
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Categoria Pai</label>
               <select
                 value={categoryFormData.parentId}
                 onChange={(e) => setCategoryFormData({ ...categoryFormData, parentId: e.target.value })}
-                className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               >
                 <option value="">Nenhuma</option>
                 {categories
@@ -464,13 +464,13 @@ const KbAdminPage = () => {
                 setShowCategoryModal(false);
                 setEditingCategory(null);
               }}
-              className="px-4 py-2 border border-gray-600 rounded-lg text-sm font-medium text-gray-300 bg-gray-700/50 hover:bg-gray-700 transition-colors"
+              className="px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-700/30 transition-colors"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-etus-green hover:bg-etus-green-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
+              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-600-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
             >
               {editingCategory ? 'Salvar' : 'Criar'}
             </button>
@@ -491,22 +491,22 @@ const KbAdminPage = () => {
         <form onSubmit={handleCreateArticle}>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Título <span className="text-red-400">*</span></label>
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Título <span className="text-red-400">*</span></label>
               <input
                 type="text"
                 required
                 value={articleFormData.title}
                 onChange={(e) => setArticleFormData({ ...articleFormData, title: e.target.value })}
-                className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Categoria</label>
+                <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Categoria</label>
                 <select
                   value={articleFormData.categoryId}
                   onChange={(e) => setArticleFormData({ ...articleFormData, categoryId: e.target.value })}
-                  className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                  className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 >
                   <option value="">Sem categoria</option>
                   {categories.map((cat) => (
@@ -517,13 +517,13 @@ const KbAdminPage = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Status</label>
+                <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Status</label>
                 <select
                   value={articleFormData.status}
                   onChange={(e) =>
                     setArticleFormData({ ...articleFormData, status: e.target.value as any })
                   }
-                  className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                  className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 >
                   <option value="DRAFT">Rascunho</option>
                   <option value="PUBLISHED">Publicado</option>
@@ -532,19 +532,19 @@ const KbAdminPage = () => {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Conteúdo (Markdown) <span className="text-red-400">*</span></label>
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Conteúdo (Markdown) <span className="text-red-400">*</span></label>
               <RichTextEditor
                 value={articleFormData.content}
                 onChange={(value) => setArticleFormData({ ...articleFormData, content: value })}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Tags (separadas por vírgula)</label>
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Tags (separadas por vírgula)</label>
               <input
                 type="text"
                 value={articleFormData.tags}
                 onChange={(e) => setArticleFormData({ ...articleFormData, tags: e.target.value })}
-                className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 placeholder="tag1, tag2, tag3"
               />
             </div>
@@ -556,13 +556,13 @@ const KbAdminPage = () => {
                 setShowArticleModal(false);
                 setEditingArticle(null);
               }}
-              className="px-4 py-2 border border-gray-600 rounded-lg text-sm font-medium text-gray-300 bg-gray-700/50 hover:bg-gray-700 transition-colors"
+              className="px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-700/30 transition-colors"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-etus-green hover:bg-etus-green-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
+              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-600-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
             >
               {editingArticle ? 'Salvar' : 'Criar'}
             </button>
@@ -584,7 +584,7 @@ const KbAdminPage = () => {
           <>
             <div className="mb-4">
               {viewingArticle.category && (
-                <p className="text-sm text-gray-400 mb-2">Categoria: {viewingArticle.category.name}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mb-2">Categoria: {viewingArticle.category.name}</p>
               )}
               <div className="flex items-center space-x-2 mb-2">
                 <span
@@ -592,7 +592,7 @@ const KbAdminPage = () => {
                     viewingArticle.status === 'PUBLISHED'
                       ? 'bg-green-500/30 text-green-400'
                       : viewingArticle.status === 'ARCHIVED'
-                      ? 'bg-gray-600/50 text-gray-400'
+                      ? 'bg-gray-600/50 text-slate-500 dark:text-slate-400'
                       : 'bg-yellow-500/30 text-yellow-400'
                   }`}
                 >
@@ -601,7 +601,7 @@ const KbAdminPage = () => {
                 {viewingArticle.tags && viewingArticle.tags.length > 0 && (
                   <div className="flex flex-wrap gap-1">
                     {viewingArticle.tags.map((tag) => (
-                      <span key={tag} className="px-2 py-1 text-xs bg-gray-600/50 text-gray-300 rounded">
+                      <span key={tag} className="px-2 py-1 text-xs bg-gray-600/50 text-slate-600 dark:text-slate-300 rounded">
                         {tag}
                       </span>
                     ))}
@@ -609,21 +609,21 @@ const KbAdminPage = () => {
                 )}
               </div>
               {viewingArticle.createdBy && (
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   Criado por: {viewingArticle.createdBy.name} em {new Date(viewingArticle.createdAt).toLocaleDateString('pt-BR')}
                 </p>
               )}
             </div>
-            <div className="border-t border-gray-600/50 pt-4 max-h-[60vh] overflow-y-auto">
+            <div className="border-t border-slate-200 dark:border-slate-700 pt-4 max-h-[60vh] overflow-y-auto">
               <div
                 className="prose prose-invert max-w-none
                   prose-headings:text-white
-                  prose-p:text-gray-300
+                  prose-p:text-slate-600 dark:text-slate-300
                   prose-strong:text-white
-                  prose-code:text-gray-300 prose-code:bg-gray-800
+                  prose-code:text-slate-600 dark:text-slate-300 prose-code:bg-gray-800
                   prose-pre:bg-gray-900 prose-pre:text-gray-100
-                  prose-a:text-etus-green
-                  prose-blockquote:text-gray-400"
+                  prose-a:text-indigo-600 dark:text-indigo-400
+                  prose-blockquote:text-slate-500 dark:text-slate-400"
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(
                     marked.parse(viewingArticle.content) as string
@@ -631,14 +631,14 @@ const KbAdminPage = () => {
                 }}
               />
             </div>
-            <div className="mt-6 flex justify-end space-x-3 border-t border-gray-600/50 pt-4">
+            <div className="mt-6 flex justify-end space-x-3 border-t border-slate-200 dark:border-slate-700 pt-4">
               <button
                 type="button"
                 onClick={() => {
                   setShowViewArticleModal(false);
                   setViewingArticle(null);
                 }}
-                className="px-4 py-2 border border-gray-600 rounded-lg text-sm font-medium text-gray-300 bg-gray-700/50 hover:bg-gray-700 transition-colors"
+                className="px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-700/30 transition-colors"
               >
                 Fechar
               </button>
@@ -656,7 +656,7 @@ const KbAdminPage = () => {
                   });
                   setShowArticleModal(true);
                 }}
-                className="px-4 py-2 bg-etus-green hover:bg-etus-green-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
+                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-600-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
               >
                 Editar
               </button>

@@ -206,6 +206,11 @@ export const ticketService = {
     return response.data;
   },
 
+  async getStaleTickets(params?: { daysThreshold?: number; take?: number }): Promise<Ticket[]> {
+    const response = await api.get<Ticket[]>('/tickets/stale', { params });
+    return response.data;
+  },
+
   async addTagsToTicket(ticketId: string, tagIds: string[]): Promise<void> {
     await api.post(`/tickets/${ticketId}/tags`, { tagIds });
   },
@@ -257,4 +262,3 @@ export const ticketService = {
     return response.data;
   },
 };
-

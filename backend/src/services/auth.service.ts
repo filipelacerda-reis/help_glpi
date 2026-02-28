@@ -28,6 +28,7 @@ export interface AuthResponse {
     email: string;
     role: UserRole;
     department: string | null;
+    active: boolean;
     enabledModules: string[];
     effectiveModules: string[];
     effectivePermissions?: string[];
@@ -92,6 +93,7 @@ export const authService = {
         email: user.email,
         role: user.role,
         department: user.department,
+        active: user.active,
         enabledModules: user.enabledModules,
         effectiveModules: getEffectiveModules(user.role, user.enabledModules),
         effectivePermissions: authz?.permissions || [],
@@ -157,6 +159,11 @@ export const authService = {
         throw new AppError('Email ou senha inválidos', 401);
       }
 
+      if (!user.active) {
+        logger.warn('Tentativa de login com usuário desativado', { email: data.email, userId: user.id });
+        throw new AppError('Usuário desativado. Contate um administrador.', 403);
+      }
+
       let isValidPassword = false;
       try {
         isValidPassword = await comparePassword(data.password, user.passwordHash);
@@ -210,6 +217,7 @@ export const authService = {
           email: user.email,
           role: user.role,
           department: user.department,
+          active: user.active,
           enabledModules: user.enabledModules,
           effectiveModules: getEffectiveModules(user.role, user.enabledModules),
           effectivePermissions: authz?.permissions || [],

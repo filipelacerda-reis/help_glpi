@@ -4,11 +4,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "guard:modern-layout": "node scripts/guard-modern-layout.mjs",
+    "build": "npm run guard:modern-layout && tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.90.21",
+    "@tanstack/react-query-devtools": "^5.91.3",
     "axios": "^1.6.5",
     "clsx": "^2.1.1",
     "dompurify": "^3.3.0",

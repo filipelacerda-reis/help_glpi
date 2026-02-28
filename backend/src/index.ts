@@ -44,6 +44,7 @@ import { equipmentRoutes } from './routes/equipment.routes';
 import { financeRoutes } from './routes/finance.routes';
 import { hrRoutes } from './routes/hr.routes';
 import { procurementRoutes } from './routes/procurement.routes';
+import { webhookRoutes } from './routes/webhook.routes';
 import { logger } from './utils/logger';
 import { initializeQueues, closeQueues, getQueueJobCountsSnapshot, isRedisAvailable, redisClient } from './lib/queue';
 import { initSocket } from './lib/socket';
@@ -195,6 +196,7 @@ app.use('/api/equipments', equipmentRoutes);
 app.use('/api/finance', financeRoutes);
 app.use('/api/hr', hrRoutes);
 app.use('/api/procurement', procurementRoutes);
+app.use('/api/webhooks', webhookRoutes);
 
 // Error handler
 app.use(errorHandler);

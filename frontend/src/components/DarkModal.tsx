@@ -22,22 +22,23 @@ const DarkModal = ({ isOpen, onClose, title, children, maxWidth = 'md' }: DarkMo
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 overflow-y-auto p-4">
-      <div className={`bg-gray-800 border border-gray-700 rounded-lg p-6 w-full ${maxWidthClasses[maxWidth]} shadow-2xl`}>
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-semibold text-white">{title}</h3>
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-slate-950/60 p-4 pt-8 backdrop-blur-md sm:items-center sm:pt-4">
+      <div
+        className={`w-full ${maxWidthClasses[maxWidth]} max-h-[calc(100dvh-4rem)] overflow-y-auto rounded-2xl border border-slate-200 bg-white shadow-[0_20px_60px_rgba(2,6,23,0.18)] dark:border-slate-700 dark:bg-slate-800`}
+      >
+        <div className="sticky top-0 z-10 flex items-center justify-between rounded-t-2xl border-b border-slate-200 bg-white/95 px-6 py-4 backdrop-blur-sm dark:border-slate-700 dark:bg-slate-800/95">
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{title}</h3>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-white transition-colors"
+            className="rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-100"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
-        {children}
+        <div className="p-6">{children}</div>
       </div>
     </div>
   );
 };
 
 export default DarkModal;
-

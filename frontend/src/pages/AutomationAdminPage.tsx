@@ -150,7 +150,7 @@ const AutomationAdminPage = () => {
         setEditingRule(null);
         setShowModal(true);
       }}
-      className="inline-flex items-center space-x-2 px-4 py-2 bg-etus-green hover:bg-etus-green-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
+      className="inline-flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-600-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
     >
       <Plus className="w-4 h-4" />
       <span>Nova Regra</span>
@@ -162,7 +162,7 @@ const AutomationAdminPage = () => {
       <ModernLayout title="Automações" subtitle="Gerenciar regras de automação" headerActions={headerActions}>
         <div className="text-center py-12">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-etus-green"></div>
-          <p className="mt-4 text-gray-400">Carregando...</p>
+          <p className="mt-4 text-slate-500 dark:text-slate-400">Carregando...</p>
         </div>
       </ModernLayout>
     );
@@ -186,39 +186,39 @@ const AutomationAdminPage = () => {
         </div>
       )}
 
-      <div className="bg-gray-700/30 backdrop-blur-sm border border-gray-600/50 rounded-lg p-6">
+      <div className="bg-white dark:bg-slate-800 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-lg p-6">
         <div className="space-y-4">
           {rules.map((rule) => (
-            <div key={rule.id} className="border border-gray-600/50 rounded-lg p-4 bg-gray-700/20 hover:bg-gray-700/30 transition-colors">
+            <div key={rule.id} className="border border-slate-200 dark:border-slate-700 rounded-lg p-4 bg-slate-50 dark:bg-slate-900/30 hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
               <div className="flex justify-between items-start">
                 <div className="flex-1">
                   <div className="flex items-center space-x-2">
                     <h3 className="font-medium text-white">{rule.name}</h3>
                     <span
                       className={`px-2 py-1 text-xs rounded-full ${
-                        rule.enabled ? 'bg-etus-green/30 text-etus-green' : 'bg-gray-600/50 text-gray-400'
+                        rule.enabled ? 'bg-indigo-600/30 text-indigo-600 dark:text-indigo-400' : 'bg-gray-600/50 text-slate-500 dark:text-slate-400'
                       }`}
                     >
                       {rule.enabled ? 'Ativa' : 'Inativa'}
                     </span>
                   </div>
                   {rule.description && (
-                    <p className="text-sm text-gray-400 mt-1">{rule.description}</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{rule.description}</p>
                   )}
-                  <div className="mt-2 text-sm text-gray-300">
+                  <div className="mt-2 text-sm text-slate-600 dark:text-slate-300">
                     <p>
                       <span className="font-medium">Evento:</span>{' '}
                       {eventOptions.find((e) => e.value === rule.event)?.label || rule.event}
                     </p>
                     <p className="mt-1">
                       <span className="font-medium">Condições:</span>{' '}
-                      <code className="text-xs bg-gray-800/50 px-2 py-1 rounded text-gray-300">
+                      <code className="text-xs bg-slate-50 dark:bg-slate-900/40 px-2 py-1 rounded text-slate-600 dark:text-slate-300">
                         {JSON.stringify(rule.conditions)}
                       </code>
                     </p>
                     <p className="mt-1">
                       <span className="font-medium">Ações:</span>{' '}
-                      <code className="text-xs bg-gray-800/50 px-2 py-1 rounded text-gray-300">
+                      <code className="text-xs bg-slate-50 dark:bg-slate-900/40 px-2 py-1 rounded text-slate-600 dark:text-slate-300">
                         {JSON.stringify(rule.actions)}
                       </code>
                     </p>
@@ -255,7 +255,7 @@ const AutomationAdminPage = () => {
             </div>
           ))}
           {rules.length === 0 && (
-            <p className="text-sm text-gray-400 text-center py-8">Nenhuma regra de automação criada</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400 text-center py-8">Nenhuma regra de automação criada</p>
           )}
         </div>
       </div>
@@ -273,31 +273,31 @@ const AutomationAdminPage = () => {
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Nome <span className="text-red-400">*</span></label>
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Nome <span className="text-red-400">*</span></label>
               <input
                 type="text"
                 required
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Descrição</label>
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Descrição</label>
               <textarea
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 rows={2}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Evento <span className="text-red-400">*</span></label>
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Evento <span className="text-red-400">*</span></label>
               <select
                 required
                 value={formData.event}
                 onChange={(e) => setFormData({ ...formData, event: e.target.value })}
-                className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               >
                 {eventOptions.map((opt) => (
                   <option key={opt.value} value={opt.value}>
@@ -325,9 +325,9 @@ const AutomationAdminPage = () => {
                   type="checkbox"
                   checked={formData.enabled}
                   onChange={(e) => setFormData({ ...formData, enabled: e.target.checked })}
-                  className="rounded border-gray-600 bg-gray-700/50 text-etus-green focus:ring-etus-green"
+                  className="rounded border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500"
                 />
-                <span className="ml-2 text-sm text-gray-300">Regra ativa</span>
+                <span className="ml-2 text-sm text-slate-600 dark:text-slate-300">Regra ativa</span>
               </label>
             </div>
           </div>
@@ -338,13 +338,13 @@ const AutomationAdminPage = () => {
                 setShowModal(false);
                 setEditingRule(null);
               }}
-              className="px-4 py-2 border border-gray-600 rounded-lg text-sm font-medium text-gray-300 bg-gray-700/50 hover:bg-gray-700 transition-colors"
+              className="px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-700/30 transition-colors"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-etus-green hover:bg-etus-green-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
+              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-600-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
             >
               {editingRule ? 'Salvar' : 'Criar'}
             </button>

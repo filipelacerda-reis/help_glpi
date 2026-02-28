@@ -10,6 +10,7 @@ export interface JournalEntry {
   title?: string | null;
   description: string;
   contentHtml?: string | null;
+  editedAt?: string | null;
   createdAt: string;
   updatedAt: string;
   source?: string | null;
@@ -41,6 +42,27 @@ export interface JournalEntry {
     mimeType?: string | null;
     url: string;
   }>;
+}
+
+export interface JournalEntryEditLog {
+  id: string;
+  entryId: string;
+  editedById: string;
+  editedByName: string;
+  editedAt: string;
+  previous: {
+    title?: string | null;
+    description: string;
+    contentHtml?: string | null;
+    tagIds: string[];
+  };
+  next: {
+    title?: string | null;
+    description: string;
+    contentHtml?: string | null;
+    tagIds: string[];
+  };
+  reason?: string | null;
 }
 
 export interface JournalSummary {
@@ -113,6 +135,25 @@ export const journalService = {
     return response.data;
   },
 
+  async updateMyManualEntry(
+    id: string,
+    payload: {
+      title?: string;
+      description: string;
+      contentHtml?: string;
+      tagIds?: string[];
+      reason?: string;
+    }
+  ): Promise<JournalEntry> {
+    const response = await api.patch(`/me/journal/${id}/manual`, payload);
+    return response.data;
+  },
+
+  async getEntryEditLogs(id: string): Promise<JournalEntryEditLog[]> {
+    const response = await api.get(`/me/journal/${id}/edit-logs`);
+    return response.data;
+  },
+
   async getMyJournalSummary(params: { from: string; to: string }): Promise<JournalSummary> {
     const response = await api.get('/me/journal/summary', { params });
     return response.data;
@@ -123,4 +164,3 @@ export const journalService = {
     return response.data;
   },
 };
-

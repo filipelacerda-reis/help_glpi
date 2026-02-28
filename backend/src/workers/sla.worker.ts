@@ -1,4 +1,4 @@
-import { Worker, Job } from 'bullmq';
+import { Worker, Job, Queue } from 'bullmq';
 import { redisConnection, isRedisAvailable } from '../lib/queue';
 import { logger } from '../utils/logger';
 import { slaService } from '../services/sla.service';
@@ -6,7 +6,7 @@ import { registerWorkerTelemetry } from '../shared/observability/queueTelemetry'
 
 // Tipos de jobs de SLA
 interface SlaJobData {
-  type: 'START_SLA' | 'UPDATE_SLA' | 'RECALCULATE_SLA' | 'CHECK_BREACH';
+  type: 'START_SLA' | 'UPDATE_SLA' | 'RECALCULATE_SLA' | 'CHECK_BREACH' | 'SCAN_SLA_RISK';
   ticketId: string;
   actorUserId?: string;
   data?: any;
@@ -69,6 +69,16 @@ export const slaWorker = new Worker<SlaJobData>(
           logger.info('Verificação de violação de SLA concluída', { ticketId });
           break;
 
+        case 'SCAN_SLA_RISK':
+          // Varredura preditiva para risco de quebra de SLA (80% do alvo)
+          {
+            const result = await slaService.scanResolutionRiskTickets({
+              limit: data?.limit,
+            });
+            logger.info('Varredura de risco SLA concluída', result);
+          }
+          break;
+
         default:
           logger.warn('Tipo de job de SLA desconhecido', { type });
       }
@@ -116,5 +126,33 @@ slaWorker.on('error', (err) => {
 });
 
 registerWorkerTelemetry('sla', slaWorker);
+
+const slaMaintenanceQueue = new Queue<SlaJobData>('sla', { connection: redisConnection });
+
+const ensureSlaRiskScanJob = async () => {
+  try {
+    await slaMaintenanceQueue.add(
+      'scan-sla-risk',
+      {
+        type: 'SCAN_SLA_RISK',
+        ticketId: 'batch',
+        data: { limit: 200 },
+      },
+      {
+        jobId: 'scan-sla-risk',
+        repeat: {
+          every: 5 * 60 * 1000,
+        },
+      }
+    );
+    logger.info('Job recorrente de risco de SLA configurado');
+  } catch (error: any) {
+    logger.error('Erro ao configurar job recorrente de risco de SLA', {
+      error: error?.message || String(error),
+    });
+  }
+};
+
+void ensureSlaRiskScanJob();
 
 logger.info('✅ Worker de SLA inicializado');

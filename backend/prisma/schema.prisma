@@ -351,6 +351,7 @@ model User {
   passwordHash String
   role         UserRole
   department   String?
+  active       Boolean  @default(true)
   enabledModules String[] @default([])
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -373,6 +374,7 @@ model User {
   kbArticleUsage    KbArticleUsage[]
   reportPresets     ReportPreset[]
   journalEntries    TechnicianJournalEntry[]
+  journalEntryEdits JournalEntryEditLog[] @relation("JournalEditActor")
   dailySummaries    TechnicianDailySummary[]
   chatSessions      ChatSession[]
   platformSettingsUpdated PlatformSetting[] @relation("PlatformSettingUpdatedBy")
@@ -963,6 +965,7 @@ model TechnicianJournalEntry {
   title       String?
   description String
   contentHtml String? // Conteúdo rico em HTML (para editor rico)
+  editedAt    DateTime?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -974,12 +977,31 @@ model TechnicianJournalEntry {
 
   // Anexos
   attachments JournalAttachment[]
+  editLogs    JournalEntryEditLog[]
 
   @@index([technicianId])
   @@index([createdAt])
   @@index([ticketId])
   @@index([type])
   @@map("technician_journal_entries")
+}
+
+model JournalEntryEditLog {
+  id         String   @id @default(cuid())
+  entryId    String
+  editedById String
+  editedAt   DateTime @default(now())
+  previous   Json
+  next       Json
+  reason     String?
+
+  entry    TechnicianJournalEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  editedBy User                   @relation("JournalEditActor", fields: [editedById], references: [id], onDelete: Cascade)
+
+  @@index([entryId])
+  @@index([editedById])
+  @@index([editedAt])
+  @@map("journal_entry_edit_logs")
 }
 
 model JournalAttachment {

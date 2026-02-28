@@ -23,6 +23,7 @@ export interface AuthResponse {
     email: string;
     role: string;
     department: string | null;
+    active: boolean;
     enabledModules: PlatformModule[];
     effectiveModules: PlatformModule[];
     effectivePermissions?: string[];

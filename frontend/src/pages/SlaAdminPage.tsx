@@ -197,7 +197,7 @@ const SlaAdminPage = () => {
           setEditingCalendar(null);
           setShowCalendarModal(true);
         }}
-        className="inline-flex items-center space-x-2 px-4 py-2 bg-gray-700/50 hover:bg-gray-700 rounded-lg text-sm font-medium text-white transition-colors"
+        className="inline-flex items-center space-x-2 px-4 py-2 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-700/30 rounded-lg text-sm font-medium text-white transition-colors"
       >
         <Calendar className="w-4 h-4" />
         <span>Novo Calendário</span>
@@ -207,7 +207,7 @@ const SlaAdminPage = () => {
           setEditingPolicy(null);
           setShowPolicyModal(true);
         }}
-        className="inline-flex items-center space-x-2 px-4 py-2 bg-etus-green hover:bg-etus-green-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
+        className="inline-flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-600-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
       >
         <Plus className="w-4 h-4" />
         <span>Nova Política</span>
@@ -220,7 +220,7 @@ const SlaAdminPage = () => {
       <ModernLayout title="SLA" subtitle="Gerenciar políticas e calendários de SLA" headerActions={headerActions}>
         <div className="text-center py-12">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-etus-green"></div>
-          <p className="mt-4 text-gray-400">Carregando...</p>
+          <p className="mt-4 text-slate-500 dark:text-slate-400">Carregando...</p>
         </div>
       </ModernLayout>
     );
@@ -245,17 +245,17 @@ const SlaAdminPage = () => {
       )}
 
       {/* Calendários */}
-      <div className="bg-gray-700/30 backdrop-blur-sm border border-gray-600/50 rounded-lg p-6 mb-6">
+      <div className="bg-white dark:bg-slate-800 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-lg p-6 mb-6">
         <h2 className="text-lg font-semibold text-white mb-4">Calendários de Negócio</h2>
         <div className="space-y-4">
           {calendars.map((calendar) => (
-            <div key={calendar.id} className="border border-gray-600/50 rounded-lg p-4 bg-gray-700/20 hover:bg-gray-700/30 transition-colors">
+            <div key={calendar.id} className="border border-slate-200 dark:border-slate-700 rounded-lg p-4 bg-slate-50 dark:bg-slate-900/30 hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
               <div className="flex justify-between items-start">
                 <div>
                   <h3 className="font-medium text-white">{calendar.name}</h3>
-                  <p className="text-sm text-gray-400">{calendar.timezone}</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{calendar.timezone}</p>
                   {calendar.isDefault && (
-                    <span className="inline-block mt-1 px-2 py-1 text-xs bg-etus-green/30 text-etus-green rounded">
+                    <span className="inline-block mt-1 px-2 py-1 text-xs bg-indigo-600/30 text-indigo-600 dark:text-indigo-400 rounded">
                       Padrão
                     </span>
                   )}
@@ -283,7 +283,7 @@ const SlaAdminPage = () => {
             </div>
           ))}
           {calendars.length === 0 && (
-            <div className="text-center py-8 text-gray-400">
+            <div className="text-center py-8 text-slate-500 dark:text-slate-400">
               Nenhum calendário cadastrado
             </div>
           )}
@@ -291,23 +291,23 @@ const SlaAdminPage = () => {
       </div>
 
       {/* Políticas */}
-      <div className="bg-gray-700/30 backdrop-blur-sm border border-gray-600/50 rounded-lg p-6">
+      <div className="bg-white dark:bg-slate-800 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-lg p-6">
         <h2 className="text-lg font-semibold text-white mb-4">Políticas de SLA</h2>
         <div className="space-y-4">
           {policies.map((policy) => (
-            <div key={policy.id} className="border border-gray-600/50 rounded-lg p-4 bg-gray-700/20 hover:bg-gray-700/30 transition-colors">
+            <div key={policy.id} className="border border-slate-200 dark:border-slate-700 rounded-lg p-4 bg-slate-50 dark:bg-slate-900/30 hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
               <div className="flex justify-between items-start">
                 <div className="flex-1">
                   <h3 className="font-medium text-white">{policy.name}</h3>
                   {policy.description && (
-                    <p className="text-sm text-gray-400 mt-1">{policy.description}</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{policy.description}</p>
                   )}
-                  <div className="mt-2 text-sm text-gray-300">
+                  <div className="mt-2 text-sm text-slate-600 dark:text-slate-300">
                     <p>Resolução: {policy.targetResolutionBusinessMinutes} min</p>
                     {policy.targetFirstResponseBusinessMinutes && (
                       <p>Primeira Resposta: {policy.targetFirstResponseBusinessMinutes} min</p>
                     )}
-                    <p className={`mt-1 ${policy.active ? 'text-etus-green' : 'text-gray-500'}`}>
+                    <p className={`mt-1 ${policy.active ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400'}`}>
                       {policy.active ? 'Ativa' : 'Inativa'}
                     </p>
                   </div>
@@ -344,7 +344,7 @@ const SlaAdminPage = () => {
             </div>
           ))}
           {policies.length === 0 && (
-            <div className="text-center py-8 text-gray-400">
+            <div className="text-center py-8 text-slate-500 dark:text-slate-400">
               Nenhuma política cadastrada
             </div>
           )}
@@ -364,27 +364,27 @@ const SlaAdminPage = () => {
         <form onSubmit={handleSavePolicy}>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Nome <span className="text-red-400">*</span></label>
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Nome <span className="text-red-400">*</span></label>
               <input
                 type="text"
                 required
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Descrição</label>
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Descrição</label>
               <textarea
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 rows={2}
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Time</label>
+                <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Time</label>
                 <select
                   value={formData.appliesTo.teamId}
                   onChange={(e) =>
@@ -393,7 +393,7 @@ const SlaAdminPage = () => {
                       appliesTo: { ...formData.appliesTo, teamId: e.target.value },
                     })
                   }
-                  className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                  className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 >
                   <option value="">Todos</option>
                   {teams.map((team) => (
@@ -404,7 +404,7 @@ const SlaAdminPage = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Categoria</label>
+                <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Categoria</label>
                 <select
                   value={formData.appliesTo.categoryId}
                   onChange={(e) =>
@@ -413,7 +413,7 @@ const SlaAdminPage = () => {
                       appliesTo: { ...formData.appliesTo, categoryId: e.target.value },
                     })
                   }
-                  className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                  className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 >
                   <option value="">Todas</option>
                   {categories.map((cat) => (
@@ -426,7 +426,7 @@ const SlaAdminPage = () => {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Tempo de Resolução (min) <span className="text-red-400">*</span></label>
+                <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Tempo de Resolução (min) <span className="text-red-400">*</span></label>
                 <input
                   type="number"
                   required
@@ -434,11 +434,11 @@ const SlaAdminPage = () => {
                   onChange={(e) =>
                     setFormData({ ...formData, targetResolutionBusinessMinutes: e.target.value })
                   }
-                  className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                  className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
                   Tempo de Primeira Resposta (min)
                 </label>
                 <input
@@ -447,17 +447,17 @@ const SlaAdminPage = () => {
                   onChange={(e) =>
                     setFormData({ ...formData, targetFirstResponseBusinessMinutes: e.target.value })
                   }
-                  className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                  className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 />
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Calendário <span className="text-red-400">*</span></label>
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Calendário <span className="text-red-400">*</span></label>
               <select
                 required
                 value={formData.calendarId}
                 onChange={(e) => setFormData({ ...formData, calendarId: e.target.value })}
-                className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               >
                 <option value="">Selecione um calendário</option>
                 {calendars.map((cal) => (
@@ -473,9 +473,9 @@ const SlaAdminPage = () => {
                   type="checkbox"
                   checked={formData.active}
                   onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
-                  className="rounded border-gray-600 bg-gray-700/50 text-etus-green focus:ring-etus-green"
+                  className="rounded border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500"
                 />
-                <span className="ml-2 text-sm text-gray-300">Política ativa</span>
+                <span className="ml-2 text-sm text-slate-600 dark:text-slate-300">Política ativa</span>
               </label>
             </div>
           </div>
@@ -486,13 +486,13 @@ const SlaAdminPage = () => {
                 setShowPolicyModal(false);
                 setEditingPolicy(null);
               }}
-              className="px-4 py-2 border border-gray-600 rounded-lg text-sm font-medium text-gray-300 bg-gray-700/50 hover:bg-gray-700 transition-colors"
+              className="px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-700/30 transition-colors"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-etus-green hover:bg-etus-green-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
+              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-600-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
             >
               {editingPolicy ? 'Salvar' : 'Criar'}
             </button>
@@ -513,22 +513,22 @@ const SlaAdminPage = () => {
         <form onSubmit={handleSaveCalendar}>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Nome <span className="text-red-400">*</span></label>
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Nome <span className="text-red-400">*</span></label>
               <input
                 type="text"
                 required
                 value={calendarFormData.name}
                 onChange={(e) => setCalendarFormData({ ...calendarFormData, name: e.target.value })}
-                className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Timezone</label>
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Timezone</label>
               <input
                 type="text"
                 value={calendarFormData.timezone}
                 onChange={(e) => setCalendarFormData({ ...calendarFormData, timezone: e.target.value })}
-                className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               />
             </div>
             <div>
@@ -537,12 +537,12 @@ const SlaAdminPage = () => {
                   type="checkbox"
                   checked={calendarFormData.isDefault}
                   onChange={(e) => setCalendarFormData({ ...calendarFormData, isDefault: e.target.checked })}
-                  className="rounded border-gray-600 bg-gray-700/50 text-etus-green focus:ring-etus-green"
+                  className="rounded border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500"
                 />
-                <span className="ml-2 text-sm text-gray-300">Calendário padrão</span>
+                <span className="ml-2 text-sm text-slate-600 dark:text-slate-300">Calendário padrão</span>
               </label>
             </div>
-            <div className="text-sm text-gray-400">
+            <div className="text-sm text-slate-500 dark:text-slate-400">
               <p>Horários configurados: Segunda a Sexta, 09:00-18:00</p>
               <p className="text-xs mt-1">Configuração avançada de horários por dia será implementada em versão futura.</p>
             </div>
@@ -554,13 +554,13 @@ const SlaAdminPage = () => {
                 setShowCalendarModal(false);
                 setEditingCalendar(null);
               }}
-              className="px-4 py-2 border border-gray-600 rounded-lg text-sm font-medium text-gray-300 bg-gray-700/50 hover:bg-gray-700 transition-colors"
+              className="px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-700/30 transition-colors"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-etus-green hover:bg-etus-green-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
+              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-600-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
             >
               {editingCalendar ? 'Salvar' : 'Criar'}
             </button>

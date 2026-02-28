@@ -26,6 +26,7 @@ export interface UpdateUserDto {
   password?: string;
   role?: UserRole;
   department?: string | null;
+  active?: boolean;
   enabledModules?: string[];
   entitlements?: Array<{
     module: ModuleKey;
@@ -41,6 +42,7 @@ function selectUserFields() {
     email: true,
     role: true,
     department: true,
+    active: true,
     enabledModules: true,
     entitlements: {
       select: {

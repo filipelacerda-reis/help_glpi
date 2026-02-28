@@ -130,14 +130,14 @@ export const MetricsFilterBar: React.FC<MetricsFilterBarProps> = ({
           {onSavePreset && (
             <button
               onClick={onSavePreset}
-              className="px-3 py-1.5 text-xs border border-gray-600 rounded-lg text-gray-300 bg-gray-700/50 hover:bg-gray-700 transition-colors"
+              className="px-3 py-1.5 text-xs border border-gray-600 rounded-lg text-gray-300 bg-gray-700/50 hover:bg-slate-100 dark:hover:bg-slate-700/30 transition-colors"
             >
               Salvar
             </button>
           )}
           <button
             onClick={clearFilters}
-            className="px-3 py-1.5 text-xs border border-gray-600 rounded-lg text-gray-300 bg-gray-700/50 hover:bg-gray-700 transition-colors"
+            className="px-3 py-1.5 text-xs border border-gray-600 rounded-lg text-gray-300 bg-gray-700/50 hover:bg-slate-100 dark:hover:bg-slate-700/30 transition-colors"
           >
             Limpar
           </button>

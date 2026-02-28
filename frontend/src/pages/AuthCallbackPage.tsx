@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Loader2 } from 'lucide-react';
 import { authService } from '../services/auth.service';
 
 const AuthCallbackPage = () => {
@@ -23,9 +24,7 @@ const AuthCallbackPage = () => {
     }
 
     localStorage.setItem('accessToken', token);
-    if (refreshToken) {
-      localStorage.setItem('refreshToken', refreshToken);
-    }
+    if (refreshToken) localStorage.setItem('refreshToken', refreshToken);
 
     authService
       .getCurrentUser()
@@ -33,27 +32,28 @@ const AuthCallbackPage = () => {
         localStorage.setItem('user', JSON.stringify(user));
         navigate('/');
       })
-      .catch(() => {
-        setError('Erro ao validar usuário. Faça login novamente.');
-      });
+      .catch(() => setError('Erro ao validar usuário. Faça login novamente.'));
   }, [navigate, searchParams]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-6 text-center">
-        <h2 className="text-2xl font-bold text-white">Autenticando...</h2>
+    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-10 dark:bg-slate-900">
+      <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <Loader2 className="mx-auto h-8 w-8 animate-spin text-indigo-600" />
+        <h1 className="mt-4 text-xl font-bold text-slate-900 dark:text-slate-100">Autenticando...</h1>
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Aguarde enquanto validamos seu acesso.</p>
+
         {error && (
-          <div className="bg-red-500/20 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg backdrop-blur-sm">
-            {error}
-          </div>
-        )}
-        {error && (
-          <button
-            onClick={() => navigate('/login')}
-            className="w-full mt-4 py-3 px-4 rounded-lg bg-etus-green text-gray-900 font-semibold"
-          >
-            Voltar para login
-          </button>
+          <>
+            <div className="mt-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-900/40 dark:bg-rose-950/20 dark:text-rose-300">
+              {error}
+            </div>
+            <button
+              onClick={() => navigate('/login')}
+              className="mt-4 w-full rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-indigo-700"
+            >
+              Voltar para login
+            </button>
+          </>
         )}
       </div>
     </div>

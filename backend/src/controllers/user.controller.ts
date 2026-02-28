@@ -25,6 +25,7 @@ const updateUserSchema = z.object({
   password: z.string().min(6).optional(),
   role: z.nativeEnum(UserRole).optional(),
   department: z.string().optional().nullable(),
+  active: z.boolean().optional(),
   enabledModules: z.array(z.string()).optional(),
   entitlements: z.array(entitlementSchema).optional(),
 });

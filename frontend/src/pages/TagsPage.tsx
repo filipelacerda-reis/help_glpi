@@ -180,7 +180,7 @@ const TagsPage = () => {
   const headerActions = (
     <button
       onClick={() => setShowCreateModal(true)}
-      className="inline-flex items-center space-x-2 px-4 py-2 bg-etus-green hover:bg-etus-green-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
+      className="inline-flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-600-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
     >
       <Plus className="w-4 h-4" />
       <span>Nova Tag</span>
@@ -192,7 +192,7 @@ const TagsPage = () => {
       <ModernLayout title="Tags" subtitle="Gerenciar tags do sistema" headerActions={headerActions}>
         <div className="text-center py-12">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-etus-green"></div>
-          <p className="mt-4 text-gray-400">Carregando...</p>
+          <p className="mt-4 text-slate-500 dark:text-slate-400">Carregando...</p>
         </div>
       </ModernLayout>
     );
@@ -217,14 +217,14 @@ const TagsPage = () => {
       )}
 
       {/* Filtros */}
-      <div className="bg-gray-700/30 backdrop-blur-sm border border-gray-600/50 rounded-lg p-4 mb-6">
+      <div className="bg-white dark:bg-slate-800 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-lg p-4 mb-6">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label className="block text-xs font-medium text-gray-400 mb-1">Grupo</label>
+            <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Grupo</label>
             <select
               value={filterGroup}
               onChange={(e) => setFilterGroup(e.target.value)}
-              className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+              className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             >
               <option value="">Todos os grupos</option>
               {Object.entries(groupLabels).map(([value, label]) => (
@@ -235,11 +235,11 @@ const TagsPage = () => {
             </select>
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-400 mb-1">Status</label>
+            <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Status</label>
             <select
               value={filterActive}
               onChange={(e) => setFilterActive(e.target.value)}
-              className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+              className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             >
               <option value="">Todas</option>
               <option value="true">Ativas</option>
@@ -252,7 +252,7 @@ const TagsPage = () => {
       {/* Lista de Tags por Grupo */}
       <div className="space-y-6">
         {Object.entries(tagsByGroup).map(([group, groupTags]) => (
-          <div key={group} className="bg-gray-700/30 backdrop-blur-sm border border-gray-600/50 rounded-lg p-6">
+          <div key={group} className="bg-white dark:bg-slate-800 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-lg p-6">
             <h2 className="text-lg font-semibold text-white mb-4">
               {groupLabels[group as Tag['group']]} ({groupTags.length})
             </h2>
@@ -268,21 +268,21 @@ const TagsPage = () => {
                     key={tag.id}
                     className={`border rounded-lg p-4 ${
                       tag.isActive
-                        ? 'border-gray-600/50 bg-gray-700/20'
-                        : 'border-gray-700/50 bg-gray-800/30 opacity-75'
-                    } hover:bg-gray-700/30 transition-colors`}
+                        ? 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/30'
+                        : 'border-slate-200 dark:border-slate-700/60 bg-slate-50 dark:bg-slate-900/40 opacity-75'
+                    } hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors`}
                   >
                     <div className="flex justify-between items-start mb-2">
                       <div className="flex-1">
                         <div className="font-medium text-white">{displayName}</div>
-                        <div className="text-xs text-gray-400 mt-1">{tag.name}</div>
+                        <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">{tag.name}</div>
                       </div>
                       <div className="flex items-center space-x-2">
                         <span
                           className={`px-2 py-1 text-xs rounded-full ${
                             tag.isActive
-                              ? 'bg-etus-green/30 text-etus-green'
-                              : 'bg-gray-600/50 text-gray-400'
+                              ? 'bg-indigo-600/30 text-indigo-600 dark:text-indigo-400'
+                              : 'bg-gray-600/50 text-slate-500 dark:text-slate-400'
                           }`}
                         >
                           {tag.isActive ? 'Ativa' : 'Inativa'}
@@ -292,7 +292,7 @@ const TagsPage = () => {
                     <div className="flex justify-end space-x-2 mt-3">
                       <button
                         onClick={() => handleToggleActive(tag)}
-                        className="text-xs text-etus-green hover:text-etus-green-dark transition-colors"
+                        className="text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-300 transition-colors"
                         title={tag.isActive ? 'Desativar' : 'Ativar'}
                       >
                         <Power className="w-4 h-4" />
@@ -319,7 +319,7 @@ const TagsPage = () => {
           </div>
         ))}
         {Object.keys(tagsByGroup).length === 0 && (
-          <div className="text-center py-12 text-gray-400">
+          <div className="text-center py-12 text-slate-500 dark:text-slate-400">
             Nenhuma tag encontrada com os filtros selecionados.
           </div>
         )}
@@ -337,12 +337,12 @@ const TagsPage = () => {
         <form onSubmit={handleCreateTag}>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Grupo</label>
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Grupo</label>
               <select
                 required
                 value={formData.group}
                 onChange={(e) => setFormData({ ...formData, group: e.target.value as Tag['group'] })}
-                className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               >
                 {Object.entries(groupLabels).map(([value, label]) => (
                   <option key={value} value={value}>
@@ -350,16 +350,16 @@ const TagsPage = () => {
                   </option>
                 ))}
               </select>
-              <p className="mt-1 text-xs text-gray-400">
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                 Prefixo: {groupPrefixes[formData.group]}:
               </p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
                 Nome <span className="text-red-400">*</span>
               </label>
               <div className="flex rounded-md">
-                <span className="inline-flex items-center px-3 rounded-l-lg border border-r-0 border-gray-600 bg-gray-700/50 text-gray-400 text-sm">
+                <span className="inline-flex items-center px-3 rounded-l-lg border border-r-0 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 text-slate-500 dark:text-slate-400 text-sm">
                   {groupPrefixes[formData.group]}:
                 </span>
                 <input
@@ -368,10 +368,10 @@ const TagsPage = () => {
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   placeholder="nome_da_tag"
-                  className="flex-1 min-w-0 block w-full px-3 py-2 rounded-r-lg border border-gray-600 bg-gray-700/50 text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green sm:text-sm"
+                  className="flex-1 min-w-0 block w-full px-3 py-2 rounded-r-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />
               </div>
-              <p className="mt-1 text-xs text-gray-400">
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                 O prefixo será adicionado automaticamente. Use apenas letras minúsculas, números e underscores.
               </p>
             </div>
@@ -380,9 +380,9 @@ const TagsPage = () => {
                 type="checkbox"
                 checked={formData.isActive}
                 onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                className="rounded border-gray-600 bg-gray-700/50 text-etus-green focus:ring-etus-green"
+                className="rounded border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500"
               />
-              <label className="ml-2 block text-sm text-gray-300">Tag ativa</label>
+              <label className="ml-2 block text-sm text-slate-600 dark:text-slate-300">Tag ativa</label>
             </div>
           </div>
           <div className="mt-6 flex justify-end space-x-3">
@@ -392,13 +392,13 @@ const TagsPage = () => {
                 setShowCreateModal(false);
                 setFormData({ name: '', group: 'FEATURE', isActive: true });
               }}
-              className="px-4 py-2 border border-gray-600 rounded-lg text-sm font-medium text-gray-300 bg-gray-700/50 hover:bg-gray-700 transition-colors"
+              className="px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-700/30 transition-colors"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-etus-green hover:bg-etus-green-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
+              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-600-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
             >
               Criar Tag
             </button>
@@ -418,12 +418,12 @@ const TagsPage = () => {
         <form onSubmit={handleUpdateTag}>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Grupo</label>
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Grupo</label>
               <select
                 required
                 value={editFormData.group}
                 onChange={(e) => setEditFormData({ ...editFormData, group: e.target.value as Tag['group'] })}
-                className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               >
                 {Object.entries(groupLabels).map(([value, label]) => (
                   <option key={value} value={value}>
@@ -431,16 +431,16 @@ const TagsPage = () => {
                   </option>
                 ))}
               </select>
-              <p className="mt-1 text-xs text-gray-400">
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                 Prefixo: {groupPrefixes[editFormData.group]}:
               </p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
                 Nome <span className="text-red-400">*</span>
               </label>
               <div className="flex rounded-md">
-                <span className="inline-flex items-center px-3 rounded-l-lg border border-r-0 border-gray-600 bg-gray-700/50 text-gray-400 text-sm">
+                <span className="inline-flex items-center px-3 rounded-l-lg border border-r-0 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 text-slate-500 dark:text-slate-400 text-sm">
                   {groupPrefixes[editFormData.group]}:
                 </span>
                 <input
@@ -449,10 +449,10 @@ const TagsPage = () => {
                   value={editFormData.name}
                   onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
                   placeholder="nome_da_tag"
-                  className="flex-1 min-w-0 block w-full px-3 py-2 rounded-r-lg border border-gray-600 bg-gray-700/50 text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green sm:text-sm"
+                  className="flex-1 min-w-0 block w-full px-3 py-2 rounded-r-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />
               </div>
-              <p className="mt-1 text-xs text-gray-400">
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                 O prefixo será adicionado automaticamente. Use apenas letras minúsculas, números e underscores.
               </p>
             </div>
@@ -461,9 +461,9 @@ const TagsPage = () => {
                 type="checkbox"
                 checked={editFormData.isActive}
                 onChange={(e) => setEditFormData({ ...editFormData, isActive: e.target.checked })}
-                className="rounded border-gray-600 bg-gray-700/50 text-etus-green focus:ring-etus-green"
+                className="rounded border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500"
               />
-              <label className="ml-2 block text-sm text-gray-300">Tag ativa</label>
+              <label className="ml-2 block text-sm text-slate-600 dark:text-slate-300">Tag ativa</label>
             </div>
           </div>
           <div className="mt-6 flex justify-end space-x-3">
@@ -473,13 +473,13 @@ const TagsPage = () => {
                 setShowEditModal(false);
                 setEditingTag(null);
               }}
-              className="px-4 py-2 border border-gray-600 rounded-lg text-sm font-medium text-gray-300 bg-gray-700/50 hover:bg-gray-700 transition-colors"
+              className="px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-700/30 transition-colors"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-etus-green hover:bg-etus-green-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
+              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-600-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
             >
               Salvar
             </button>

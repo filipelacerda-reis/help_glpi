@@ -46,32 +46,32 @@ const FinancePage = () => {
   return (
     <ModernLayout title="Financeiro" subtitle="Visão consolidada de custos e ativos">
       <CorporateFiltersBar filters={filters} onChange={setFilters} />
-      {loading && <div className="text-gray-300">Carregando dados financeiros...</div>}
+      {loading && <div className="text-slate-600 dark:text-slate-300">Carregando dados financeiros...</div>}
       {error && <div className="text-red-400">{error}</div>}
       {data && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-            <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-4">
-              <p className="text-xs text-gray-400">Valor total em ativos</p>
+            <div className="rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 p-4">
+              <p className="text-xs text-slate-500 dark:text-slate-400">Valor total em ativos</p>
               <p className="text-xl font-semibold text-white">{formatCurrency(data.totalAssetValue)}</p>
             </div>
-            <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-4">
-              <p className="text-xs text-gray-400">Valor alocado</p>
+            <div className="rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 p-4">
+              <p className="text-xs text-slate-500 dark:text-slate-400">Valor alocado</p>
               <p className="text-xl font-semibold text-white">{formatCurrency(data.assignedAssetValue)}</p>
             </div>
-            <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-4">
-              <p className="text-xs text-gray-400">Valor em estoque</p>
+            <div className="rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 p-4">
+              <p className="text-xs text-slate-500 dark:text-slate-400">Valor em estoque</p>
               <p className="text-xl font-semibold text-white">{formatCurrency(data.inStockAssetValue)}</p>
             </div>
-            <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-4">
-              <p className="text-xs text-gray-400">Chamados operacionais abertos</p>
+            <div className="rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 p-4">
+              <p className="text-xs text-slate-500 dark:text-slate-400">Chamados operacionais abertos</p>
               <p className="text-xl font-semibold text-white">{data.openTickets}</p>
             </div>
           </div>
 
           {data.comparison && (
-            <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-4">
-              <p className="text-xs text-gray-400">Comparação de compras no período</p>
+            <div className="rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 p-4">
+              <p className="text-xs text-slate-500 dark:text-slate-400">Comparação de compras no período</p>
               <p className="text-lg text-white mt-1">
                 {formatCurrency(data.comparison.purchases.current)} vs {formatCurrency(data.comparison.purchases.previous)}
               </p>
@@ -83,7 +83,7 @@ const FinancePage = () => {
             </div>
           )}
 
-          <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-4">
+          <div className="rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 p-4">
             <h3 className="text-sm font-semibold text-white mb-3">Distribuição por tipo de equipamento</h3>
             <div className="h-72">
               <ResponsiveContainer width="100%" height="100%">
@@ -101,7 +101,7 @@ const FinancePage = () => {
           </div>
 
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-            <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-4">
+            <div className="rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 p-4">
               <h3 className="text-sm font-semibold text-white mb-3">Compras por mês</h3>
               <div className="h-72">
                 <ResponsiveContainer width="100%" height="100%">
@@ -116,7 +116,7 @@ const FinancePage = () => {
               </div>
             </div>
 
-            <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-4">
+            <div className="rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 p-4">
               <h3 className="text-sm font-semibold text-white mb-3">Movimentação de entregas</h3>
               <div className="h-72">
                 <ResponsiveContainer width="100%" height="100%">

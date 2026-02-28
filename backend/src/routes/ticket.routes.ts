@@ -9,6 +9,7 @@ const router = Router();
 // Permitir que todos os níveis de perfil possam criar tickets
 router.post('/', authenticate, requireModuleAccess('TICKETS'), uploadMultiple, ticketController.createTicket);
 router.get('/', authenticate, requireModuleAccess('TICKETS'), ticketController.getTickets);
+router.get('/stale', authenticate, requireModuleAccess('TICKETS'), ticketController.getStaleTickets);
 router.get('/:id', authenticate, requireModuleAccess('TICKETS'), ticketController.getTicketById);
 router.patch('/:id', authenticate, requireModuleAccess('TICKETS'), ticketController.updateTicket);
 router.post('/:id/comments', authenticate, requireModuleAccess('TICKETS'), uploadMultiple, ticketController.addComment);

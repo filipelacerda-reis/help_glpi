@@ -19,7 +19,7 @@ const maskValue = (value: unknown): unknown => {
     return Object.fromEntries(
       Object.entries(value as Record<string, unknown>).map(([key, val]) => {
         const lower = key.toLowerCase();
-        if (['cert', 'secret', 'key', 'password'].some((token) => lower.includes(token))) {
+        if (['cert', 'secret', 'key', 'password', 'token'].some((token) => lower.includes(token))) {
           return [key, '***'];
         }
         return [key, maskValue(val)];

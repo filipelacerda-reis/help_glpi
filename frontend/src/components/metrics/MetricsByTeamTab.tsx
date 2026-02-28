@@ -1,98 +1,120 @@
 import { MetricsResponse } from '../../types/metrics.types';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useNavigate } from 'react-router-dom';
 
 interface MetricsByTeamTabProps {
   metrics: MetricsResponse;
 }
 
+const tooltipStyle = {
+  borderRadius: 12,
+  border: '1px solid #e2e8f0',
+  backgroundColor: 'rgba(255,255,255,0.95)',
+};
+
 export const MetricsByTeamTab: React.FC<MetricsByTeamTabProps> = ({ metrics }) => {
   const navigate = useNavigate();
+  const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
+  const tooltipThemeStyle = {
+    ...tooltipStyle,
+    border: isDark ? '1px solid #334155' : tooltipStyle.border,
+    backgroundColor: isDark ? 'rgba(30,41,59,0.95)' : tooltipStyle.backgroundColor,
+  };
+  const tooltipLabelStyle = { color: isDark ? '#e2e8f0' : '#0f172a' };
+  const tooltipItemStyle = { color: isDark ? '#f8fafc' : '#0f172a' };
+  const tooltipCursor = {
+    fill: isDark ? 'rgba(99,102,241,0.12)' : 'rgba(99,102,241,0.08)',
+    stroke: isDark ? 'rgba(148,163,184,0.4)' : 'rgba(99,102,241,0.2)',
+    strokeWidth: 1,
+  };
 
   const formatMinutes = (minutes: number | null) => {
     if (minutes === null) return 'N/A';
     const hours = Math.floor(minutes / 60);
     const mins = Math.floor(minutes % 60);
-    if (hours === 0) return `${mins}min`;
-    return `${hours}h ${mins}min`;
-  };
-
-  const handleTeamClick = (teamId: string) => {
-    navigate(`/tickets?teamId=${teamId}`);
+    return hours === 0 ? `${mins}min` : `${hours}h ${mins}min`;
   };
 
   return (
     <div className="space-y-6">
-      {/* Tabela */}
-      <div className="bg-white shadow rounded-lg overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">Métricas por Time</h2>
-        </div>
+      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <h2 className="mb-1 text-lg font-bold text-slate-900 dark:text-slate-100">Métricas por Time</h2>
+        <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">
+          Performance de criação, resolução e saúde operacional por equipe
+        </p>
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Time</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Criados</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Resolvidos</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Backlog</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">MTTA</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">MTTR</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">% SLA</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">% Reabertura</th>
+          <table className="min-w-full text-sm">
+            <thead>
+              <tr className="border-b border-slate-200 text-left text-xs uppercase tracking-wide text-slate-500 dark:border-slate-700 dark:text-slate-400">
+                <th className="py-3 pr-4">Time</th>
+                <th className="py-3 pr-4">Criados</th>
+                <th className="py-3 pr-4">Resolvidos</th>
+                <th className="py-3 pr-4">Backlog</th>
+                <th className="py-3 pr-4">MTTA</th>
+                <th className="py-3 pr-4">MTTR</th>
+                <th className="py-3 pr-4">% SLA</th>
+                <th className="py-3 pr-0">% Reabertura</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody>
               {metrics.byTeam.items.map((item) => (
                 <tr
                   key={item.teamId}
-                  onClick={() => handleTeamClick(item.teamId)}
-                  className="hover:bg-gray-50 cursor-pointer"
+                  onClick={() => navigate(`/tickets?teamId=${item.teamId}`)}
+                  className="cursor-pointer border-b border-slate-100 transition-colors hover:bg-slate-50 dark:border-slate-700/50 dark:hover:bg-slate-700/30"
                 >
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <td className="py-3 pr-4 font-semibold text-slate-900 dark:text-slate-100">
                     {item.teamName}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.created}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.resolved}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.backlog}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {formatMinutes(item.mtta)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {formatMinutes(item.mttr)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {item.slaCompliancePercent.toFixed(1)}%
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {item.reopenRatePercent.toFixed(1)}%
-                  </td>
+                  <td className="py-3 pr-4 text-slate-600 dark:text-slate-300">{item.created}</td>
+                  <td className="py-3 pr-4 text-slate-600 dark:text-slate-300">{item.resolved}</td>
+                  <td className="py-3 pr-4 text-slate-600 dark:text-slate-300">{item.backlog}</td>
+                  <td className="py-3 pr-4 text-slate-600 dark:text-slate-300">{formatMinutes(item.mtta)}</td>
+                  <td className="py-3 pr-4 text-slate-600 dark:text-slate-300">{formatMinutes(item.mttr)}</td>
+                  <td className="py-3 pr-4 text-slate-600 dark:text-slate-300">{item.slaCompliancePercent.toFixed(1)}%</td>
+                  <td className="py-3 pr-0 text-slate-600 dark:text-slate-300">{item.reopenRatePercent.toFixed(1)}%</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-      </div>
+      </section>
 
-      {/* Gráfico */}
-      <div className="bg-white shadow rounded-lg p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Volume de Tickets por Time</h2>
+      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <h2 className="mb-1 text-lg font-bold text-slate-900 dark:text-slate-100">Volume por Time</h2>
+        <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">Comparativo de tickets criados e resolvidos</p>
         {metrics.byTeam.items.length > 0 ? (
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={metrics.byTeam.items}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="teamName" angle={-45} textAnchor="end" height={100} />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="created" fill="#8DF768" name="Criados" />
-              <Bar dataKey="resolved" fill="#0088FE" name="Resolvidos" />
-            </BarChart>
-          </ResponsiveContainer>
+          <div className="h-[340px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={metrics.byTeam.items} layout="vertical" margin={{ left: 12, right: 12 }}>
+                <defs>
+                  <linearGradient id="teamCreatedGradient" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stopColor="#4f46e5" stopOpacity={0.9} />
+                    <stop offset="100%" stopColor="#4f46e5" stopOpacity={0.55} />
+                  </linearGradient>
+                  <linearGradient id="teamResolvedGradient" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stopColor="#0ea5e9" stopOpacity={0.9} />
+                    <stop offset="100%" stopColor="#10b981" stopOpacity={0.65} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#cbd5e1" opacity={0.4} />
+                <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} />
+                <YAxis dataKey="teamName" type="category" width={140} axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} />
+                <Tooltip
+                  contentStyle={tooltipThemeStyle}
+                  labelStyle={tooltipLabelStyle}
+                  itemStyle={tooltipItemStyle}
+                  cursor={tooltipCursor}
+                />
+                <Bar dataKey="created" fill="url(#teamCreatedGradient)" name="Criados" radius={[0, 4, 4, 0]} />
+                <Bar dataKey="resolved" fill="url(#teamResolvedGradient)" name="Resolvidos" radius={[0, 4, 4, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         ) : (
-          <div className="text-center py-8 text-gray-500">Nenhum dado disponível</div>
+          <div className="py-10 text-center text-sm text-slate-500 dark:text-slate-400">Nenhum dado disponível</div>
         )}
-      </div>
+      </section>
     </div>
   );
 };
-

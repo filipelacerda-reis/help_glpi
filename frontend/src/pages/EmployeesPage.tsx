@@ -141,10 +141,10 @@ const EmployeesPage = () => {
           </div>
         )}
 
-        <div className="rounded-lg border border-gray-600/50 bg-gray-700/30 p-4">
+        <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
           <div className="mb-4">
             <input
-              className="w-full rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-white"
+              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-gray-800 px-3 py-2 text-sm text-white"
               placeholder="Buscar por nome, CPF, função ou time"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -152,12 +152,12 @@ const EmployeesPage = () => {
           </div>
 
           {loading ? (
-            <div className="text-gray-300">Carregando...</div>
+            <div className="text-slate-600 dark:text-slate-300">Carregando...</div>
           ) : (
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm">
                 <thead>
-                  <tr className="border-b border-gray-600 text-left text-gray-300">
+                  <tr className="border-b border-slate-300 dark:border-slate-700 text-left text-slate-600 dark:text-slate-300">
                     <th className="py-2 pr-4">Nome</th>
                     <th className="py-2 pr-4">CPF</th>
                     <th className="py-2 pr-4">Função</th>
@@ -168,7 +168,7 @@ const EmployeesPage = () => {
                 </thead>
                 <tbody>
                   {filteredEmployees.map((employee) => (
-                    <tr key={employee.id} className="border-b border-gray-700/70 text-gray-100">
+                    <tr key={employee.id} className="border-b border-slate-300 dark:border-slate-700/70 text-gray-100">
                       <td className="py-2 pr-4">{employee.name}</td>
                       <td className="py-2 pr-4">{formatCpf(employee.cpf)}</td>
                       <td className="py-2 pr-4">{employee.roleTitle}</td>
@@ -203,21 +203,21 @@ const EmployeesPage = () => {
         {canManage && (
           <form
             onSubmit={handleSave}
-            className="rounded-lg border border-gray-600/50 bg-gray-700/30 p-4"
+            className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4"
           >
             <h2 className="mb-4 text-lg font-semibold text-white">
               {editingId ? 'Editar Funcionário' : 'Novo Funcionário'}
             </h2>
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               <input
-                className="rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-white"
+                className="rounded-lg border border-slate-300 dark:border-slate-700 bg-gray-800 px-3 py-2 text-sm text-white"
                 placeholder="Nome"
                 value={form.name}
                 onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
                 required
               />
               <input
-                className="rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-white"
+                className="rounded-lg border border-slate-300 dark:border-slate-700 bg-gray-800 px-3 py-2 text-sm text-white"
                 placeholder="CPF"
                 value={form.cpf}
                 onChange={(e) =>
@@ -226,14 +226,14 @@ const EmployeesPage = () => {
                 required
               />
               <input
-                className="rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-white"
+                className="rounded-lg border border-slate-300 dark:border-slate-700 bg-gray-800 px-3 py-2 text-sm text-white"
                 placeholder="Função"
                 value={form.roleTitle}
                 onChange={(e) => setForm((prev) => ({ ...prev, roleTitle: e.target.value }))}
                 required
               />
               <select
-                className="rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-white"
+                className="rounded-lg border border-slate-300 dark:border-slate-700 bg-gray-800 px-3 py-2 text-sm text-white"
                 value={form.teamId}
                 onChange={(e) => setForm((prev) => ({ ...prev, teamId: e.target.value }))}
               >
@@ -246,7 +246,7 @@ const EmployeesPage = () => {
               </select>
               <input
                 type="date"
-                className="rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-white"
+                className="rounded-lg border border-slate-300 dark:border-slate-700 bg-gray-800 px-3 py-2 text-sm text-white"
                 value={form.hireDate}
                 onChange={(e) => setForm((prev) => ({ ...prev, hireDate: e.target.value }))}
               />
@@ -255,7 +255,7 @@ const EmployeesPage = () => {
               <button
                 type="submit"
                 disabled={saving}
-                className="rounded bg-etus-green px-4 py-2 text-sm font-semibold text-gray-900 disabled:opacity-60"
+                className="rounded bg-indigo-600 px-4 py-2 text-sm font-semibold text-gray-900 disabled:opacity-60"
               >
                 {saving ? 'Salvando...' : editingId ? 'Atualizar' : 'Cadastrar'}
               </button>

@@ -45,6 +45,29 @@ export const notificationService = {
     return notification;
   },
 
+  async createSlaRiskNotification(userId: string, ticketId: string, message: string) {
+    const existing = await prisma.notification.findFirst({
+      where: {
+        userId,
+        ticketId,
+        title: 'Risco de SLA iminente',
+      },
+      select: { id: true },
+    });
+
+    if (existing) {
+      return null;
+    }
+
+    return this.createNotification({
+      userId,
+      ticketId,
+      type: NotificationType.TEAM_CHANGE,
+      title: 'Risco de SLA iminente',
+      message,
+    });
+  },
+
   async getUserNotifications(userId: string, unreadOnly: boolean = false) {
     logger.debug('Buscando notificações do usuário', { userId, unreadOnly });
     
@@ -491,4 +514,3 @@ export const notificationService = {
     }
   },
 };
-

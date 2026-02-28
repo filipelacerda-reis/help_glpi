@@ -430,9 +430,9 @@ const TicketDetailPage = () => {
       case 'RESOLVED':
         return 'bg-green-500/20 text-green-400';
       case 'CLOSED':
-        return 'bg-gray-500/20 text-gray-400';
+        return 'bg-gray-500/20 text-slate-500 dark:text-slate-400';
       default:
-        return 'bg-gray-500/20 text-gray-400';
+        return 'bg-gray-500/20 text-slate-500 dark:text-slate-400';
     }
   };
 
@@ -447,7 +447,7 @@ const TicketDetailPage = () => {
       case 'CRITICAL':
         return 'bg-red-500/20 text-red-400';
       default:
-        return 'bg-gray-500/20 text-gray-400';
+        return 'bg-gray-500/20 text-slate-500 dark:text-slate-400';
     }
   };
 
@@ -553,7 +553,7 @@ const TicketDetailPage = () => {
       <ModernLayout title="Carregando Ticket..." subtitle="Detalhes e histórico do chamado">
         <div className="text-center py-12">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-etus-green"></div>
-          <p className="mt-4 text-gray-400">Carregando...</p>
+          <p className="mt-4 text-slate-500 dark:text-slate-400">Carregando...</p>
         </div>
       </ModernLayout>
     );
@@ -566,7 +566,7 @@ const TicketDetailPage = () => {
           <p className="text-red-400">Ticket não encontrado</p>
           <button
             onClick={() => navigate('/tickets')}
-            className="mt-4 text-etus-green hover:text-etus-green-light transition-colors"
+            className="mt-4 text-indigo-600 dark:text-indigo-400 hover:text-indigo-600 dark:text-indigo-400-light transition-colors"
           >
             ← Voltar para lista
           </button>
@@ -594,14 +594,14 @@ const TicketDetailPage = () => {
         )}
 
         {/* Tabs */}
-        <div className="mb-6 border-b border-gray-700/50">
+        <div className="mb-6 border-b border-slate-200 dark:border-slate-700/60">
           <nav className="-mb-px flex space-x-8">
             <button
               onClick={() => setActiveTab('details')}
               className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2
                 ${activeTab === 'details'
-                  ? 'border-etus-green text-etus-green'
-                  : 'border-transparent text-gray-400 hover:text-gray-200 hover:border-gray-500'
+                  ? 'border-etus-green text-indigo-600 dark:text-indigo-400'
+                  : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-gray-200 hover:border-gray-500'
                 }`}
             >
               <Info className="w-4 h-4" />
@@ -611,8 +611,8 @@ const TicketDetailPage = () => {
               onClick={() => setActiveTab('history')}
               className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2
                 ${activeTab === 'history'
-                  ? 'border-etus-green text-etus-green'
-                  : 'border-transparent text-gray-400 hover:text-gray-200 hover:border-gray-500'
+                  ? 'border-etus-green text-indigo-600 dark:text-indigo-400'
+                  : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-gray-200 hover:border-gray-500'
                 }`}
             >
               <Clock className="w-4 h-4" />
@@ -622,8 +622,8 @@ const TicketDetailPage = () => {
               onClick={() => setActiveTab('relations')}
               className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2
                 ${activeTab === 'relations'
-                  ? 'border-etus-green text-etus-green'
-                  : 'border-transparent text-gray-400 hover:text-gray-200 hover:border-gray-500'
+                  ? 'border-etus-green text-indigo-600 dark:text-indigo-400'
+                  : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-gray-200 hover:border-gray-500'
                 }`}
             >
               <LinkIcon className="w-4 h-4" />
@@ -633,20 +633,20 @@ const TicketDetailPage = () => {
         </div>
 
         {activeTab === 'history' && (
-          <div className="bg-gray-800/50 backdrop-blur-sm shadow-lg rounded-lg p-6 mb-6 border border-gray-700/50">
+          <div className="bg-slate-50 dark:bg-slate-900/40 backdrop-blur-sm shadow-lg rounded-lg p-6 mb-6 border border-slate-200 dark:border-slate-700/60">
             <h2 className="text-lg font-semibold text-white mb-4">Histórico do Ticket</h2>
             <div className="space-y-4">
               {events.length === 0 ? (
-                <p className="text-sm text-gray-400">Nenhum evento registrado</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Nenhum evento registrado</p>
               ) : (
                 events.map((event) => (
-                  <div key={event.id} className="flex items-start space-x-3 pb-4 border-b border-gray-700/50 last:border-0">
-                    <div className="flex-shrink-0 w-2 h-2 rounded-full bg-etus-green mt-2"></div>
+                  <div key={event.id} className="flex items-start space-x-3 pb-4 border-b border-slate-200 dark:border-slate-700/60 last:border-0">
+                    <div className="flex-shrink-0 w-2 h-2 rounded-full bg-indigo-600 mt-2"></div>
                     <div className="flex-1">
-                      <p className="text-sm text-gray-300">{getEventLabel(event)}</p>
+                      <p className="text-sm text-slate-600 dark:text-slate-300">{getEventLabel(event)}</p>
                       {event.metadata && (
-                        <p className="text-xs text-gray-500 mt-1">
-                          <code className="bg-gray-700/50 text-gray-300 px-1 rounded">{JSON.stringify(event.metadata, null, 2)}</code>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                          <code className="bg-slate-50 dark:bg-slate-900/40 text-slate-600 dark:text-slate-300 px-1 rounded">{JSON.stringify(event.metadata, null, 2)}</code>
                         </p>
                       )}
                     </div>
@@ -658,13 +658,13 @@ const TicketDetailPage = () => {
         )}
 
         {activeTab === 'relations' && (
-          <div className="bg-gray-800/50 backdrop-blur-sm shadow-lg rounded-lg p-6 mb-6 border border-gray-700/50">
+          <div className="bg-slate-50 dark:bg-slate-900/40 backdrop-blur-sm shadow-lg rounded-lg p-6 mb-6 border border-slate-200 dark:border-slate-700/60">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-semibold text-white">Tickets Relacionados</h2>
               {(user?.role === 'ADMIN' || user?.role === 'TRIAGER') && (
                 <button
                   onClick={() => setShowAddRelationModal(true)}
-                  className="inline-flex items-center space-x-1 px-3 py-1 text-sm text-etus-green hover:text-etus-green-light hover:bg-etus-green/20 rounded-lg transition-colors"
+                  className="inline-flex items-center space-x-1 px-3 py-1 text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-600 dark:text-indigo-400-light hover:bg-indigo-600/20 rounded-lg transition-colors"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Adicionar Relação</span>
@@ -676,15 +676,15 @@ const TicketDetailPage = () => {
                 <>
                   {relations.outgoing.length > 0 && (
                     <div>
-                      <h3 className="text-sm font-medium text-gray-300 mb-2">Relacionamentos de Saída</h3>
+                      <h3 className="text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">Relacionamentos de Saída</h3>
                       {relations.outgoing.map((rel) => (
-                        <div key={`${rel.ticketId}-${rel.relatedTicketId}-${rel.relationType}`} className="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg mb-2 border border-gray-600/50">
+                        <div key={`${rel.ticketId}-${rel.relatedTicketId}-${rel.relationType}`} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900/40 rounded-lg mb-2 border border-slate-200 dark:border-slate-700">
                           <div>
                             <span className="text-sm font-medium text-white">
                               {rel.relationType.replace('_', ' ')}: #{rel.relatedTicketId.substring(0, 8)}
                             </span>
                             {rel.relatedTicket && (
-                              <p className="text-xs text-gray-400">{rel.relatedTicket.title}</p>
+                              <p className="text-xs text-slate-500 dark:text-slate-400">{rel.relatedTicket.title}</p>
                             )}
                           </div>
                           {(user?.role === 'ADMIN' || user?.role === 'TRIAGER') && (
@@ -701,15 +701,15 @@ const TicketDetailPage = () => {
                   )}
                   {relations.incoming.length > 0 && (
                     <div>
-                      <h3 className="text-sm font-medium text-gray-300 mb-2">Relacionamentos de Entrada</h3>
+                      <h3 className="text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">Relacionamentos de Entrada</h3>
                       {relations.incoming.map((rel) => (
-                        <div key={`${rel.ticketId}-${rel.relatedTicketId}-${rel.relationType}`} className="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg mb-2 border border-gray-600/50">
+                        <div key={`${rel.ticketId}-${rel.relatedTicketId}-${rel.relationType}`} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900/40 rounded-lg mb-2 border border-slate-200 dark:border-slate-700">
                           <div>
                             <span className="text-sm font-medium text-white">
                               {rel.relationType.replace('_', ' ')}: #{rel.relatedTicketId.substring(0, 8)}
                             </span>
                             {rel.relatedTicket && (
-                              <p className="text-xs text-gray-400">{rel.relatedTicket.title}</p>
+                              <p className="text-xs text-slate-500 dark:text-slate-400">{rel.relatedTicket.title}</p>
                             )}
                           </div>
                         </div>
@@ -718,7 +718,7 @@ const TicketDetailPage = () => {
                   )}
                 </>
               ) : (
-                <p className="text-sm text-gray-400">Nenhum ticket relacionado</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Nenhum ticket relacionado</p>
               )}
             </div>
           </div>
@@ -727,13 +727,13 @@ const TicketDetailPage = () => {
         {/* Conteúdo principal - apenas na aba de detalhes */}
         {activeTab === 'details' && ticket && (
           <>
-        <div className="bg-gray-800/50 backdrop-blur-sm shadow-lg rounded-lg p-6 mb-6 border border-gray-700/50">
+        <div className="bg-slate-50 dark:bg-slate-900/40 backdrop-blur-sm shadow-lg rounded-lg p-6 mb-6 border border-slate-200 dark:border-slate-700/60">
           <div className="flex justify-between items-start mb-4">
             <div>
               <h1 className="text-2xl font-bold text-white">
                 #{ticket.id.slice(0, 8)} - {ticket.title}
               </h1>
-              <p className="mt-2 text-sm text-gray-500">
+              <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
                 Criado em {new Date(ticket.createdAt).toLocaleString('pt-BR')}
               </p>
             </div>
@@ -756,9 +756,9 @@ const TicketDetailPage = () => {
           </div>
 
           <div className="mb-4">
-            <h2 className="text-sm font-medium text-gray-300 mb-2">Descrição</h2>
+            <h2 className="text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">Descrição</h2>
             <div 
-              className="text-gray-300 prose prose-invert max-w-none"
+              className="text-slate-600 dark:text-slate-300 prose prose-invert max-w-none"
               dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(ticket.description) }}
             />
           </div>
@@ -766,7 +766,7 @@ const TicketDetailPage = () => {
           {/* Exibir imagens anexadas */}
           {ticket.attachments && ticket.attachments.length > 0 && (
             <div className="mb-4">
-              <h2 className="text-sm font-medium text-gray-300 mb-2">Anexos</h2>
+              <h2 className="text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">Anexos</h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                 {ticket.attachments.map((attachment) => (
                   <div key={attachment.id} className="relative">
@@ -779,10 +779,10 @@ const TicketDetailPage = () => {
                       <img
                         src={attachment.url || `/uploads/tickets/${attachment.filePath}`}
                         alt={attachment.fileName}
-                        className="w-full h-32 object-cover rounded-md border border-gray-600 hover:opacity-75 cursor-pointer"
+                        className="w-full h-32 object-cover rounded-md border border-slate-300 dark:border-slate-700 hover:opacity-75 cursor-pointer"
                       />
                     </a>
-                    <p className="text-xs text-gray-500 mt-1 truncate">{attachment.fileName}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 truncate">{attachment.fileName}</p>
                   </div>
                 ))}
               </div>
@@ -791,30 +791,30 @@ const TicketDetailPage = () => {
 
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
-              <p className="text-sm font-medium text-gray-300">Solicitante</p>
+              <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Solicitante</p>
               <p className="text-sm text-white">{ticket.requester.name}</p>
             </div>
             {ticket.assignedTechnician && (
               <div>
-                <p className="text-sm font-medium text-gray-300">Técnico Responsável</p>
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Técnico Responsável</p>
                 <p className="text-sm text-white">{ticket.assignedTechnician.name}</p>
               </div>
             )}
             {ticket.category && (
               <div>
-                <p className="text-sm font-medium text-gray-300">Categoria</p>
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Categoria</p>
                 <p className="text-sm text-white">{ticket.category.name}</p>
               </div>
             )}
             {ticket.team && (
               <div>
-                <p className="text-sm font-medium text-gray-300">Time Responsável</p>
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Time Responsável</p>
                 <p className="text-sm text-white">{ticket.team.name}</p>
               </div>
             )}
             {ticket.teamSolicitante && (
               <div>
-                <p className="text-sm font-medium text-gray-300">Time Solicitante</p>
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Time Solicitante</p>
                 <p className="text-sm text-white">{ticket.teamSolicitante.name}</p>
               </div>
             )}
@@ -823,12 +823,12 @@ const TicketDetailPage = () => {
           {/* Observadores */}
           <div className="mb-4">
             <div className="flex justify-between items-center mb-2">
-              <h3 className="text-sm font-semibold text-gray-300">Observadores</h3>
+              <h3 className="text-sm font-semibold text-slate-600 dark:text-slate-300">Observadores</h3>
               {(user?.role === 'ADMIN' || user?.role === 'TRIAGER' || user?.id === ticket.requesterId || user?.id === ticket.assignedTechnicianId) && (
                 <button
                   type="button"
                   onClick={handleAddObserver}
-                  className="text-xs text-etus-green hover:text-etus-green-light transition-colors"
+                  className="text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-600 dark:text-indigo-400-light transition-colors"
                 >
                   <Plus className="inline-block w-3 h-3 mr-1" /> Adicionar Observador
                 </button>
@@ -839,7 +839,7 @@ const TicketDetailPage = () => {
                 {ticket.observers.map((obs) => (
                   <div
                     key={obs.observerId}
-                    className="flex items-center gap-2 px-2 py-1 bg-gray-700/50 border border-gray-600 rounded-full text-sm text-gray-300"
+                    className="flex items-center gap-2 px-2 py-1 bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-full text-sm text-slate-600 dark:text-slate-300"
                   >
                     <span>{obs.observer.name}</span>
                     {(user?.role === 'ADMIN' || user?.id === ticket.requesterId || user?.id === ticket.assignedTechnicianId || user?.id === obs.observerId) && (
@@ -856,30 +856,30 @@ const TicketDetailPage = () => {
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-gray-500">Nenhum observador adicionado</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Nenhum observador adicionado</p>
             )}
           </div>
 
           {/* Tempos em Horário Comercial */}
           {(ticket.firstResponseBusinessMinutes !== null || ticket.resolutionBusinessMinutes !== null || ticket.closureBusinessMinutes !== null) && (
-            <div className="mb-4 p-3 bg-gray-700/50 rounded-lg border border-gray-600/50">
-              <h3 className="text-sm font-semibold text-gray-300 mb-2">Tempos (Horário Comercial)</h3>
+            <div className="mb-4 p-3 bg-slate-50 dark:bg-slate-900/40 rounded-lg border border-slate-200 dark:border-slate-700">
+              <h3 className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2">Tempos (Horário Comercial)</h3>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-sm">
                 {ticket.firstResponseBusinessMinutes !== null && (
                   <div>
-                    <span className="text-gray-400">Primeira Resposta: </span>
+                    <span className="text-slate-500 dark:text-slate-400">Primeira Resposta: </span>
                     <span className="font-medium text-white">{formatBusinessMinutes(ticket.firstResponseBusinessMinutes)}</span>
                   </div>
                 )}
                 {ticket.resolutionBusinessMinutes !== null && (
                   <div>
-                    <span className="text-gray-400">Resolução: </span>
+                    <span className="text-slate-500 dark:text-slate-400">Resolução: </span>
                     <span className="font-medium text-white">{formatBusinessMinutes(ticket.resolutionBusinessMinutes)}</span>
                   </div>
                 )}
                 {ticket.closureBusinessMinutes !== null && (
                   <div>
-                    <span className="text-gray-400">Fechamento: </span>
+                    <span className="text-slate-500 dark:text-slate-400">Fechamento: </span>
                     <span className="font-medium text-white">{formatBusinessMinutes(ticket.closureBusinessMinutes)}</span>
                   </div>
                 )}
@@ -889,8 +889,8 @@ const TicketDetailPage = () => {
 
           {/* Gestão de Projetos - Barra de Progresso de Tarefas Filhas */}
           {relations && relations.outgoing.some((r) => r.relationType === 'PARENT_OF') && (
-            <div className="mb-4 p-3 bg-gray-700/50 rounded-lg border border-gray-600/50">
-              <h3 className="text-sm font-semibold text-gray-300 mb-3">Progresso das Tarefas</h3>
+            <div className="mb-4 p-3 bg-slate-50 dark:bg-slate-900/40 rounded-lg border border-slate-200 dark:border-slate-700">
+              <h3 className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-3">Progresso das Tarefas</h3>
               {(() => {
                 const childTickets = relations.outgoing
                   .filter((r) => r.relationType === 'PARENT_OF')
@@ -905,7 +905,7 @@ const TicketDetailPage = () => {
                 return (
                   <div>
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm text-gray-400">
+                      <span className="text-sm text-slate-500 dark:text-slate-400">
                         {completedTasks} de {totalTasks} tarefas concluídas
                       </span>
                       <span className="text-sm font-semibold text-white">{progressPercentage}%</span>
@@ -913,7 +913,7 @@ const TicketDetailPage = () => {
                     <div className="w-full bg-gray-600 rounded-full h-3">
                       <div
                         className={`h-3 rounded-full transition-all ${
-                          progressPercentage === 100 ? 'bg-green-500' : 'bg-etus-green'
+                          progressPercentage === 100 ? 'bg-green-500' : 'bg-indigo-600'
                         }`}
                         style={{ width: `${progressPercentage}%` }}
                       />
@@ -926,14 +926,14 @@ const TicketDetailPage = () => {
 
           {/* Gestão de Projetos - Prazos e Tempo */}
           {(ticket.dueDate || ticket.estimatedMinutes || (ticket.worklogs && ticket.worklogs.length > 0)) && (
-            <div className="mb-4 p-3 bg-gray-700/50 rounded-lg border border-gray-600/50">
-              <h3 className="text-sm font-semibold text-gray-300 mb-3">Prazos e Tempo</h3>
+            <div className="mb-4 p-3 bg-slate-50 dark:bg-slate-900/40 rounded-lg border border-slate-200 dark:border-slate-700">
+              <h3 className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-3">Prazos e Tempo</h3>
               <div className="space-y-3">
                 {/* Due Date */}
                 {ticket.dueDate && (
                   <div className="flex items-center space-x-2">
-                    <Calendar className="w-4 h-4 text-gray-400" />
-                    <span className="text-sm text-gray-400">Data de Entrega: </span>
+                    <Calendar className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                    <span className="text-sm text-slate-500 dark:text-slate-400">Data de Entrega: </span>
                     <span
                       className={`text-sm font-medium ${
                         new Date(ticket.dueDate) < new Date() && ticket.status !== 'CLOSED' && ticket.status !== 'RESOLVED'
@@ -952,7 +952,7 @@ const TicketDetailPage = () => {
                 {/* Estimado vs Realizado */}
                 {(ticket.estimatedMinutes || (ticket.worklogs && ticket.worklogs.length > 0)) && (
                   <div>
-                    <h4 className="text-xs font-medium text-gray-400 mb-2">Tempo: Estimado vs Realizado</h4>
+                    <h4 className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">Tempo: Estimado vs Realizado</h4>
                     {(() => {
                       const estimated = ticket.estimatedMinutes || 0;
                       const actual = ticket.worklogs
@@ -967,11 +967,11 @@ const TicketDetailPage = () => {
                         <div>
                           <div className="grid grid-cols-2 gap-2 mb-2 text-sm">
                             <div>
-                              <span className="text-gray-400">Estimado: </span>
+                              <span className="text-slate-500 dark:text-slate-400">Estimado: </span>
                               <span className="font-medium text-white">{Math.round(estimated / 60)}h {estimated % 60}m</span>
                             </div>
                             <div>
-                              <span className="text-gray-400">Realizado: </span>
+                              <span className="text-slate-500 dark:text-slate-400">Realizado: </span>
                               <span className={`font-medium ${actual > estimated ? 'text-red-400' : 'text-white'}`}>
                                 {Math.round(actual / 60)}h {actual % 60}m
                               </span>
@@ -1004,12 +1004,12 @@ const TicketDetailPage = () => {
 
           {/* Gestão de Projetos - Campos Personalizados */}
           {ticket.customFields && Object.keys(ticket.customFields).length > 0 && (
-            <div className="mb-4 p-3 bg-gray-700/50 rounded-lg border border-gray-600/50">
-              <h3 className="text-sm font-semibold text-gray-300 mb-3">Informações Adicionais</h3>
+            <div className="mb-4 p-3 bg-slate-50 dark:bg-slate-900/40 rounded-lg border border-slate-200 dark:border-slate-700">
+              <h3 className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-3">Informações Adicionais</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {Object.entries(ticket.customFields).map(([key, value]) => (
                   <div key={key}>
-                    <p className="text-xs font-medium text-gray-400 mb-1">{key}</p>
+                    <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">{key}</p>
                     <p className="text-sm text-white">
                       {typeof value === 'object' ? JSON.stringify(value) : String(value)}
                     </p>
@@ -1023,7 +1023,7 @@ const TicketDetailPage = () => {
           {ticket.tags && ticket.tags.length > 0 && (
             <div className="mb-4">
               <div className="flex justify-between items-center mb-2">
-                <h3 className="text-sm font-semibold text-gray-300">Tags</h3>
+                <h3 className="text-sm font-semibold text-slate-600 dark:text-slate-300">Tags</h3>
                 {(user?.role === 'ADMIN' || user?.role === 'TRIAGER') && (
                   <button
                     type="button"
@@ -1038,7 +1038,7 @@ const TicketDetailPage = () => {
                         setEditingTags(true);
                       }
                     }}
-                    className="text-xs text-etus-green hover:text-etus-green-light transition-colors"
+                    className="text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-600 dark:text-indigo-400-light transition-colors"
                   >
                     <Edit className="inline-block w-3 h-3 mr-1" /> {editingTags ? 'Cancelar' : 'Editar'}
                   </button>
@@ -1051,8 +1051,8 @@ const TicketDetailPage = () => {
                     if (groupTags.length === 0) return null;
                     
                     return (
-                      <div key={group} className="border border-gray-700/50 rounded-lg p-2 bg-gray-700/30">
-                        <h4 className="text-xs font-semibold text-gray-400 mb-1">{getGroupLabel(group as Tag['group'])}</h4>
+                      <div key={group} className="border border-slate-200 dark:border-slate-700/60 rounded-lg p-2 bg-white dark:bg-slate-800">
+                        <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">{getGroupLabel(group as Tag['group'])}</h4>
                         <div className="flex flex-wrap gap-1">
                           {groupTags.map((tag) => (
                             <button
@@ -1061,8 +1061,8 @@ const TicketDetailPage = () => {
                               onClick={() => toggleTag(tag.id)}
                               className={`px-2 py-1 text-xs rounded-full border transition-colors ${
                                 selectedTagIds.includes(tag.id)
-                                  ? 'bg-etus-green text-gray-900 border-etus-green'
-                                  : 'bg-gray-600/50 text-gray-300 border-gray-600 hover:border-etus-green'
+                                  ? 'bg-indigo-600 text-gray-900 border-etus-green'
+                                  : 'bg-gray-600/50 text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:border-etus-green'
                               }`}
                             >
                               {tag.name.replace(/^(feature|area|env|platform|source|impact|rc|status_reason|work|question|infra):/, '')}
@@ -1081,14 +1081,14 @@ const TicketDetailPage = () => {
                           setSelectedTagIds(ticket.tags.map((tt: any) => tt.tagId));
                         }
                       }}
-                      className="px-3 py-1 text-xs border border-gray-600 rounded-lg text-gray-300 bg-gray-700/50 hover:bg-gray-700 transition-colors"
+                      className="px-3 py-1 text-xs border border-slate-300 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-700/30 transition-colors"
                     >
                       Cancelar
                     </button>
                     <button
                       type="button"
                       onClick={handleUpdateTags}
-                      className="px-3 py-1 text-xs bg-etus-green text-gray-900 rounded-lg hover:bg-etus-green-dark transition-colors"
+                      className="px-3 py-1 text-xs bg-indigo-600 text-gray-900 rounded-lg hover:bg-indigo-600-dark transition-colors"
                     >
                       Salvar Tags
                     </button>
@@ -1108,7 +1108,7 @@ const TicketDetailPage = () => {
                       SOURCE: 'bg-pink-500/20 text-pink-400',
                       IMPACT: 'bg-red-500/20 text-red-400',
                       RC: 'bg-orange-500/20 text-orange-400',
-                      STATUS_REASON: 'bg-gray-500/20 text-gray-400',
+                      STATUS_REASON: 'bg-gray-500/20 text-slate-500 dark:text-slate-400',
                       WORK: 'bg-teal-500/20 text-teal-400',
                       QUESTION: 'bg-cyan-500/20 text-cyan-400',
                       INFRA: 'bg-green-500/20 text-green-400',
@@ -1117,7 +1117,7 @@ const TicketDetailPage = () => {
                     return (
                       <span
                         key={tt.tagId}
-                        className={`px-2 py-1 text-xs rounded-full ${groupColors[tag.group] || 'bg-gray-500/20 text-gray-400'}`}
+                        className={`px-2 py-1 text-xs rounded-full ${groupColors[tag.group] || 'bg-gray-500/20 text-slate-500 dark:text-slate-400'}`}
                         title={getGroupLabel(tag.group)}
                       >
                         {tag.name.replace(/^(feature|area|env|platform|source|impact|rc|status_reason|work|question|infra):/, '')}
@@ -1131,7 +1131,7 @@ const TicketDetailPage = () => {
 
           {/* Botão para assumir ticket (membros do time) */}
           {canTakeTicket && (
-            <div className="border-t border-gray-700/50 pt-4 mt-4">
+            <div className="border-t border-slate-200 dark:border-slate-700/60 pt-4 mt-4">
               <button
                 onClick={handleTakeTicket}
                 className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg shadow-sm text-sm font-medium text-white transition-colors"
@@ -1142,16 +1142,16 @@ const TicketDetailPage = () => {
           )}
 
           {canEdit && (
-            <div className="border-t border-gray-700/50 pt-4 mt-4">
+            <div className="border-t border-slate-200 dark:border-slate-700/60 pt-4 mt-4">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
                     Status
                   </label>
                   <select
                     value={ticket.status}
                     onChange={(e) => handleUpdateStatus(e.target.value)}
-                    className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-etus-green focus:border-etus-green sm:text-sm text-white transition-all"
+                    className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-white transition-all"
                   >
                     <option value="OPEN">Aberto</option>
                     <option value="IN_PROGRESS">Em Atendimento</option>
@@ -1162,13 +1162,13 @@ const TicketDetailPage = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
                     Prioridade
                   </label>
                   <select
                     value={ticket.priority}
                     onChange={(e) => handleUpdatePriority(e.target.value)}
-                    className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-etus-green focus:border-etus-green sm:text-sm text-white transition-all"
+                    className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-white transition-all"
                   >
                     <option value="LOW">Baixa</option>
                     <option value="MEDIUM">Média</option>
@@ -1180,7 +1180,7 @@ const TicketDetailPage = () => {
                 {/* Atribuir técnico: ADMIN, TRIAGER ou líder do time */}
                 {(user?.role === 'TRIAGER' || user?.role === 'ADMIN' || canAssignToTeamMember) && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">
+                    <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
                       Técnico
                     </label>
                     <select
@@ -1188,7 +1188,7 @@ const TicketDetailPage = () => {
                       onChange={(e) =>
                         handleAssignTechnician(e.target.value || null)
                       }
-                      className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-etus-green focus:border-etus-green sm:text-sm text-white transition-all"
+                      className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-white transition-all"
                     >
                       <option value="">Não atribuído</option>
                       {users.map((u) => (
@@ -1203,7 +1203,7 @@ const TicketDetailPage = () => {
                 {/* Mover para outro time: ADMIN, TRIAGER ou membro do time */}
                 {(user?.role === 'TRIAGER' || user?.role === 'ADMIN' || canMoveTicket) && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">
+                    <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
                       Time
                     </label>
                     <select
@@ -1211,7 +1211,7 @@ const TicketDetailPage = () => {
                       onChange={(e) =>
                         handleAssignTeam(e.target.value || null)
                       }
-                      className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-etus-green focus:border-etus-green sm:text-sm text-white transition-all"
+                      className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-white transition-all"
                     >
                       <option value="">Não atribuído</option>
                       {teams.map((team) => (
@@ -1227,7 +1227,7 @@ const TicketDetailPage = () => {
           )}
 
           {canClose && (
-            <div className="border-t border-gray-700/50 pt-4 mt-4">
+            <div className="border-t border-slate-200 dark:border-slate-700/60 pt-4 mt-4">
               <button
                 onClick={() => handleUpdateStatus('CLOSED')}
                 className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg shadow-sm text-sm font-medium text-white transition-colors"
@@ -1238,7 +1238,7 @@ const TicketDetailPage = () => {
           )}
         </div>
 
-        <div className="bg-gray-800/50 backdrop-blur-sm shadow-lg rounded-lg p-6 mb-6 border border-gray-700/50">
+        <div className="bg-slate-50 dark:bg-slate-900/40 backdrop-blur-sm shadow-lg rounded-lg p-6 mb-6 border border-slate-200 dark:border-slate-700/60">
           <h2 className="text-lg font-semibold text-white mb-4">Comentários</h2>
 
           <div className="space-y-4 mb-6">
@@ -1248,7 +1248,7 @@ const TicketDetailPage = () => {
                 className={`border-l-4 pl-4 py-2 rounded-r-lg ${
                   comment.type === 'INTERNAL'
                     ? 'border-orange-400 bg-orange-900/20'
-                    : 'border-etus-green bg-etus-green/10'
+                    : 'border-etus-green bg-indigo-600/10'
                 }`}
               >
                 <div className="flex justify-between items-start mb-1">
@@ -1259,7 +1259,7 @@ const TicketDetailPage = () => {
                         Interno
                       </span>
                     )}
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-slate-500 dark:text-slate-400">
                       {new Date(comment.createdAt).toLocaleString('pt-BR')}
                     </span>
                   </div>
@@ -1283,10 +1283,10 @@ const TicketDetailPage = () => {
                           <img
                             src={attachment.url || `/uploads/tickets/${attachment.filePath}`}
                             alt={attachment.fileName}
-                            className="w-full h-24 object-cover rounded-md border border-gray-600 hover:opacity-75 cursor-pointer"
+                            className="w-full h-24 object-cover rounded-md border border-slate-300 dark:border-slate-700 hover:opacity-75 cursor-pointer"
                           />
                         </a>
-                        <p className="text-xs text-gray-500 mt-1 truncate">{attachment.fileName}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 truncate">{attachment.fileName}</p>
                       </div>
                     ))}
                   </div>
@@ -1295,17 +1295,17 @@ const TicketDetailPage = () => {
             ))}
           </div>
 
-          <form onSubmit={handleAddComment} className="border-t border-gray-700/50 pt-4">
+          <form onSubmit={handleAddComment} className="border-t border-slate-200 dark:border-slate-700/60 pt-4">
             {canEdit && (
               <div className="mb-3">
-                <label className="flex items-center text-gray-300">
+                <label className="flex items-center text-slate-600 dark:text-slate-300">
                   <input
                     type="checkbox"
                     checked={commentType === 'INTERNAL'}
                     onChange={(e) =>
                       setCommentType(e.target.checked ? 'INTERNAL' : 'PUBLIC')
                     }
-                    className="mr-2 rounded border-gray-600 text-etus-green focus:ring-etus-green bg-gray-800"
+                    className="mr-2 rounded border-slate-300 dark:border-slate-700 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500 bg-gray-800"
                   />
                   <span className="text-sm">Comentário interno</span>
                 </label>
@@ -1323,7 +1323,7 @@ const TicketDetailPage = () => {
             
             {/* Upload de imagens para comentário */}
             <div className="mb-3">
-              <label className="block text-sm font-medium text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
                 Anexos (opcional)
               </label>
               <FileUpload
@@ -1339,7 +1339,7 @@ const TicketDetailPage = () => {
             <button
               type="submit"
               disabled={submitting}
-              className="px-4 py-2 bg-etus-green text-gray-900 rounded-lg shadow-sm text-sm font-semibold hover:bg-etus-green-dark disabled:opacity-50 transition-colors"
+              className="px-4 py-2 bg-indigo-600 text-gray-900 rounded-lg shadow-sm text-sm font-semibold hover:bg-indigo-600-dark disabled:opacity-50 transition-colors"
             >
               <MessageSquare className="inline-block w-4 h-4 mr-2" /> {submitting ? 'Enviando...' : 'Adicionar Comentário'}
             </button>
@@ -1350,12 +1350,12 @@ const TicketDetailPage = () => {
 
       {/* Seção de CSAT - apenas para tickets fechados e solicitante */}
       {activeTab === 'details' && ticket && ticket.status === 'CLOSED' && user?.id === ticket.requesterId && (
-        <div className="bg-gray-800/50 backdrop-blur-sm shadow-lg rounded-lg p-6 mb-6 border border-gray-700/50">
+        <div className="bg-slate-50 dark:bg-slate-900/40 backdrop-blur-sm shadow-lg rounded-lg p-6 mb-6 border border-slate-200 dark:border-slate-700/60">
           <h3 className="text-lg font-semibold text-white mb-4">Avaliar Atendimento</h3>
           {satisfaction ? (
-            <div className="p-4 bg-gray-700/50 rounded-lg border border-gray-600/50">
+            <div className="p-4 bg-slate-50 dark:bg-slate-900/40 rounded-lg border border-slate-200 dark:border-slate-700">
               <div className="flex items-center space-x-2 mb-2">
-                <span className="text-sm font-medium text-gray-300">Avaliação:</span>
+                <span className="text-sm font-medium text-slate-600 dark:text-slate-300">Avaliação:</span>
                 <div className="flex">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <Star key={star} className={`w-5 h-5 ${star <= satisfaction.score ? 'text-yellow-400' : 'text-gray-600'}`} />
@@ -1363,13 +1363,13 @@ const TicketDetailPage = () => {
                 </div>
               </div>
               {satisfaction.comment && (
-                <p className="text-sm text-gray-400 mt-2">{satisfaction.comment}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">{satisfaction.comment}</p>
               )}
             </div>
           ) : (
             <button
               onClick={() => setShowSatisfactionModal(true)}
-              className="px-4 py-2 bg-etus-green text-gray-900 rounded-lg text-sm font-medium hover:bg-etus-green-dark transition-colors"
+              className="px-4 py-2 bg-indigo-600 text-gray-900 rounded-lg text-sm font-medium hover:bg-indigo-600-dark transition-colors"
             >
               <Star className="inline-block w-4 h-4 mr-2" /> Avaliar Atendimento
             </button>
@@ -1379,18 +1379,18 @@ const TicketDetailPage = () => {
 
       {/* Seção de Worklogs */}
       {activeTab === 'details' && worklogs.length > 0 && (
-        <div className="bg-gray-800/50 backdrop-blur-sm shadow-lg rounded-lg p-6 mb-6 border border-gray-700/50">
+        <div className="bg-slate-50 dark:bg-slate-900/40 backdrop-blur-sm shadow-lg rounded-lg p-6 mb-6 border border-slate-200 dark:border-slate-700/60">
           <h3 className="text-lg font-semibold text-white mb-4">Worklogs</h3>
           <div className="space-y-2">
             {worklogs.map((worklog) => (
-              <div key={worklog.id} className="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg border border-gray-600/50">
+              <div key={worklog.id} className="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-900/40 rounded-lg border border-slate-200 dark:border-slate-700">
                 <div>
                   <p className="text-sm font-medium text-white">{worklog.user.name}</p>
                   {worklog.description && (
-                    <p className="text-xs text-gray-400">{worklog.description}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{worklog.description}</p>
                   )}
                 </div>
-                <span className="text-sm text-gray-300">
+                <span className="text-sm text-slate-600 dark:text-slate-300">
                   {Math.floor(worklog.durationMinutes / 60)}h {worklog.durationMinutes % 60}min
                 </span>
               </div>
@@ -1401,7 +1401,7 @@ const TicketDetailPage = () => {
 
       {/* Seção de Base de Conhecimento */}
       {activeTab === 'details' && (user?.role === 'ADMIN' || user?.role === 'TRIAGER' || user?.role === 'TECHNICIAN') && (
-        <div className="bg-gray-800/50 backdrop-blur-sm shadow-lg rounded-lg p-6 mb-6 border border-gray-700/50">
+        <div className="bg-slate-50 dark:bg-slate-900/40 backdrop-blur-sm shadow-lg rounded-lg p-6 mb-6 border border-slate-200 dark:border-slate-700/60">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-semibold text-white">Artigos de Conhecimento</h3>
             <button
@@ -1410,7 +1410,7 @@ const TicketDetailPage = () => {
                 setKbSearchQuery('');
                 setKbSearchResults([]);
               }}
-              className="inline-flex items-center space-x-1 px-3 py-1 text-sm text-etus-green hover:text-etus-green-light hover:bg-etus-green/20 rounded-lg transition-colors"
+              className="inline-flex items-center space-x-1 px-3 py-1 text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-600 dark:text-indigo-400-light hover:bg-indigo-600/20 rounded-lg transition-colors"
             >
               <Plus className="w-4 h-4" />
               <span>Vincular Artigo</span>
@@ -1419,16 +1419,16 @@ const TicketDetailPage = () => {
           {kbArticles.length > 0 ? (
             <div className="space-y-2">
               {kbArticles.map((item) => (
-                <div key={item.article.id} className="p-3 bg-gray-700/50 rounded-lg border border-gray-600/50">
+                <div key={item.article.id} className="p-3 bg-slate-50 dark:bg-slate-900/40 rounded-lg border border-slate-200 dark:border-slate-700">
                   <h4 className="text-sm font-medium text-white">{item.article.title}</h4>
                   {item.article.category && (
-                    <p className="text-xs text-gray-400">{item.article.category.name}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{item.article.category.name}</p>
                   )}
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-sm text-gray-400">Nenhum artigo vinculado</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Nenhum artigo vinculado</p>
           )}
         </div>
       )}
@@ -1461,7 +1461,7 @@ const TicketDetailPage = () => {
               setShowAddObserverModal(false);
               setSelectedObserverId('');
             }}
-            className="px-4 py-2 border border-gray-600 rounded-lg text-sm font-medium text-gray-300 bg-gray-700/50 hover:bg-gray-700 transition-colors"
+            className="px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-700/30 transition-colors"
           >
             Cancelar
           </button>
@@ -1469,7 +1469,7 @@ const TicketDetailPage = () => {
             type="button"
             onClick={() => handleConfirmAddObserver(selectedObserverId ? [selectedObserverId] : [])}
             disabled={!selectedObserverId}
-            className="px-4 py-2 bg-etus-green text-gray-900 rounded-lg text-sm font-medium hover:bg-etus-green-dark disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 bg-indigo-600 text-gray-900 rounded-lg text-sm font-medium hover:bg-indigo-600-dark disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Adicionar
           </button>
@@ -1487,7 +1487,7 @@ const TicketDetailPage = () => {
         title="Avaliar Atendimento"
       >
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-300 mb-2">Nota (1-5)</label>
+          <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">Nota (1-5)</label>
           <div className="flex space-x-2">
             {[1, 2, 3, 4, 5].map((star) => (
               <button
@@ -1502,11 +1502,11 @@ const TicketDetailPage = () => {
           </div>
         </div>
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-300 mb-2">Comentário (opcional)</label>
+          <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">Comentário (opcional)</label>
           <textarea
             value={satisfactionComment}
             onChange={(e) => setSatisfactionComment(e.target.value)}
-            className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+            className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             rows={3}
           />
         </div>
@@ -1518,14 +1518,14 @@ const TicketDetailPage = () => {
               setSatisfactionComment('');
               setSatisfactionScore(5);
             }}
-            className="px-4 py-2 border border-gray-600 rounded-lg text-sm font-medium text-gray-300 bg-gray-700/50 hover:bg-gray-700 transition-colors"
+            className="px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-700/30 transition-colors"
           >
             Cancelar
           </button>
           <button
             type="button"
             onClick={handleSubmitSatisfaction}
-            className="px-4 py-2 bg-etus-green text-gray-900 rounded-lg text-sm font-medium hover:bg-etus-green-dark"
+            className="px-4 py-2 bg-indigo-600 text-gray-900 rounded-lg text-sm font-medium hover:bg-indigo-600-dark"
           >
             Salvar
           </button>
@@ -1565,14 +1565,14 @@ const TicketDetailPage = () => {
                 setKbSearchResults([]);
               }
             }}
-            className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+            className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
         <div className="max-h-96 overflow-y-auto space-y-2">
           {kbSearchResults.map((article) => (
             <div
               key={article.id}
-              className="p-3 border border-gray-700/50 rounded-lg hover:border-etus-green cursor-pointer bg-gray-700/30"
+              className="p-3 border border-slate-200 dark:border-slate-700/60 rounded-lg hover:border-etus-green cursor-pointer bg-white dark:bg-slate-800"
               onClick={async () => {
                 if (id) {
                   try {
@@ -1587,15 +1587,15 @@ const TicketDetailPage = () => {
             >
               <h4 className="font-medium text-white">{article.title}</h4>
               {article.category && (
-                <p className="text-xs text-gray-400 mt-1">{article.category.name}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{article.category.name}</p>
               )}
-              <p className="text-xs text-gray-500 mt-1 line-clamp-2">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">
                 {article.content.substring(0, 150)}...
               </p>
             </div>
           ))}
           {kbSearchQuery.length > 2 && kbSearchResults.length === 0 && (
-            <p className="text-sm text-gray-400 text-center py-4">Nenhum artigo encontrado</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400 text-center py-4">Nenhum artigo encontrado</p>
           )}
         </div>
         <div className="mt-4 flex justify-end">
@@ -1606,7 +1606,7 @@ const TicketDetailPage = () => {
               setKbSearchQuery('');
               setKbSearchResults([]);
             }}
-            className="px-4 py-2 border border-gray-600 rounded-lg text-sm font-medium text-gray-300 bg-gray-700/50 hover:bg-gray-700 transition-colors"
+            className="px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-700/30 transition-colors"
           >
             Fechar
           </button>
@@ -1623,21 +1623,21 @@ const TicketDetailPage = () => {
         title="Adicionar Relação"
       >
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-300 mb-2">ID do Ticket Relacionado</label>
+          <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">ID do Ticket Relacionado</label>
           <input
             type="text"
             value={relationTicketId}
             onChange={(e) => setRelationTicketId(e.target.value)}
-            className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+            className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             placeholder="Digite o ID do ticket"
           />
         </div>
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-300 mb-2">Tipo de Relação</label>
+          <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">Tipo de Relação</label>
           <select
             value={relationType}
             onChange={(e) => setRelationType(e.target.value as TicketRelation['relationType'])}
-            className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+            className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           >
             <option value="CHILD_OF">Filho de</option>
             <option value="PARENT_OF">Pai de</option>
@@ -1653,7 +1653,7 @@ const TicketDetailPage = () => {
               setShowAddRelationModal(false);
               setRelationTicketId('');
             }}
-            className="px-4 py-2 border border-gray-600 rounded-lg text-sm font-medium text-gray-300 bg-gray-700/50 hover:bg-gray-700 transition-colors"
+            className="px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-700/30 transition-colors"
           >
             Cancelar
           </button>
@@ -1661,7 +1661,7 @@ const TicketDetailPage = () => {
             type="button"
             onClick={handleAddRelation}
             disabled={!relationTicketId}
-            className="px-4 py-2 bg-etus-green text-gray-900 rounded-lg text-sm font-medium hover:bg-etus-green-dark disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 bg-indigo-600 text-gray-900 rounded-lg text-sm font-medium hover:bg-indigo-600-dark disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Adicionar
           </button>

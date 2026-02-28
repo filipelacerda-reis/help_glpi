@@ -8,6 +8,7 @@ export interface User {
   email: string;
   role: string;
   department: string | null;
+  active: boolean;
   enabledModules: PlatformModule[];
   effectiveModules: PlatformModule[];
   entitlements?: UserEntitlement[];
@@ -32,6 +33,7 @@ export interface UpdateUserDto {
   password?: string;
   role?: 'REQUESTER' | 'TECHNICIAN' | 'TRIAGER' | 'ADMIN';
   department?: string | null;
+  active?: boolean;
   enabledModules?: PlatformModule[];
   entitlements?: UserEntitlement[];
 }

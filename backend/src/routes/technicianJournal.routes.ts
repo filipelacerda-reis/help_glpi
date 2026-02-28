@@ -16,6 +16,8 @@ router.post(
   uploadMultiple,
   technicianJournalController.createManualEntry
 );
+router.patch('/me/journal/:id/manual', requireModuleAccess('JOURNAL'), technicianJournalController.updateMyManualEntry);
+router.get('/me/journal/:id/edit-logs', requireModuleAccess('JOURNAL'), technicianJournalController.getEntryEditLogs);
 router.get('/me/journal/summary', requireModuleAccess('JOURNAL'), technicianJournalController.getMyJournalSummary);
 router.get('/me/metrics', requireModuleAccess('METRICS'), technicianMetricsController.getMyMetrics);
 

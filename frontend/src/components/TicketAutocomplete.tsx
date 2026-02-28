@@ -192,7 +192,7 @@ export const TicketAutocomplete: React.FC<TicketAutocompleteProps> = ({
               type="button"
               onClick={() => handleSelectTicket(ticket)}
               className={`w-full text-left px-4 py-2 hover:bg-gray-50 focus:bg-gray-50 focus:outline-none border-b border-gray-100 last:border-b-0 ${
-                darkTheme ? 'hover:bg-gray-700/50 border-gray-700' : ''
+                darkTheme ? 'hover:bg-slate-100 dark:hover:bg-slate-700/30 border-gray-700' : ''
               }`}
             >
               <div className="flex items-center justify-between">

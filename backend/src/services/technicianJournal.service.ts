@@ -7,6 +7,7 @@ import {
   TicketWorklog,
   Ticket,
   TicketComment,
+  UserRole,
 } from '@prisma/client';
 
 export interface CreateManualEntryDto {
@@ -14,6 +15,14 @@ export interface CreateManualEntryDto {
   description: string;
   contentHtml?: string; // Conteúdo rico em HTML
   tagIds?: string[]; // IDs das tags da plataforma
+}
+
+export interface UpdateManualEntryDto {
+  title?: string;
+  description: string;
+  contentHtml?: string;
+  tagIds?: string[];
+  reason?: string;
 }
 
 export interface JournalEntryFilters {
@@ -37,6 +46,7 @@ export interface JournalEntryDTO {
   title?: string | null;
   description: string;
   contentHtml?: string | null;
+  editedAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;
   source?: string | null;
@@ -68,6 +78,27 @@ export interface JournalEntryDTO {
     mimeType?: string | null;
     url: string;
   }>;
+}
+
+export interface JournalEntryEditLogDTO {
+  id: string;
+  entryId: string;
+  editedById: string;
+  editedByName: string;
+  editedAt: Date;
+  previous: {
+    title?: string | null;
+    description: string;
+    contentHtml?: string | null;
+    tagIds: string[];
+  };
+  next: {
+    title?: string | null;
+    description: string;
+    contentHtml?: string | null;
+    tagIds: string[];
+  };
+  reason?: string | null;
 }
 
 export interface DailySummaryDTO {
@@ -152,6 +183,141 @@ export const technicianJournalService = {
       attachmentsCount: entry.attachments.length,
     });
     return entry;
+  },
+
+  async updateManualEntry(
+    technicianId: string,
+    entryId: string,
+    payload: UpdateManualEntryDto
+  ) {
+    const existing = await prisma.technicianJournalEntry.findUnique({
+      where: { id: entryId },
+      include: {
+        tags: {
+          select: { tagId: true },
+        },
+      },
+    });
+
+    if (!existing) {
+      throw new AppError('Entrada do diário não encontrada', 404);
+    }
+    if (existing.technicianId !== technicianId) {
+      throw new AppError('Você não pode editar esta entrada', 403);
+    }
+    if (existing.type !== TechnicianJournalEntryType.MANUAL) {
+      throw new AppError('Apenas entradas manuais podem ser editadas', 400);
+    }
+
+    const previous = {
+      title: existing.title,
+      description: existing.description,
+      contentHtml: existing.contentHtml,
+      tagIds: existing.tags.map((t) => t.tagId),
+    };
+    const next = {
+      title: payload.title || null,
+      description: payload.description,
+      contentHtml: payload.contentHtml || null,
+      tagIds: payload.tagIds || [],
+    };
+
+    const updated = await prisma.$transaction(async (tx) => {
+      await tx.journalTag.deleteMany({
+        where: { journalEntryId: entryId },
+      });
+
+      const entry = await tx.technicianJournalEntry.update({
+        where: { id: entryId },
+        data: {
+          title: payload.title || null,
+          description: payload.description,
+          contentHtml: payload.contentHtml || null,
+          editedAt: new Date(),
+          tags: payload.tagIds?.length
+            ? {
+                create: payload.tagIds.map((tagId) => ({ tagId })),
+              }
+            : undefined,
+        },
+        include: {
+          attachments: true,
+          tags: {
+            include: {
+              tag: true,
+            },
+          },
+        },
+      });
+
+      await tx.journalEntryEditLog.create({
+        data: {
+          entryId,
+          editedById: technicianId,
+          previous,
+          next,
+          reason: payload.reason || null,
+        },
+      });
+
+      return entry;
+    });
+
+    return updated;
+  },
+
+  async getEntryEditLogs(entryId: string, actorUserId: string, actorRole: UserRole): Promise<JournalEntryEditLogDTO[]> {
+    const entry = await prisma.technicianJournalEntry.findUnique({
+      where: { id: entryId },
+      select: { id: true, technicianId: true },
+    });
+    if (!entry) {
+      throw new AppError('Entrada do diário não encontrada', 404);
+    }
+
+    if (actorRole !== UserRole.ADMIN) {
+      const leadTeamIds = await prisma.userTeam.findMany({
+        where: {
+          userId: actorUserId,
+          role: 'LEAD',
+        },
+        select: { teamId: true },
+      });
+
+      const allowed = leadTeamIds.length
+        ? await prisma.userTeam.count({
+            where: {
+              userId: entry.technicianId,
+              teamId: { in: leadTeamIds.map((t) => t.teamId) },
+            },
+          })
+        : 0;
+
+      if (!allowed && actorUserId !== entry.technicianId) {
+        throw new AppError('Sem permissão para visualizar histórico de edição', 403);
+      }
+    }
+
+    const logs = await prisma.journalEntryEditLog.findMany({
+      where: { entryId },
+      include: {
+        editedBy: {
+          select: { id: true, name: true },
+        },
+      },
+      orderBy: { editedAt: 'desc' },
+    });
+
+    return logs.map((log) => ({
+      id: log.id,
+      entryId: log.entryId,
+      editedById: log.editedById,
+      editedByName: log.editedBy.name,
+      editedAt: log.editedAt,
+      previous: log.previous as JournalEntryEditLogDTO['previous'],
+      next: log.next as JournalEntryEditLogDTO['next'],
+      reason: log.reason,
+    }));
   },
 
   /**
@@ -669,6 +835,7 @@ export const technicianJournalService = {
       title: entry.title,
       description: entry.description,
       contentHtml: entry.contentHtml,
+      editedAt: entry.editedAt,
       createdAt: entry.createdAt,
       updatedAt: entry.updatedAt,
       source: entry.source,
@@ -895,4 +1062,3 @@ export const technicianJournalService = {
     }
   },
 };
-

@@ -201,6 +201,8 @@ export const getSamlStrategy = async () => {
             department: (profile as any).department || null,
           },
         });
+      } else if (!user.active) {
+        return done(new AppError('Usuário desativado. Contate um administrador.', 403));
       } else if (saml.updateRoleOnLogin && role !== user.role) {
         user = await prisma.user.update({
           where: { id: user.id },

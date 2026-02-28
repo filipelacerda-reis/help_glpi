@@ -58,6 +58,8 @@ const typeLabel: Record<EquipmentType, string> = {
   CHARGER: 'Carregador',
   OTHER: 'Outro',
 };
+const CUSTOM_TYPE_STORAGE_KEY = 'glpi:custom-equipment-types';
+const CUSTOM_TYPE_NOTE_REGEX = /^\[tipo-custom:([^\]]+)\]\s*/i;
 
 const statusLabel: Record<EquipmentStatus, string> = {
   IN_STOCK: 'Em estoque',
@@ -104,11 +106,13 @@ const EquipmentsPage = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [query, setQuery] = useState('');
+  const [customEquipmentTypes, setCustomEquipmentTypes] = useState<string[]>([]);
+  const [newCustomType, setNewCustomType] = useState('');
+  const [selectedTypeValue, setSelectedTypeValue] = useState<string>('NOTEBOOK');
 
   const [form, setForm] = useState({
     invoiceNumber: '',
     purchaseDate: '',
-    equipmentType: 'NOTEBOOK' as EquipmentType,
     assetTag: '',
     value: '',
     serialNumber: '',
@@ -118,6 +122,33 @@ const EquipmentsPage = () => {
     warrantyEndDate: '',
     notes: '',
   });
+
+  const readCustomTypeFromNotes = (notes?: string | null) => {
+    if (!notes) return null;
+    const match = notes.match(CUSTOM_TYPE_NOTE_REGEX);
+    return match?.[1]?.trim() || null;
+  };
+
+  const buildNotesWithCustomType = (customType: string, notes?: string) => {
+    const cleanType = customType.trim();
+    const userNotes = (notes || '').trim();
+    const prefix = `[tipo-custom:${cleanType}]`;
+    return userNotes ? `${prefix} ${userNotes}` : prefix;
+  };
+
+  const getEquipmentTypeDisplay = (equipmentType: EquipmentType, notes?: string | null) => {
+    if (equipmentType !== 'OTHER') return typeLabel[equipmentType];
+    const custom = readCustomTypeFromNotes(notes);
+    return custom || typeLabel[equipmentType];
+  };
+
+  const persistCustomTypes = (nextTypes: string[]) => {
+    const unique = Array.from(
+      new Set(nextTypes.map((item) => item.trim()).filter(Boolean))
+    );
+    setCustomEquipmentTypes(unique);
+    localStorage.setItem(CUSTOM_TYPE_STORAGE_KEY, JSON.stringify(unique));
+  };
 
   const [assigningEquipmentId, setAssigningEquipmentId] = useState<string | null>(null);
   const [assignForm, setAssignForm] = useState({
@@ -153,6 +184,14 @@ const EquipmentsPage = () => {
         equipmentService.getAlerts(30),
       ]);
       setEquipments(equipmentsData);
+      const extractedCustomTypes = equipmentsData
+        .map((equipment) => readCustomTypeFromNotes(equipment.notes))
+        .filter((item): item is string => Boolean(item));
+      if (extractedCustomTypes.length > 0) {
+        setCustomEquipmentTypes((prev) =>
+          Array.from(new Set([...prev, ...extractedCustomTypes]))
+        );
+      }
       setEmployees(employeesData);
       setDashboard(dashboardData);
       setAlerts(alertsData);
@@ -164,8 +203,38 @@ const EquipmentsPage = () => {
   };
 
   useEffect(() => {
+    try {
+      const raw = localStorage.getItem(CUSTOM_TYPE_STORAGE_KEY);
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        setCustomEquipmentTypes(
+          parsed.map((item) => String(item).trim()).filter(Boolean)
+        );
+      }
+    } catch {
+      setCustomEquipmentTypes([]);
+    }
+  }, []);
+
+  useEffect(() => {
     loadData();
   }, []);
+
+  const typeOptions = useMemo(
+    () =>
+      [
+        ...EQUIPMENT_TYPES.map((type) => ({
+          value: type,
+          label: typeLabel[type],
+        })),
+        ...customEquipmentTypes.map((customType) => ({
+          value: `CUSTOM:${customType}`,
+          label: customType,
+        })),
+      ] as Array<{ value: string; label: string }>,
+    [customEquipmentTypes]
+  );
 
   const filteredEquipments = useMemo(() => {
     if (!query.trim()) return equipments;
@@ -232,10 +301,18 @@ const EquipmentsPage = () => {
     setSaving(true);
     setError('');
     try {
+      const isCustomType = selectedTypeValue.startsWith('CUSTOM:');
+      const customTypeLabel = isCustomType
+        ? selectedTypeValue.replace('CUSTOM:', '').trim()
+        : '';
+      const payloadEquipmentType = isCustomType
+        ? 'OTHER'
+        : (selectedTypeValue as EquipmentType);
+
       await equipmentService.create({
         invoiceNumber: form.invoiceNumber,
         purchaseDate: form.purchaseDate,
-        equipmentType: form.equipmentType,
+        equipmentType: payloadEquipmentType,
         assetTag: form.assetTag,
         value: Number(form.value),
         serialNumber: form.serialNumber || undefined,
@@ -243,13 +320,15 @@ const EquipmentsPage = () => {
         model: form.model || undefined,
         condition: form.condition,
         warrantyEndDate: form.warrantyEndDate || null,
-        notes: form.notes || undefined,
+        notes:
+          isCustomType && customTypeLabel
+            ? buildNotesWithCustomType(customTypeLabel, form.notes)
+            : form.notes || undefined,
       });
 
       setForm({
         invoiceNumber: '',
         purchaseDate: '',
-        equipmentType: 'NOTEBOOK',
         assetTag: '',
         value: '',
         serialNumber: '',
@@ -259,6 +338,7 @@ const EquipmentsPage = () => {
         warrantyEndDate: '',
         notes: '',
       });
+      setSelectedTypeValue('NOTEBOOK');
       await loadData();
     } catch (err: any) {
       setError(err.response?.data?.error || 'Erro ao cadastrar equipamento');
@@ -360,6 +440,25 @@ const EquipmentsPage = () => {
     setEmployeeSearchQuery('');
   };
 
+  const handleAddCustomType = () => {
+    const normalized = newCustomType.trim();
+    if (!normalized) return;
+
+    const existingOption = typeOptions.find(
+      (option) => option.label.toLowerCase() === normalized.toLowerCase()
+    );
+    if (existingOption) {
+      setSelectedTypeValue(existingOption.value);
+      setNewCustomType('');
+      return;
+    }
+
+    const nextTypes = [...customEquipmentTypes, normalized];
+    persistCustomTypes(nextTypes);
+    setSelectedTypeValue(`CUSTOM:${normalized}`);
+    setNewCustomType('');
+  };
+
   const handleDownloadEmployeePdf = async () => {
     if (!viewingEmployee?.id) return;
     try {
@@ -397,20 +496,20 @@ const EquipmentsPage = () => {
 
         {dashboard && (
           <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
-            <div className="rounded-lg border border-gray-600/50 bg-gray-700/30 p-4">
-              <div className="text-xs uppercase tracking-wide text-gray-400">Total de ativos</div>
+            <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
+              <div className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Total de ativos</div>
               <div className="mt-1 text-2xl font-semibold text-white">{dashboard.totalEquipments}</div>
             </div>
-            <div className="rounded-lg border border-gray-600/50 bg-gray-700/30 p-4">
-              <div className="text-xs uppercase tracking-wide text-gray-400">Entregues</div>
+            <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
+              <div className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Entregues</div>
               <div className="mt-1 text-2xl font-semibold text-white">{dashboard.assignedCount}</div>
             </div>
-            <div className="rounded-lg border border-gray-600/50 bg-gray-700/30 p-4">
-              <div className="text-xs uppercase tracking-wide text-gray-400">Em estoque</div>
+            <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
+              <div className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Em estoque</div>
               <div className="mt-1 text-2xl font-semibold text-white">{dashboard.inStockCount}</div>
             </div>
-            <div className="rounded-lg border border-gray-600/50 bg-gray-700/30 p-4">
-              <div className="text-xs uppercase tracking-wide text-gray-400">Valor total</div>
+            <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
+              <div className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Valor total</div>
               <div className="mt-1 text-2xl font-semibold text-white">
                 R$ {dashboard.totalValue.toFixed(2)}
               </div>
@@ -455,10 +554,10 @@ const EquipmentsPage = () => {
           </div>
         )}
 
-        <div className="rounded-lg border border-gray-600/50 bg-gray-700/30 p-4">
+        <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
           <div className="mb-4">
             <input
-              className="w-full rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-white"
+              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-gray-800 px-3 py-2 text-sm text-white"
               placeholder="Buscar por patrimônio, NF, serial, marca ou modelo"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -466,12 +565,12 @@ const EquipmentsPage = () => {
           </div>
 
           {loading ? (
-            <div className="text-gray-300">Carregando...</div>
+            <div className="text-slate-600 dark:text-slate-300">Carregando...</div>
           ) : (
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm">
                 <thead>
-                  <tr className="border-b border-gray-600 text-left text-gray-300">
+                  <tr className="border-b border-slate-300 dark:border-slate-700 text-left text-slate-600 dark:text-slate-300">
                     <th className="py-2 pr-4">Patrimônio</th>
                     <th className="py-2 pr-4">Tipo</th>
                     <th className="py-2 pr-4">NF</th>
@@ -488,10 +587,12 @@ const EquipmentsPage = () => {
                     return (
                       <tr
                         key={equipment.id}
-                        className="border-b border-gray-700/70 text-gray-100"
+                        className="border-b border-slate-300 dark:border-slate-700/70 text-gray-100"
                       >
                         <td className="py-2 pr-4">{equipment.assetTag}</td>
-                        <td className="py-2 pr-4">{typeLabel[equipment.equipmentType]}</td>
+                        <td className="py-2 pr-4">
+                          {getEquipmentTypeDisplay(equipment.equipmentType, equipment.notes)}
+                        </td>
                         <td className="py-2 pr-4">{equipment.invoiceNumber}</td>
                         <td className="py-2 pr-4">
                           R$ {Number(equipment.value).toFixed(2)}
@@ -502,7 +603,7 @@ const EquipmentsPage = () => {
                           {activeAssignment?.employee ? (
                             <button
                               type="button"
-                              className="underline decoration-dotted text-etus-green hover:text-etus-green-dark"
+                              className="underline decoration-dotted text-indigo-600 dark:text-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-300"
                               onClick={() => openEmployeeModal(activeAssignment.employee!.id)}
                             >
                               {activeAssignment.employee.name}
@@ -532,7 +633,7 @@ const EquipmentsPage = () => {
                               </>
                             ) : (
                               <button
-                                className="rounded bg-etus-green px-2 py-1 text-xs text-gray-900"
+                                className="rounded bg-indigo-600 px-2 py-1 text-xs text-gray-900"
                                 onClick={() => setAssigningEquipmentId(equipment.id)}
                               >
                                 Entregar
@@ -552,12 +653,12 @@ const EquipmentsPage = () => {
         {canManage && (
           <form
             onSubmit={handleCreate}
-            className="rounded-lg border border-gray-600/50 bg-gray-700/30 p-4"
+            className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4"
           >
             <h2 className="mb-4 text-lg font-semibold text-white">Novo Equipamento</h2>
             <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
               <input
-                className="rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-white"
+                className="rounded-lg border border-slate-300 dark:border-slate-700 bg-gray-800 px-3 py-2 text-sm text-white"
                 placeholder="Nota Fiscal"
                 value={form.invoiceNumber}
                 onChange={(e) => setForm((prev) => ({ ...prev, invoiceNumber: e.target.value }))}
@@ -565,26 +666,41 @@ const EquipmentsPage = () => {
               />
               <input
                 type="date"
-                className="rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-white"
+                className="rounded-lg border border-slate-300 dark:border-slate-700 bg-gray-800 px-3 py-2 text-sm text-white"
                 value={form.purchaseDate}
                 onChange={(e) => setForm((prev) => ({ ...prev, purchaseDate: e.target.value }))}
                 required
               />
-              <select
-                className="rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-white"
-                value={form.equipmentType}
-                onChange={(e) =>
-                  setForm((prev) => ({ ...prev, equipmentType: e.target.value as EquipmentType }))
-                }
-              >
-                {EQUIPMENT_TYPES.map((type) => (
-                  <option key={type} value={type}>
-                    {typeLabel[type]}
-                  </option>
-                ))}
-              </select>
+              <div className="space-y-2">
+                <select
+                  className="w-full rounded-lg border border-slate-300 bg-gray-800 px-3 py-2 text-sm text-white dark:border-slate-700"
+                  value={selectedTypeValue}
+                  onChange={(e) => setSelectedTypeValue(e.target.value)}
+                >
+                  {typeOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <div className="flex items-center gap-2">
+                  <input
+                    className="w-full rounded-lg border border-slate-300 bg-gray-800 px-3 py-2 text-sm text-white dark:border-slate-700"
+                    placeholder="Adicionar novo tipo (ex: Impressora 3D)"
+                    value={newCustomType}
+                    onChange={(e) => setNewCustomType(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddCustomType}
+                    className="rounded-lg border border-slate-300 px-3 py-2 text-xs font-medium text-slate-300 transition-colors hover:bg-slate-700/30 dark:border-slate-700"
+                  >
+                    Adicionar tipo
+                  </button>
+                </div>
+              </div>
               <input
-                className="rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-white"
+                className="rounded-lg border border-slate-300 dark:border-slate-700 bg-gray-800 px-3 py-2 text-sm text-white"
                 placeholder="Patrimônio"
                 value={form.assetTag}
                 onChange={(e) => setForm((prev) => ({ ...prev, assetTag: e.target.value }))}
@@ -593,14 +709,14 @@ const EquipmentsPage = () => {
               <input
                 type="number"
                 step="0.01"
-                className="rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-white"
+                className="rounded-lg border border-slate-300 dark:border-slate-700 bg-gray-800 px-3 py-2 text-sm text-white"
                 placeholder="Valor"
                 value={form.value}
                 onChange={(e) => setForm((prev) => ({ ...prev, value: e.target.value }))}
                 required
               />
               <select
-                className="rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-white"
+                className="rounded-lg border border-slate-300 dark:border-slate-700 bg-gray-800 px-3 py-2 text-sm text-white"
                 value={form.condition}
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, condition: e.target.value as EquipmentCondition }))
@@ -613,33 +729,33 @@ const EquipmentsPage = () => {
                 ))}
               </select>
               <input
-                className="rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-white"
+                className="rounded-lg border border-slate-300 dark:border-slate-700 bg-gray-800 px-3 py-2 text-sm text-white"
                 placeholder="Serial"
                 value={form.serialNumber}
                 onChange={(e) => setForm((prev) => ({ ...prev, serialNumber: e.target.value }))}
               />
               <input
-                className="rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-white"
+                className="rounded-lg border border-slate-300 dark:border-slate-700 bg-gray-800 px-3 py-2 text-sm text-white"
                 placeholder="Marca"
                 value={form.brand}
                 onChange={(e) => setForm((prev) => ({ ...prev, brand: e.target.value }))}
               />
               <input
-                className="rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-white"
+                className="rounded-lg border border-slate-300 dark:border-slate-700 bg-gray-800 px-3 py-2 text-sm text-white"
                 placeholder="Modelo"
                 value={form.model}
                 onChange={(e) => setForm((prev) => ({ ...prev, model: e.target.value }))}
               />
               <input
                 type="date"
-                className="rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-white md:col-span-2"
+                className="rounded-lg border border-slate-300 dark:border-slate-700 bg-gray-800 px-3 py-2 text-sm text-white md:col-span-2"
                 value={form.warrantyEndDate}
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, warrantyEndDate: e.target.value }))
                 }
               />
               <input
-                className="rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-white md:col-span-3"
+                className="rounded-lg border border-slate-300 dark:border-slate-700 bg-gray-800 px-3 py-2 text-sm text-white md:col-span-3"
                 placeholder="Observações"
                 value={form.notes}
                 onChange={(e) => setForm((prev) => ({ ...prev, notes: e.target.value }))}
@@ -648,7 +764,7 @@ const EquipmentsPage = () => {
             <button
               type="submit"
               disabled={saving}
-              className="mt-4 rounded bg-etus-green px-4 py-2 text-sm font-semibold text-gray-900 disabled:opacity-60"
+              className="mt-4 rounded bg-indigo-600 px-4 py-2 text-sm font-semibold text-gray-900 disabled:opacity-60"
             >
               {saving ? 'Salvando...' : 'Cadastrar equipamento'}
             </button>
@@ -664,7 +780,7 @@ const EquipmentsPage = () => {
               <h3 className="mb-4 text-base font-semibold text-white">Entrega de equipamento</h3>
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                 <select
-                  className="rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-white"
+                  className="rounded-lg border border-slate-300 dark:border-slate-700 bg-gray-800 px-3 py-2 text-sm text-white"
                   value={assignForm.employeeId}
                   onChange={(e) =>
                     setAssignForm((prev) => ({ ...prev, employeeId: e.target.value }))
@@ -680,14 +796,14 @@ const EquipmentsPage = () => {
                 </select>
                 <input
                   type="date"
-                  className="rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-white"
+                  className="rounded-lg border border-slate-300 dark:border-slate-700 bg-gray-800 px-3 py-2 text-sm text-white"
                   value={assignForm.expectedReturnAt}
                   onChange={(e) =>
                     setAssignForm((prev) => ({ ...prev, expectedReturnAt: e.target.value }))
                   }
                 />
                 <select
-                  className="rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-white"
+                  className="rounded-lg border border-slate-300 dark:border-slate-700 bg-gray-800 px-3 py-2 text-sm text-white"
                   value={assignForm.deliveryCondition}
                   onChange={(e) =>
                     setAssignForm((prev) => ({
@@ -703,7 +819,7 @@ const EquipmentsPage = () => {
                   ))}
                 </select>
                 <input
-                  className="rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-white"
+                  className="rounded-lg border border-slate-300 dark:border-slate-700 bg-gray-800 px-3 py-2 text-sm text-white"
                   placeholder="Nº termo de entrega"
                   value={assignForm.deliveryTermNumber}
                   onChange={(e) =>
@@ -714,7 +830,7 @@ const EquipmentsPage = () => {
                   }
                 />
                 <input
-                  className="rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-white md:col-span-2"
+                  className="rounded-lg border border-slate-300 dark:border-slate-700 bg-gray-800 px-3 py-2 text-sm text-white md:col-span-2"
                   placeholder="Observações"
                   value={assignForm.notes}
                   onChange={(e) =>
@@ -723,7 +839,7 @@ const EquipmentsPage = () => {
                 />
               </div>
               <div className="mt-5 flex gap-2">
-                <button className="rounded bg-etus-green px-4 py-2 text-sm font-semibold text-gray-900">
+                <button className="rounded bg-indigo-600 px-4 py-2 text-sm font-semibold text-gray-900">
                   Confirmar entrega
                 </button>
                 <button
@@ -747,7 +863,7 @@ const EquipmentsPage = () => {
               <h3 className="mb-4 text-base font-semibold text-white">Devolução de equipamento</h3>
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                 <select
-                  className="rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-white"
+                  className="rounded-lg border border-slate-300 dark:border-slate-700 bg-gray-800 px-3 py-2 text-sm text-white"
                   value={returnForm.returnCondition}
                   onChange={(e) =>
                     setReturnForm((prev) => ({
@@ -763,7 +879,7 @@ const EquipmentsPage = () => {
                   ))}
                 </select>
                 <select
-                  className="rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-white"
+                  className="rounded-lg border border-slate-300 dark:border-slate-700 bg-gray-800 px-3 py-2 text-sm text-white"
                   value={returnForm.finalStatus}
                   onChange={(e) =>
                     setReturnForm((prev) => ({
@@ -779,7 +895,7 @@ const EquipmentsPage = () => {
                   ))}
                 </select>
                 <input
-                  className="rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-white md:col-span-2"
+                  className="rounded-lg border border-slate-300 dark:border-slate-700 bg-gray-800 px-3 py-2 text-sm text-white md:col-span-2"
                   placeholder="Observações"
                   value={returnForm.notes}
                   onChange={(e) =>
@@ -805,13 +921,13 @@ const EquipmentsPage = () => {
 
         {viewingEmployeeId && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/70 p-4">
-            <div className="w-full max-w-4xl rounded-xl border border-gray-600 bg-gray-800 p-5 shadow-2xl">
+            <div className="w-full max-w-4xl rounded-xl border border-slate-300 dark:border-slate-700 bg-gray-800 p-5 shadow-2xl">
               <div className="mb-4 flex items-center justify-between">
                 <h3 className="text-base font-semibold text-white">Equipamentos do colaborador</h3>
                 <div className="flex gap-2">
                   <button
                     type="button"
-                    className="rounded bg-etus-green px-3 py-2 text-sm font-semibold text-gray-900 disabled:opacity-60"
+                    className="rounded bg-indigo-600 px-3 py-2 text-sm font-semibold text-gray-900 disabled:opacity-60"
                     disabled={!viewingEmployee || employeeModalLoading}
                     onClick={handleDownloadEmployeePdf}
                   >
@@ -827,47 +943,47 @@ const EquipmentsPage = () => {
                 </div>
               </div>
 
-              {employeeModalLoading && <div className="text-gray-300">Carregando colaborador...</div>}
+              {employeeModalLoading && <div className="text-slate-600 dark:text-slate-300">Carregando colaborador...</div>}
 
               {!employeeModalLoading && viewingEmployee && (
                 <div className="space-y-4">
-                  <div className="grid grid-cols-1 gap-3 rounded-lg border border-gray-700 bg-gray-700/30 p-4 md:grid-cols-5">
+                  <div className="grid grid-cols-1 gap-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 md:grid-cols-5">
                     <div>
-                      <div className="text-xs uppercase tracking-wide text-gray-400">Nome</div>
+                      <div className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Nome</div>
                       <div className="text-sm text-white">{viewingEmployee.name}</div>
                     </div>
                     <div>
-                      <div className="text-xs uppercase tracking-wide text-gray-400">CPF</div>
+                      <div className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">CPF</div>
                       <div className="text-sm text-white">{viewingEmployee.cpf}</div>
                     </div>
                     <div>
-                      <div className="text-xs uppercase tracking-wide text-gray-400">Time</div>
+                      <div className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Time</div>
                       <div className="text-sm text-white">{viewingEmployee.team?.name || '-'}</div>
                     </div>
                     <div>
-                      <div className="text-xs uppercase tracking-wide text-gray-400">Função</div>
+                      <div className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Função</div>
                       <div className="text-sm text-white">{viewingEmployee.roleTitle}</div>
                     </div>
                     <div>
-                      <div className="text-xs uppercase tracking-wide text-gray-400">Admissão</div>
+                      <div className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Admissão</div>
                       <div className="text-sm text-white">{formatDate(viewingEmployee.hireDate)}</div>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 gap-3 rounded-lg border border-gray-700 bg-gray-700/30 p-3 md:grid-cols-4">
+                  <div className="grid grid-cols-1 gap-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 md:grid-cols-4">
                     <div className="md:col-span-4">
-                      <div className="mb-1 text-xs uppercase tracking-wide text-gray-400">Buscar na lista</div>
+                      <div className="mb-1 text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Buscar na lista</div>
                       <input
-                        className="w-full rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-white"
+                        className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-gray-800 px-3 py-2 text-sm text-white"
                         placeholder="Patrimônio, NF, tipo, serial, marca ou modelo"
                         value={employeeSearchQuery}
                         onChange={(e) => setEmployeeSearchQuery(e.target.value)}
                       />
                     </div>
                     <div>
-                      <div className="mb-1 text-xs uppercase tracking-wide text-gray-400">Escopo</div>
+                      <div className="mb-1 text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Escopo</div>
                       <select
-                        className="w-full rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-white"
+                        className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-gray-800 px-3 py-2 text-sm text-white"
                         value={employeeFilter}
                         onChange={(e) => setEmployeeFilter(e.target.value as EmployeeEquipmentsFilter)}
                       >
@@ -879,9 +995,9 @@ const EquipmentsPage = () => {
                       </select>
                     </div>
                     <div>
-                      <div className="mb-1 text-xs uppercase tracking-wide text-gray-400">Ordenar por</div>
+                      <div className="mb-1 text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Ordenar por</div>
                       <select
-                        className="w-full rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-white"
+                        className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-gray-800 px-3 py-2 text-sm text-white"
                         value={employeeSortBy}
                         onChange={(e) => setEmployeeSortBy(e.target.value as EmployeeEquipmentsSortBy)}
                       >
@@ -893,9 +1009,9 @@ const EquipmentsPage = () => {
                       </select>
                     </div>
                     <div>
-                      <div className="mb-1 text-xs uppercase tracking-wide text-gray-400">Direção</div>
+                      <div className="mb-1 text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Direção</div>
                       <select
-                        className="w-full rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-white"
+                        className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-gray-800 px-3 py-2 text-sm text-white"
                         value={employeeSortDir}
                         onChange={(e) => setEmployeeSortDir(e.target.value as EmployeeEquipmentsSortDir)}
                       >
@@ -904,7 +1020,7 @@ const EquipmentsPage = () => {
                       </select>
                     </div>
                     <div className="flex items-end">
-                      <div className="rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-gray-200">
+                      <div className="rounded-lg border border-slate-300 dark:border-slate-700 bg-gray-800 px-3 py-2 text-sm text-gray-200">
                         Itens no escopo: {employeeAssignments.length}
                       </div>
                     </div>
@@ -913,7 +1029,7 @@ const EquipmentsPage = () => {
                   <div className="overflow-x-auto">
                     <table className="min-w-full text-sm">
                       <thead>
-                        <tr className="border-b border-gray-600 text-left text-gray-300">
+                        <tr className="border-b border-slate-300 dark:border-slate-700 text-left text-slate-600 dark:text-slate-300">
                           <th className="py-2 pr-3">Patrimônio</th>
                           <th className="py-2 pr-3">Tipo</th>
                           <th className="py-2 pr-3">NF</th>
@@ -930,12 +1046,14 @@ const EquipmentsPage = () => {
                         {employeeAssignments.map((assignment) => (
                             <tr
                               key={assignment.id}
-                              className="border-b border-gray-700/70 text-gray-100"
+                              className="border-b border-slate-300 dark:border-slate-700/70 text-gray-100"
                             >
                               <td className="py-2 pr-3">{assignment.equipment.assetTag}</td>
                               <td className="py-2 pr-3">
-                                {typeLabel[assignment.equipment.equipmentType as EquipmentType] ||
-                                  assignment.equipment.equipmentType}
+                                {getEquipmentTypeDisplay(
+                                  assignment.equipment.equipmentType as EquipmentType,
+                                  (assignment.equipment as Equipment).notes
+                                )}
                               </td>
                               <td className="py-2 pr-3">{assignment.equipment.invoiceNumber}</td>
                               <td className="py-2 pr-3">
@@ -959,7 +1077,7 @@ const EquipmentsPage = () => {
                       </tbody>
                     </table>
                     {employeeAssignments.length === 0 && (
-                      <div className="mt-3 text-sm text-gray-300">Nenhum equipamento encontrado no filtro selecionado.</div>
+                      <div className="mt-3 text-sm text-slate-600 dark:text-slate-300">Nenhum equipamento encontrado no filtro selecionado.</div>
                     )}
                   </div>
                 </div>

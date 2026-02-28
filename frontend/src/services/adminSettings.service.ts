@@ -4,6 +4,11 @@ export interface AdminSettingsPayload {
   saml?: Record<string, any>;
   auth0?: Record<string, any>;
   platform?: Record<string, any>;
+  slack?: {
+    enabled: boolean;
+    botToken?: string;
+    signingSecret?: string;
+  };
 }
 
 export const adminSettingsService = {
@@ -31,6 +36,22 @@ export const adminSettingsService = {
     const response = await api.get('/admin/audit', {
       params: { limit, cursor },
     });
+    return response.data;
+  },
+  async getSlackSettings() {
+    const response = await api.get('/admin/settings/slack');
+    return response.data as {
+      enabled: boolean;
+      botToken: string;
+      signingSecret: string;
+    };
+  },
+  async updateSlackSettings(payload: {
+    enabled: boolean;
+    botToken?: string;
+    signingSecret?: string;
+  }) {
+    const response = await api.put('/admin/settings/slack', payload);
     return response.data;
   },
 };

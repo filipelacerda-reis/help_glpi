@@ -165,6 +165,32 @@ export const ticketController = {
     }
   },
 
+  async getStaleTickets(req: Request, res: Response, next: NextFunction) {
+    if (!req.userId || !req.userRole) {
+      res.status(401).json({ error: 'Não autenticado' });
+      return;
+    }
+
+    try {
+      const daysThresholdRaw = Number(req.query.daysThreshold ?? 5);
+      const takeRaw = Number(req.query.take ?? 10);
+      const daysThreshold = Number.isFinite(daysThresholdRaw)
+        ? Math.max(1, Math.min(daysThresholdRaw, 90))
+        : 5;
+      const take = Number.isFinite(takeRaw) ? Math.max(1, Math.min(takeRaw, 50)) : 10;
+
+      const tickets = await ticketService.getStaleTickets(
+        req.userId,
+        req.userRole,
+        daysThreshold,
+        take
+      );
+      res.json(tickets);
+    } catch (error: any) {
+      next(error);
+    }
+  },
+
   async updateTicket(req: Request, res: Response, next: NextFunction) {
     if (!req.userId || !req.userRole) {
       res.status(401).json({ error: 'Não autenticado' });
@@ -319,4 +345,3 @@ export const ticketController = {
     }
   },
 };
-

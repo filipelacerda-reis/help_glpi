@@ -39,32 +39,32 @@ const ProcurementPage = () => {
   return (
     <ModernLayout title="Compras" subtitle="Demanda de reposição e riscos operacionais">
       <CorporateFiltersBar filters={filters} onChange={setFilters} />
-      {loading && <div className="text-gray-300">Carregando dados de compras...</div>}
+      {loading && <div className="text-slate-600 dark:text-slate-300">Carregando dados de compras...</div>}
       {error && <div className="text-red-400">{error}</div>}
       {data && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-            <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-4">
-              <p className="text-xs text-gray-400">Retornos atrasados</p>
+            <div className="rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 p-4">
+              <p className="text-xs text-slate-500 dark:text-slate-400">Retornos atrasados</p>
               <p className="text-xl font-semibold text-white">{data.overdueReturns}</p>
             </div>
-            <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-4">
-              <p className="text-xs text-gray-400">Garantia vence em 45 dias</p>
+            <div className="rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 p-4">
+              <p className="text-xs text-slate-500 dark:text-slate-400">Garantia vence em 45 dias</p>
               <p className="text-xl font-semibold text-white">{data.warrantyExpiring45Days}</p>
             </div>
-            <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-4">
-              <p className="text-xs text-gray-400">Ativos aposentados/perdidos</p>
+            <div className="rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 p-4">
+              <p className="text-xs text-slate-500 dark:text-slate-400">Ativos aposentados/perdidos</p>
               <p className="text-xl font-semibold text-white">{data.retiredOrLostCount}</p>
             </div>
-            <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-4">
-              <p className="text-xs text-gray-400">Chamados operacionais pendentes</p>
+            <div className="rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 p-4">
+              <p className="text-xs text-slate-500 dark:text-slate-400">Chamados operacionais pendentes</p>
               <p className="text-xl font-semibold text-white">{data.pendingOperationalTickets}</p>
             </div>
           </div>
 
           {data.comparison && (
-            <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-4">
-              <p className="text-xs text-gray-400">Comparação de chamados pendentes no período</p>
+            <div className="rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 p-4">
+              <p className="text-xs text-slate-500 dark:text-slate-400">Comparação de chamados pendentes no período</p>
               <p className="text-lg text-white mt-1">
                 {data.comparison.pendingTickets.current} vs {data.comparison.pendingTickets.previous}
               </p>
@@ -77,11 +77,11 @@ const ProcurementPage = () => {
           )}
 
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-            <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-4">
+            <div className="rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 p-4">
               <h3 className="text-sm font-semibold text-white mb-3">Demanda de reposição por tipo</h3>
               <div className="h-72">
                 {data.replacementDemandByType.length === 0 ? (
-                  <p className="text-sm text-gray-400">Sem demanda crítica de reposição no momento.</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Sem demanda crítica de reposição no momento.</p>
                 ) : (
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={data.replacementDemandByType}>
@@ -97,7 +97,7 @@ const ProcurementPage = () => {
               </div>
             </div>
 
-            <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-4">
+            <div className="rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 p-4">
               <h3 className="text-sm font-semibold text-white mb-3">Indicadores de risco</h3>
               <div className="h-72">
                 <ResponsiveContainer width="100%" height="100%">
@@ -121,7 +121,7 @@ const ProcurementPage = () => {
             </div>
           </div>
 
-          <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-4">
+          <div className="rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 p-4">
             <h3 className="text-sm font-semibold text-white mb-3">Evolução de chamados pendentes</h3>
             <div className="h-72">
               <ResponsiveContainer width="100%" height="100%">

@@ -1,7 +1,7 @@
 import prisma from '../lib/prisma';
 import { logger } from '../utils/logger';
 import { MetricsFilters, MetricsResponse } from '../types/metrics.types';
-import { TicketStatus, TicketPriority } from '@prisma/client';
+import { TicketStatus, TicketPriority, InteractionType, UserRole } from '@prisma/client';
 import { businessMinutesBetween } from '../domain/time/businessTime.engine';
 import { diffInCalendarMinutes } from '../utils/businessHours';
 import { businessCalendarService } from './businessCalendar.service';
@@ -297,6 +297,80 @@ export const enterpriseMetricsService = {
     const reopenRatePercent =
       resolvedTickets.length > 0 ? (reopenedTickets.length / resolvedTickets.length) * 100 : 0;
 
+    // FCR (First Contact Resolution): resolvidos com exatamente 1 resposta pública técnica e sem reabertura
+    const resolvedTicketIds = resolvedTickets.map((ticket) => ticket.id);
+    const technicalRepliesByTicket =
+      resolvedTicketIds.length > 0
+        ? await prisma.ticketInteraction.groupBy({
+            by: ['ticketId'],
+            where: {
+              ticketId: { in: resolvedTicketIds },
+              type: InteractionType.PUBLIC_REPLY,
+              author: {
+                role: { in: [UserRole.TECHNICIAN, UserRole.TRIAGER, UserRole.ADMIN] },
+              },
+            },
+            _count: { _all: true },
+          })
+        : [];
+
+    const oneReplyResolvedIds = new Set(
+      technicalRepliesByTicket
+        .filter((interaction) => interaction._count._all === 1)
+        .map((interaction) => interaction.ticketId)
+    );
+
+    const reopenedResolvedIds = new Set(
+      reopenedTickets.map((ticket) => ticket.ticketId)
+    );
+
+    const fcrResolvedCount = resolvedTicketIds.filter(
+      (ticketId) => oneReplyResolvedIds.has(ticketId) && !reopenedResolvedIds.has(ticketId)
+    ).length;
+
+    const fcrPercent =
+      resolvedTicketIds.length > 0 ? (fcrResolvedCount / resolvedTicketIds.length) * 100 : 0;
+
+    // Esforço por categoria com base em worklogs dentro do período filtrado
+    const worklogTicketWhere = { ...where };
+    delete worklogTicketWhere.createdAt;
+
+    const worklogDateWhere: { gte?: Date; lte?: Date } = {};
+    if (startDate) worklogDateWhere.gte = startDate;
+    if (endDate) worklogDateWhere.lte = endDate;
+
+    const worklogs = await prisma.ticketWorklog.findMany({
+      where: {
+        ticket: worklogTicketWhere,
+        ...(startDate || endDate ? { createdAt: worklogDateWhere } : {}),
+      },
+      select: {
+        durationMinutes: true,
+        ticket: {
+          select: {
+            category: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const worklogByCategoryMap = new Map<string, number>();
+    for (const worklog of worklogs) {
+      const categoryName = worklog.ticket.category?.name || 'Sem categoria';
+      worklogByCategoryMap.set(
+        categoryName,
+        (worklogByCategoryMap.get(categoryName) || 0) + worklog.durationMinutes
+      );
+    }
+
+    const worklogByCategory = Array.from(worklogByCategoryMap.entries())
+      .map(([categoryName, totalMinutes]) => ({ categoryName, totalMinutes }))
+      .sort((a, b) => b.totalMinutes - a.totalMinutes);
+
     // Trend: tickets criados vs resolvidos por dia
     const trendCreatedVsResolved = await this.calculateTrend(where, startDate, endDate);
 
@@ -331,6 +405,8 @@ export const enterpriseMetricsService = {
       mttr,
       slaCompliancePercent: Math.round(slaCompliancePercent * 100) / 100,
       reopenRatePercent: Math.round(reopenRatePercent * 100) / 100,
+      fcrPercent: Math.round(fcrPercent * 100) / 100,
+      worklogByCategory,
       trendCreatedVsResolved,
       priorityDistribution: priorityDistribution.map((p) => ({
         priority: p.priority,

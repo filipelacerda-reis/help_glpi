@@ -176,7 +176,7 @@ const TeamsPage = () => {
   const headerActions = (
     <button
       onClick={() => setShowCreateModal(true)}
-      className="inline-flex items-center space-x-2 px-4 py-2 bg-etus-green hover:bg-etus-green-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
+      className="inline-flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-600-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
     >
       <Plus className="w-4 h-4" />
       <span>Criar Novo Time</span>
@@ -188,7 +188,7 @@ const TeamsPage = () => {
       <ModernLayout title="Times" subtitle="Gerenciar times do sistema" headerActions={headerActions}>
         <div className="text-center py-12">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-etus-green"></div>
-          <p className="mt-4 text-gray-400">Carregando...</p>
+          <p className="mt-4 text-slate-500 dark:text-slate-400">Carregando...</p>
         </div>
       </ModernLayout>
     );
@@ -202,32 +202,32 @@ const TeamsPage = () => {
         </div>
       )}
 
-      <div className="bg-gray-700/30 backdrop-blur-sm border border-gray-600/50 rounded-lg overflow-hidden">
-        <div className="p-4 border-b border-gray-600/50">
+      <div className="bg-white dark:bg-slate-800 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
+        <div className="p-4 border-b border-slate-200 dark:border-slate-700">
           <h2 className="text-lg font-semibold text-white">Lista de Times ({teams.length})</h2>
         </div>
         {teams.length === 0 ? (
-          <div className="text-center py-12 text-gray-400">
+          <div className="text-center py-12 text-slate-500 dark:text-slate-400">
             Nenhum time cadastrado. Clique em "Criar Novo Time" para começar.
           </div>
         ) : (
           <ul className="divide-y divide-gray-600/50">
             {teams.map((team) => (
-              <li key={team.id} className="p-6 hover:bg-gray-700/30 transition-colors">
+              <li key={team.id} className="p-6 hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
                     <h3 className="text-lg font-medium text-white">{team.name}</h3>
                     {team.description && (
-                      <p className="mt-1 text-sm text-gray-400">{team.description}</p>
+                      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{team.description}</p>
                     )}
                     {team.users && team.users.length > 0 && (
                       <div className="mt-4">
-                        <p className="text-sm font-medium text-gray-300 mb-2">Membros:</p>
+                        <p className="text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">Membros:</p>
                         <div className="flex flex-wrap gap-2">
                           {team.users.map((userTeam: UserTeam) => (
                             <span
                               key={`${userTeam.userId}-${userTeam.teamId}`}
-                              className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-600/50 text-gray-300 border border-gray-600"
+                              className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-600/50 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-700"
                             >
                               {userTeam.user.name}
                               {userTeam.role === 'LEAD' && (
@@ -249,7 +249,7 @@ const TeamsPage = () => {
                     )}
                     <div className="mt-4 space-y-2">
                       <div>
-                        <p className="text-sm font-medium text-gray-300 mb-2">Categorias vinculadas:</p>
+                        <p className="text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">Categorias vinculadas:</p>
                         {team.categories && team.categories.length > 0 ? (
                           <div className="flex flex-wrap gap-2">
                             {team.categories.map((tc: any) => (
@@ -262,11 +262,11 @@ const TeamsPage = () => {
                             ))}
                           </div>
                         ) : (
-                          <p className="text-xs text-gray-500 italic">Nenhuma categoria vinculada</p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400 italic">Nenhuma categoria vinculada</p>
                         )}
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-300 mb-2">Tipos de chamados vinculados:</p>
+                        <p className="text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">Tipos de chamados vinculados:</p>
                         {team.ticketTypes && team.ticketTypes.length > 0 ? (
                           <div className="flex flex-wrap gap-2">
                             {team.ticketTypes.map((tt: any) => {
@@ -283,7 +283,7 @@ const TeamsPage = () => {
                             })}
                           </div>
                         ) : (
-                          <p className="text-xs text-gray-500 italic">Nenhum tipo de chamado vinculado</p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400 italic">Nenhum tipo de chamado vinculado</p>
                         )}
                       </div>
                     </div>
@@ -333,7 +333,7 @@ const TeamsPage = () => {
         <form onSubmit={handleCreateTeam}>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
                 Nome <span className="text-red-400">*</span>
               </label>
               <input
@@ -341,69 +341,69 @@ const TeamsPage = () => {
                 required
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Descrição</label>
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Descrição</label>
               <textarea
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 rows={3}
-                className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">
                 Categorias Vinculadas
               </label>
-              <div className="max-h-48 overflow-y-auto border border-gray-600 rounded-lg p-3 bg-gray-700/30">
+              <div className="max-h-48 overflow-y-auto border border-slate-300 dark:border-slate-700 rounded-lg p-3 bg-white dark:bg-slate-800">
                 {categories.length === 0 ? (
-                  <p className="text-sm text-gray-400">Nenhuma categoria disponível</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Nenhuma categoria disponível</p>
                 ) : (
                   <div className="space-y-2">
                     {categories.map((category) => (
                       <label
                         key={category.id}
-                        className="flex items-center space-x-2 cursor-pointer hover:bg-gray-600/30 p-2 rounded"
+                        className="flex items-center space-x-2 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700/30 p-2 rounded"
                       >
                         <input
                           type="checkbox"
                           checked={formData.categoryIds.includes(category.id)}
                           onChange={() => toggleCategory(category.id)}
-                          className="w-4 h-4 text-etus-green bg-gray-700 border-gray-600 rounded focus:ring-etus-green"
+                          className="w-4 h-4 text-indigo-600 dark:text-indigo-400 bg-gray-700 border-slate-300 dark:border-slate-700 rounded focus:ring-indigo-500"
                         />
-                        <span className="text-sm text-gray-300">{category.name}</span>
+                        <span className="text-sm text-slate-600 dark:text-slate-300">{category.name}</span>
                       </label>
                     ))}
                   </div>
                 )}
               </div>
-              <p className="mt-1 text-xs text-gray-400">
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                 Selecione as categorias que este time pode usar ao criar tickets
               </p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">
                 Tipos de Chamados Vinculados
               </label>
               <div className="grid grid-cols-2 gap-2">
                 {ticketTypeOptions.map((option) => (
                   <label
                     key={option.value}
-                    className="flex items-center space-x-2 cursor-pointer hover:bg-gray-600/30 p-2 rounded border border-gray-600"
+                    className="flex items-center space-x-2 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700/30 p-2 rounded border border-slate-300 dark:border-slate-700"
                   >
                     <input
                       type="checkbox"
                       checked={formData.ticketTypes.includes(option.value)}
                       onChange={() => toggleTicketType(option.value)}
-                      className="w-4 h-4 text-etus-green bg-gray-700 border-gray-600 rounded focus:ring-etus-green"
+                      className="w-4 h-4 text-indigo-600 dark:text-indigo-400 bg-gray-700 border-slate-300 dark:border-slate-700 rounded focus:ring-indigo-500"
                     />
-                    <span className="text-sm text-gray-300">{option.label}</span>
+                    <span className="text-sm text-slate-600 dark:text-slate-300">{option.label}</span>
                   </label>
                 ))}
               </div>
-              <p className="mt-1 text-xs text-gray-400">
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                 Selecione os tipos de chamados que este time pode receber
               </p>
             </div>
@@ -414,13 +414,13 @@ const TeamsPage = () => {
                   setShowCreateModal(false);
                   setFormData({ name: '', description: '', categoryIds: [], ticketTypes: [] });
                 }}
-                className="px-4 py-2 border border-gray-600 rounded-lg text-sm font-medium text-gray-300 bg-gray-700/50 hover:bg-gray-700 transition-colors"
+                className="px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-700/30 transition-colors"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-etus-green hover:bg-etus-green-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
+                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-600-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
               >
                 Criar
               </button>
@@ -442,7 +442,7 @@ const TeamsPage = () => {
         <form onSubmit={handleEditTeam}>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
                 Nome <span className="text-red-400">*</span>
               </label>
               <input
@@ -450,69 +450,69 @@ const TeamsPage = () => {
                 required
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Descrição</label>
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Descrição</label>
               <textarea
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 rows={3}
-                className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">
                 Categorias Vinculadas
               </label>
-              <div className="max-h-48 overflow-y-auto border border-gray-600 rounded-lg p-3 bg-gray-700/30">
+              <div className="max-h-48 overflow-y-auto border border-slate-300 dark:border-slate-700 rounded-lg p-3 bg-white dark:bg-slate-800">
                 {categories.length === 0 ? (
-                  <p className="text-sm text-gray-400">Nenhuma categoria disponível</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Nenhuma categoria disponível</p>
                 ) : (
                   <div className="space-y-2">
                     {categories.map((category) => (
                       <label
                         key={category.id}
-                        className="flex items-center space-x-2 cursor-pointer hover:bg-gray-600/30 p-2 rounded"
+                        className="flex items-center space-x-2 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700/30 p-2 rounded"
                       >
                         <input
                           type="checkbox"
                           checked={formData.categoryIds.includes(category.id)}
                           onChange={() => toggleCategory(category.id)}
-                          className="w-4 h-4 text-etus-green bg-gray-700 border-gray-600 rounded focus:ring-etus-green"
+                          className="w-4 h-4 text-indigo-600 dark:text-indigo-400 bg-gray-700 border-slate-300 dark:border-slate-700 rounded focus:ring-indigo-500"
                         />
-                        <span className="text-sm text-gray-300">{category.name}</span>
+                        <span className="text-sm text-slate-600 dark:text-slate-300">{category.name}</span>
                       </label>
                     ))}
                   </div>
                 )}
               </div>
-              <p className="mt-1 text-xs text-gray-400">
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                 Selecione as categorias que este time pode usar ao criar tickets
               </p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">
                 Tipos de Chamados Vinculados
               </label>
               <div className="grid grid-cols-2 gap-2">
                 {ticketTypeOptions.map((option) => (
                   <label
                     key={option.value}
-                    className="flex items-center space-x-2 cursor-pointer hover:bg-gray-600/30 p-2 rounded border border-gray-600"
+                    className="flex items-center space-x-2 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700/30 p-2 rounded border border-slate-300 dark:border-slate-700"
                   >
                     <input
                       type="checkbox"
                       checked={formData.ticketTypes.includes(option.value)}
                       onChange={() => toggleTicketType(option.value)}
-                      className="w-4 h-4 text-etus-green bg-gray-700 border-gray-600 rounded focus:ring-etus-green"
+                      className="w-4 h-4 text-indigo-600 dark:text-indigo-400 bg-gray-700 border-slate-300 dark:border-slate-700 rounded focus:ring-indigo-500"
                     />
-                    <span className="text-sm text-gray-300">{option.label}</span>
+                    <span className="text-sm text-slate-600 dark:text-slate-300">{option.label}</span>
                   </label>
                 ))}
               </div>
-              <p className="mt-1 text-xs text-gray-400">
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                 Selecione os tipos de chamados que este time pode receber
               </p>
             </div>
@@ -524,13 +524,13 @@ const TeamsPage = () => {
                   setSelectedTeam(null);
                   setFormData({ name: '', description: '', categoryIds: [], ticketTypes: [] });
                 }}
-                className="px-4 py-2 border border-gray-600 rounded-lg text-sm font-medium text-gray-300 bg-gray-700/50 hover:bg-gray-700 transition-colors"
+                className="px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-700/30 transition-colors"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-etus-green hover:bg-etus-green-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
+                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-600-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
               >
                 Salvar Alterações
               </button>
@@ -552,14 +552,14 @@ const TeamsPage = () => {
         <form onSubmit={handleAddMember}>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
                 Usuário <span className="text-red-400">*</span>
               </label>
               <select
                 required
                 value={memberData.userId}
                 onChange={(e) => setMemberData({ ...memberData, userId: e.target.value })}
-                className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               >
                 <option value="">Selecione um usuário</option>
                 {users
@@ -575,7 +575,7 @@ const TeamsPage = () => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Papel</label>
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Papel</label>
               <select
                 value={memberData.role}
                 onChange={(e) =>
@@ -584,7 +584,7 @@ const TeamsPage = () => {
                     role: e.target.value as 'MEMBER' | 'LEAD',
                   })
                 }
-                className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               >
                 <option value="MEMBER">Membro</option>
                 <option value="LEAD">Líder</option>
@@ -598,13 +598,13 @@ const TeamsPage = () => {
                   setSelectedTeam(null);
                   setMemberData({ userId: '', role: 'MEMBER' });
                 }}
-                className="px-4 py-2 border border-gray-600 rounded-lg text-sm font-medium text-gray-300 bg-gray-700/50 hover:bg-gray-700 transition-colors"
+                className="px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-700/30 transition-colors"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-etus-green hover:bg-etus-green-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
+                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-600-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
               >
                 Adicionar
               </button>

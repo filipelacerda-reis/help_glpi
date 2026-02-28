@@ -124,7 +124,7 @@ const NotificationsPage = () => {
       case 'TEAM_CHANGE':
         return <Users className="w-5 h-5 text-purple-400" />;
       default:
-        return <Bell className="w-5 h-5 text-gray-400" />;
+        return <Bell className="w-5 h-5 text-slate-500 dark:text-slate-400" />;
     }
   };
 
@@ -135,8 +135,8 @@ const NotificationsPage = () => {
           onClick={() => setFilter('all')}
           className={`px-3 py-1 text-sm rounded-lg transition-colors ${
             filter === 'all'
-              ? 'bg-etus-green text-gray-900'
-              : 'bg-gray-700/50 text-gray-300 hover:bg-gray-700'
+              ? 'bg-indigo-600 text-gray-900'
+              : 'bg-slate-50 dark:bg-slate-900/40 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/30'
           }`}
         >
           Todas
@@ -145,8 +145,8 @@ const NotificationsPage = () => {
           onClick={() => setFilter('unread')}
           className={`px-3 py-1 text-sm rounded-lg transition-colors ${
             filter === 'unread'
-              ? 'bg-etus-green text-gray-900'
-              : 'bg-gray-700/50 text-gray-300 hover:bg-gray-700'
+              ? 'bg-indigo-600 text-gray-900'
+              : 'bg-slate-50 dark:bg-slate-900/40 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/30'
           }`}
         >
           Não lidas ({unreadCount})
@@ -155,7 +155,7 @@ const NotificationsPage = () => {
       {unreadCount > 0 && (
         <button
           onClick={handleMarkAllAsRead}
-          className="px-4 py-2 text-sm text-etus-green hover:text-etus-green-dark border border-etus-green/50 rounded-lg hover:bg-etus-green/10 transition-colors"
+          className="px-4 py-2 text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-300 border border-etus-green/50 rounded-lg hover:bg-indigo-600/10 transition-colors"
         >
           Marcar todas como lidas
         </button>
@@ -168,7 +168,7 @@ const NotificationsPage = () => {
       <ModernLayout title="Notificações" subtitle="Central de notificações do sistema" headerActions={headerActions}>
         <div className="text-center py-12">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-etus-green"></div>
-          <p className="mt-4 text-gray-400">Carregando...</p>
+          <p className="mt-4 text-slate-500 dark:text-slate-400">Carregando...</p>
         </div>
       </ModernLayout>
     );
@@ -176,9 +176,9 @@ const NotificationsPage = () => {
 
   return (
     <ModernLayout title="Notificações" subtitle="Central de notificações do sistema" headerActions={headerActions}>
-      <div className="bg-gray-700/30 backdrop-blur-sm border border-gray-600/50 rounded-lg overflow-hidden">
+      <div className="bg-white dark:bg-slate-800 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
         {notifications.length === 0 ? (
-          <div className="p-12 text-center text-gray-400">
+          <div className="p-12 text-center text-slate-500 dark:text-slate-400">
             {filter === 'unread' ? 'Nenhuma notificação não lida' : 'Nenhuma notificação'}
           </div>
         ) : (
@@ -190,7 +190,7 @@ const NotificationsPage = () => {
                 className={`p-4 cursor-pointer transition-colors ${
                   !notification.read
                     ? 'bg-blue-500/10 hover:bg-blue-500/20 border-l-4 border-blue-500'
-                    : 'hover:bg-gray-700/30'
+                    : 'hover:bg-slate-50 dark:hover:bg-slate-700/30'
                 }`}
               >
                 <div className="flex items-start">
@@ -204,13 +204,13 @@ const NotificationsPage = () => {
                         <span className="h-2 w-2 bg-blue-500 rounded-full flex-shrink-0"></span>
                       )}
                     </div>
-                    <p className="text-sm text-gray-300 mt-1">{notification.message}</p>
+                    <p className="text-sm text-slate-600 dark:text-slate-300 mt-1">{notification.message}</p>
                     {notification.ticket && (
-                      <p className="text-xs text-gray-400 mt-1">
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                         Ticket: {notification.ticket.title}
                       </p>
                     )}
-                    <p className="text-xs text-gray-500 mt-1">{formatTime(notification.createdAt)}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{formatTime(notification.createdAt)}</p>
                   </div>
                 </div>
               </li>

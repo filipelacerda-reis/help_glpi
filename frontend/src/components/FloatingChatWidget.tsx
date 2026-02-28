@@ -180,7 +180,7 @@ export const FloatingChatWidget: React.FC = () => {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setIsMinimized(!isMinimized)}
-                className="p-1 hover:bg-gray-700 rounded transition-colors"
+                className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700/30 rounded transition-colors"
                 aria-label={isMinimized ? 'Expandir' : 'Minimizar'}
               >
                 <Minimize2 className="w-4 h-4 text-gray-400" />
@@ -190,7 +190,7 @@ export const FloatingChatWidget: React.FC = () => {
                   setIsOpen(false);
                   setIsMinimized(false);
                 }}
-                className="p-1 hover:bg-gray-700 rounded transition-colors"
+                className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700/30 rounded transition-colors"
                 aria-label="Fechar"
               >
                 <X className="w-4 h-4 text-gray-400" />

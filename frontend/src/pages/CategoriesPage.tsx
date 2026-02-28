@@ -120,29 +120,29 @@ const CategoriesPage = () => {
     const subCategories = getSubCategories(category.id);
     return (
       <div key={category.id} className={`${level > 0 ? 'ml-6 mt-2' : ''}`}>
-        <div className="flex items-center justify-between p-3 bg-gray-700/30 border border-gray-600/50 rounded-lg hover:bg-gray-700/40 transition-colors">
+        <div className="flex items-center justify-between p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700/30 transition-colors">
           <div className="flex-1">
             <div className="flex items-center space-x-2">
               <h3 className="font-medium text-white">{category.name}</h3>
               {!category.active && (
-                <span className="px-2 py-1 text-xs font-medium text-gray-400 bg-gray-600/50 rounded">
+                <span className="px-2 py-1 text-xs font-medium text-slate-500 dark:text-slate-400 bg-gray-600/50 rounded">
                   Inativa
                 </span>
               )}
               {category.parentCategory && (
-                <span className="text-xs text-gray-400">
+                <span className="text-xs text-slate-500 dark:text-slate-400">
                   (Pai: {category.parentCategory.name})
                 </span>
               )}
             </div>
             {subCategories.length > 0 && (
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                 {subCategories.length} subcategoria{subCategories.length > 1 ? 's' : ''}
               </p>
             )}
             {category.teams && category.teams.length > 0 && (
               <div className="mt-2">
-                <p className="text-xs text-gray-400 mb-1">Times vinculados:</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Times vinculados:</p>
                 <div className="flex flex-wrap gap-1">
                   {category.teams.map((teamLink: any) => (
                     <span
@@ -181,7 +181,7 @@ const CategoriesPage = () => {
   const headerActions = user?.role === 'ADMIN' ? (
     <button
       onClick={() => setShowCreateModal(true)}
-      className="inline-flex items-center space-x-2 px-4 py-2 bg-etus-green hover:bg-etus-green-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
+      className="inline-flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-600-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
     >
       <Plus className="w-4 h-4" />
       <span>Nova Categoria</span>
@@ -193,7 +193,7 @@ const CategoriesPage = () => {
       <ModernLayout title="Categorias" subtitle="Gerenciar categorias de chamados" headerActions={headerActions}>
         <div className="text-center py-12">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-etus-green"></div>
-          <p className="mt-4 text-gray-400">Carregando categorias...</p>
+          <p className="mt-4 text-slate-500 dark:text-slate-400">Carregando categorias...</p>
         </div>
       </ModernLayout>
     );
@@ -208,14 +208,14 @@ const CategoriesPage = () => {
       )}
 
       {/* Filtros */}
-      <div className="mb-6 bg-gray-700/30 backdrop-blur-sm border border-gray-600/50 rounded-lg p-4">
+      <div className="mb-6 bg-white dark:bg-slate-800 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-lg p-4">
         <div className="flex items-center space-x-4">
           <div>
-            <label className="block text-xs font-medium text-gray-400 mb-1">Status</label>
+            <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Status</label>
             <select
               value={filterActive}
               onChange={(e) => setFilterActive(e.target.value)}
-              className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+              className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             >
               <option value="true">Apenas Ativas</option>
               <option value="false">Apenas Inativas</option>
@@ -226,9 +226,9 @@ const CategoriesPage = () => {
       </div>
 
       {/* Lista de Categorias */}
-      <div className="bg-gray-700/30 backdrop-blur-sm border border-gray-600/50 rounded-lg">
+      <div className="bg-white dark:bg-slate-800 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-lg">
         {categories.length === 0 ? (
-          <div className="text-center py-12 text-gray-400">
+          <div className="text-center py-12 text-slate-500 dark:text-slate-400">
             Nenhuma categoria encontrada
           </div>
         ) : (
@@ -254,7 +254,7 @@ const CategoriesPage = () => {
         <form onSubmit={handleCreateCategory}>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
                 Nome <span className="text-red-400">*</span>
               </label>
               <input
@@ -262,12 +262,12 @@ const CategoriesPage = () => {
                 required
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 placeholder="Ex: Infraestrutura"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
                 Categoria Pai (opcional)
               </label>
               <select
@@ -278,7 +278,7 @@ const CategoriesPage = () => {
                     parentCategoryId: e.target.value || undefined,
                   })
                 }
-                className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               >
                 <option value="">Nenhuma (categoria raiz)</option>
                 {categories
@@ -296,9 +296,9 @@ const CategoriesPage = () => {
                 id="active"
                 checked={formData.active ?? true}
                 onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
-                className="h-4 w-4 text-etus-green focus:ring-etus-green border-gray-600 bg-gray-700/50 rounded"
+                className="h-4 w-4 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 rounded"
               />
-              <label htmlFor="active" className="ml-2 block text-sm text-gray-300">
+              <label htmlFor="active" className="ml-2 block text-sm text-slate-600 dark:text-slate-300">
                 Categoria ativa
               </label>
             </div>
@@ -314,13 +314,13 @@ const CategoriesPage = () => {
                   active: true,
                 });
               }}
-              className="px-4 py-2 border border-gray-600 rounded-lg text-sm font-medium text-gray-300 bg-gray-700/50 hover:bg-gray-700 transition-colors"
+              className="px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-700/30 transition-colors"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-etus-green hover:bg-etus-green-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
+              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-600-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
             >
               Criar
             </button>
@@ -340,7 +340,7 @@ const CategoriesPage = () => {
         <form onSubmit={handleUpdateCategory}>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
                 Nome <span className="text-red-400">*</span>
               </label>
               <input
@@ -348,11 +348,11 @@ const CategoriesPage = () => {
                 required
                 value={editFormData.name || ''}
                 onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
-                className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
                 Categoria Pai (opcional)
               </label>
               <select
@@ -363,7 +363,7 @@ const CategoriesPage = () => {
                     parentCategoryId: e.target.value || null,
                   })
                 }
-                className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               >
                 <option value="">Nenhuma (categoria raiz)</option>
                 {categories
@@ -381,9 +381,9 @@ const CategoriesPage = () => {
                 id="editActive"
                 checked={editFormData.active ?? true}
                 onChange={(e) => setEditFormData({ ...editFormData, active: e.target.checked })}
-                className="h-4 w-4 text-etus-green focus:ring-etus-green border-gray-600 bg-gray-700/50 rounded"
+                className="h-4 w-4 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 rounded"
               />
-              <label htmlFor="editActive" className="ml-2 block text-sm text-gray-300">
+              <label htmlFor="editActive" className="ml-2 block text-sm text-slate-600 dark:text-slate-300">
                 Categoria ativa
               </label>
             </div>
@@ -395,13 +395,13 @@ const CategoriesPage = () => {
                 setShowEditModal(false);
                 setEditingCategory(null);
               }}
-              className="px-4 py-2 border border-gray-600 rounded-lg text-sm font-medium text-gray-300 bg-gray-700/50 hover:bg-gray-700 transition-colors"
+              className="px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-700/30 transition-colors"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-etus-green hover:bg-etus-green-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
+              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-600-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
             >
               Salvar
             </button>

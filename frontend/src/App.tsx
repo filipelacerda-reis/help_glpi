@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { SocketProvider } from './contexts/SocketContext';
 import LoginPage from './pages/LoginPage';
@@ -24,7 +24,7 @@ import EquipmentsPage from './pages/EquipmentsPage';
 import FinancePage from './pages/FinancePage';
 import HrPage from './pages/HrPage';
 import ProcurementPage from './pages/ProcurementPage';
-import Layout from './components/Layout';
+import IntegrationsAdminPage from './pages/IntegrationsAdminPage';
 import { PlatformModule } from './config/modules';
 import { ModuleKey, SubmoduleKey } from './config/entitlements';
 
@@ -118,7 +118,7 @@ function AppRoutes() {
         path="/"
         element={
           <PrivateRoute>
-            <Layout />
+            <Outlet />
           </PrivateRoute>
         }
       >
@@ -194,6 +194,16 @@ function AppRoutes() {
               fallbackModule="PROCUREMENT"
             >
               <ProcurementPage />
+            </RequireEntitlement>
+          }
+        />
+        <Route
+          path="integrations"
+          element={
+            <RequireEntitlement moduleKey="ADMIN" submoduleKey="ADMIN_SETTINGS" fallbackModule="ADMIN">
+              <RequireAdmin>
+                <IntegrationsAdminPage />
+              </RequireAdmin>
             </RequireEntitlement>
           }
         />

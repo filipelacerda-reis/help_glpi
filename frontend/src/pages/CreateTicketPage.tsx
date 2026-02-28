@@ -317,7 +317,7 @@ const CreateTicketPage = () => {
     >
       <div className="max-w-4xl mx-auto">
         <div>
-          <form onSubmit={handleSubmit} className="bg-gray-700/30 backdrop-blur-sm border border-gray-600/50 rounded-lg p-6">
+          <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-800 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-lg p-6">
           {error && (
             <div className="mb-4 bg-red-500/20 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg backdrop-blur-sm">
               {error}
@@ -325,7 +325,7 @@ const CreateTicketPage = () => {
           )}
 
           <div className="mb-4">
-            <label htmlFor="title" className="block text-sm font-medium text-gray-300 mb-1">
+            <label htmlFor="title" className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
               Título <span className="text-red-400">*</span>
             </label>
             <input
@@ -335,7 +335,7 @@ const CreateTicketPage = () => {
               minLength={3}
               value={formData.title}
               onChange={(e) => handleTitleChange(e.target.value)}
-              className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-400 focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+              className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               placeholder="Descreva brevemente o problema"
             />
           </div>
@@ -370,24 +370,24 @@ const CreateTicketPage = () => {
                 <button
                   type="button"
                   onClick={() => setRagSolution({ ...ragSolution, visible: false })}
-                  className="text-gray-400 hover:text-gray-300 text-xs"
+                  className="text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:text-slate-300 text-xs"
                 >
                   ✕
                 </button>
               </div>
-              <div className="bg-gray-800/50 rounded-lg p-4 mb-3 border border-gray-700/50">
+              <div className="bg-slate-50 dark:bg-slate-900/40 rounded-lg p-4 mb-3 border border-slate-200 dark:border-slate-700/60">
                 <div
                   className="prose prose-invert max-w-none prose-sm
                     prose-headings:text-white prose-headings:text-sm
                     prose-p:text-gray-200 prose-p:text-sm prose-p:my-2
                     prose-strong:text-white
-                    prose-code:text-gray-300 prose-code:bg-gray-800 prose-code:px-1 prose-code:py-0.5 prose-code:rounded
+                    prose-code:text-slate-600 dark:text-slate-300 prose-code:bg-gray-800 prose-code:px-1 prose-code:py-0.5 prose-code:rounded
                     prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-pre:text-xs
                     prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline
                     prose-ul:text-gray-200 prose-ul:text-sm prose-ul:my-2
                     prose-ol:text-gray-200 prose-ol:text-sm prose-ol:my-2
                     prose-li:text-gray-200 prose-li:text-sm
-                    prose-blockquote:text-gray-400 prose-blockquote:border-gray-600"
+                    prose-blockquote:text-slate-500 dark:text-slate-400 prose-blockquote:border-slate-300 dark:border-slate-700"
                   dangerouslySetInnerHTML={{
                     __html: DOMPurify.sanitize(
                       marked.parse(ragSolution.text) as string
@@ -402,14 +402,14 @@ const CreateTicketPage = () => {
                     sessionStorage.setItem('ticketDeflectionSuccess', 'true');
                     navigate('/tickets');
                   }}
-                  className="px-4 py-2 bg-etus-green hover:bg-etus-green-dark rounded-lg text-sm font-semibold text-gray-900 transition-colors"
+                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-600-dark rounded-lg text-sm font-semibold text-gray-900 transition-colors"
                 >
                   Isso resolveu meu problema!
                 </button>
                 <button
                   type="button"
                   onClick={() => setRagSolution({ ...ragSolution, visible: false })}
-                  className="px-4 py-2 border border-gray-600 rounded-lg text-sm font-medium text-gray-300 bg-gray-700/50 hover:bg-gray-700 transition-colors"
+                  className="px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-700/30 transition-colors"
                 >
                   Ignorar
                 </button>
@@ -423,17 +423,17 @@ const CreateTicketPage = () => {
               <div className="flex justify-between items-start mb-3">
                 <div className="flex items-center space-x-2">
                   <span className="text-2xl">🤖</span>
-                  <h3 className="text-sm font-semibold text-etus-green">Solução Sugerida pela IA</h3>
+                  <h3 className="text-sm font-semibold text-indigo-600 dark:text-indigo-400">Solução Sugerida pela IA</h3>
                 </div>
                 <button
                   type="button"
                   onClick={() => setShowAiSolution(false)}
-                  className="text-gray-400 hover:text-gray-300 text-xs"
+                  className="text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:text-slate-300 text-xs"
                 >
                   ✕
                 </button>
               </div>
-              <div className="bg-gray-800/50 rounded-lg p-4 mb-3 border border-gray-700/50">
+              <div className="bg-slate-50 dark:bg-slate-900/40 rounded-lg p-4 mb-3 border border-slate-200 dark:border-slate-700/60">
                 <p className="text-sm text-gray-200 whitespace-pre-wrap">{aiSolution}</p>
               </div>
               <div className="flex space-x-3">
@@ -444,7 +444,7 @@ const CreateTicketPage = () => {
                     sessionStorage.setItem('ticketDeflectionSuccess', 'true');
                     navigate('/tickets');
                   }}
-                  className="px-4 py-2 bg-etus-green hover:bg-etus-green-dark rounded-lg text-sm font-semibold text-gray-900 transition-colors"
+                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-600-dark rounded-lg text-sm font-semibold text-gray-900 transition-colors"
                 >
                   Isso resolveu!
                 </button>
@@ -454,7 +454,7 @@ const CreateTicketPage = () => {
                     setShowAiSolution(false);
                     setAiSolution(null);
                   }}
-                  className="px-4 py-2 border border-gray-600 rounded-lg text-sm font-medium text-gray-300 bg-gray-700/50 hover:bg-gray-700 transition-colors"
+                  className="px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-700/30 transition-colors"
                 >
                   Continuar chamado
                 </button>
@@ -479,14 +479,14 @@ const CreateTicketPage = () => {
                 {kbSuggestions.slice(0, 3).map((article) => (
                   <div
                     key={article.id}
-                    className="p-3 bg-gray-700/30 rounded border border-blue-500/30 cursor-pointer hover:border-blue-500/50 transition-colors"
+                    className="p-3 bg-white dark:bg-slate-800 rounded border border-blue-500/30 cursor-pointer hover:border-blue-500/50 transition-colors"
                     onClick={() => setSelectedKbArticle(article)}
                   >
                     <h4 className="text-sm font-medium text-white">{article.title}</h4>
                     {article.category && (
-                      <p className="text-xs text-gray-400 mt-1">{article.category.name}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{article.category.name}</p>
                     )}
-                    <p className="text-xs text-gray-400 mt-1 line-clamp-2">
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">
                       {article.content.substring(0, 100)}...
                     </p>
                   </div>
@@ -499,7 +499,7 @@ const CreateTicketPage = () => {
           )}
 
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">
               Anexos (Imagens, PDF, Documentos)
             </label>
             <FileUpload
@@ -519,7 +519,7 @@ const CreateTicketPage = () => {
           </div>
 
           <div className="mb-4">
-            <label htmlFor="team" className="block text-sm font-medium text-gray-300 mb-1">
+            <label htmlFor="team" className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
               Time <span className="text-red-400">*</span>
             </label>
             <select
@@ -527,7 +527,7 @@ const CreateTicketPage = () => {
               required
               value={formData.teamId}
               onChange={(e) => setFormData({ ...formData, teamId: e.target.value })}
-              className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+              className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               disabled={teams.length === 0}
             >
               <option value="">
@@ -548,7 +548,7 @@ const CreateTicketPage = () => {
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 mb-4">
             <div>
-              <label htmlFor="tipo" className="block text-sm font-medium text-gray-300 mb-1">
+              <label htmlFor="tipo" className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
                 Tipo de Chamado <span className="text-red-400">*</span>
               </label>
               <select
@@ -562,7 +562,7 @@ const CreateTicketPage = () => {
                     setSelectedTagIds([]);
                   }
                 }}
-                className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 disabled={!formData.teamId || availableTicketTypes.length === 0}
               >
                 {availableTicketTypes.length === 0 ? (
@@ -579,21 +579,21 @@ const CreateTicketPage = () => {
                 )}
               </select>
               {!formData.teamId && (
-                <p className="mt-1 text-xs text-gray-400">
+                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                   Selecione um time para ver os tipos de chamados disponíveis
                 </p>
               )}
             </div>
 
             <div>
-              <label htmlFor="category" className="block text-sm font-medium text-gray-300 mb-1">
+              <label htmlFor="category" className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
                 Categoria
               </label>
               <select
                 id="category"
                 value={formData.categoryId}
                 onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
-                className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 disabled={!formData.teamId}
               >
                 <option value="">
@@ -610,7 +610,7 @@ const CreateTicketPage = () => {
                 ))}
               </select>
               {!formData.teamId && (
-                <p className="mt-1 text-xs text-gray-400">
+                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                   Selecione um time para ver as categorias disponíveis
                 </p>
               )}
@@ -619,14 +619,14 @@ const CreateTicketPage = () => {
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 mb-4">
             <div>
-              <label htmlFor="priority" className="block text-sm font-medium text-gray-300 mb-1">
+              <label htmlFor="priority" className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
                 Prioridade
               </label>
               <select
                 id="priority"
                 value={formData.priority}
                 onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
-                className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               >
                 <option value="LOW">Baixa</option>
                 <option value="MEDIUM">Média</option>
@@ -637,14 +637,14 @@ const CreateTicketPage = () => {
 
             {(formData.tipo === 'INCIDENT' || formData.tipo === 'SERVICE_REQUEST' || formData.tipo === 'PROBLEM') && (
               <div>
-                <label htmlFor="infraTipo" className="block text-sm font-medium text-gray-300 mb-1">
+                <label htmlFor="infraTipo" className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
                   Tipo de Infraestrutura
                 </label>
                 <select
                   id="infraTipo"
                   value={formData.infraTipo}
                   onChange={(e) => setFormData({ ...formData, infraTipo: e.target.value as typeof formData.infraTipo })}
-                  className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                  className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 >
                   <option value="">Selecione (opcional)</option>
                   <option value="LOCAL">Local</option>
@@ -676,7 +676,7 @@ const CreateTicketPage = () => {
           {/* Gestão de Projetos - Campos adicionais */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 mb-4">
             <div>
-              <label htmlFor="dueDate" className="block text-sm font-medium text-gray-300 mb-1">
+              <label htmlFor="dueDate" className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
                 Data de Entrega
               </label>
               <input
@@ -684,11 +684,11 @@ const CreateTicketPage = () => {
                 id="dueDate"
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
-                className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               />
             </div>
             <div>
-              <label htmlFor="estimatedMinutes" className="block text-sm font-medium text-gray-300 mb-1">
+              <label htmlFor="estimatedMinutes" className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
                 Tempo Estimado (minutos)
               </label>
               <input
@@ -698,7 +698,7 @@ const CreateTicketPage = () => {
                 value={estimatedMinutes}
                 onChange={(e) => setEstimatedMinutes(e.target.value)}
                 placeholder="Ex: 120"
-                className="block w-full bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-400 focus:ring-2 focus:ring-etus-green focus:border-etus-green"
+                className="block w-full bg-slate-50 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               />
             </div>
           </div>
@@ -719,7 +719,7 @@ const CreateTicketPage = () => {
           {/* Seleção de Tags */}
           {getRelevantTagGroups().length > 0 && (
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">
                 Tags
                 {formData.tipo === 'QUESTION' && <span className="text-red-400"> *</span>}
               </label>
@@ -729,8 +729,8 @@ const CreateTicketPage = () => {
                   if (groupTags.length === 0) return null;
 
                   return (
-                    <div key={group} className="border border-gray-600/50 rounded-lg p-3 bg-gray-700/20">
-                      <h4 className="text-sm font-semibold text-gray-300 mb-2">{groupLabels[group]}</h4>
+                    <div key={group} className="border border-slate-200 dark:border-slate-700 rounded-lg p-3 bg-slate-50 dark:bg-slate-900/30">
+                      <h4 className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2">{groupLabels[group]}</h4>
                       <div className="flex flex-wrap gap-2">
                         {groupTags.map((tag) => (
                           <button
@@ -739,8 +739,8 @@ const CreateTicketPage = () => {
                             onClick={() => toggleTag(tag.id)}
                             className={`px-3 py-1 text-xs rounded-full border transition-colors ${
                               selectedTagIds.includes(tag.id)
-                                ? 'bg-etus-green text-gray-900 border-etus-green'
-                                : 'bg-gray-700/50 text-gray-300 border-gray-600 hover:border-etus-green'
+                                ? 'bg-indigo-600 text-gray-900 border-etus-green'
+                                : 'bg-slate-50 dark:bg-slate-900/40 text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:border-etus-green'
                             }`}
                           >
                             {tag.name.replace(/^(feature|area|env|platform|source|impact|rc|status_reason|work|question|infra):/, '')}
@@ -763,14 +763,14 @@ const CreateTicketPage = () => {
             <button
               type="button"
               onClick={() => navigate('/tickets')}
-              className="px-4 py-2 border border-gray-600 rounded-lg text-sm font-medium text-gray-300 bg-gray-700/50 hover:bg-gray-700 transition-colors"
+              className="px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-700/30 transition-colors"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-2 bg-etus-green hover:bg-etus-green-dark rounded-lg text-sm font-semibold text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-etus-green disabled:opacity-50 transition-colors"
+              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-600-dark rounded-lg text-sm font-semibold text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-indigo-500 disabled:opacity-50 transition-colors"
             >
               {loading ? 'Criando...' : 'Criar Ticket'}
             </button>
@@ -789,19 +789,19 @@ const CreateTicketPage = () => {
         >
           <div className="mb-4">
             {selectedKbArticle.category && (
-              <p className="text-sm text-gray-400 mb-2">Categoria: {selectedKbArticle.category.name}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mb-2">Categoria: {selectedKbArticle.category.name}</p>
             )}
           </div>
-          <div className="border-t border-gray-600/50 pt-4 max-h-[60vh] overflow-y-auto">
+          <div className="border-t border-slate-200 dark:border-slate-700 pt-4 max-h-[60vh] overflow-y-auto">
             <div
               className="prose prose-invert max-w-none
                 prose-headings:text-white
-                prose-p:text-gray-300
+                prose-p:text-slate-600 dark:text-slate-300
                 prose-strong:text-white
-                prose-code:text-gray-300 prose-code:bg-gray-800
+                prose-code:text-slate-600 dark:text-slate-300 prose-code:bg-gray-800
                 prose-pre:bg-gray-900 prose-pre:text-gray-100
-                prose-a:text-etus-green
-                prose-blockquote:text-gray-400"
+                prose-a:text-indigo-600 dark:text-indigo-400
+                prose-blockquote:text-slate-500 dark:text-slate-400"
               dangerouslySetInnerHTML={{
                 __html: DOMPurify.sanitize(
                   marked.parse(selectedKbArticle.content) as string
@@ -809,21 +809,21 @@ const CreateTicketPage = () => {
               }}
             />
           </div>
-          <div className="mt-6 flex justify-end space-x-3 border-t border-gray-600/50 pt-4">
+          <div className="mt-6 flex justify-end space-x-3 border-t border-slate-200 dark:border-slate-700 pt-4">
             <button
               type="button"
               onClick={() => {
                 setSelectedKbArticle(null);
                 navigate('/tickets');
               }}
-              className="px-4 py-2 border border-gray-600 rounded-lg text-sm font-medium text-gray-300 bg-gray-700/50 hover:bg-gray-700 transition-colors"
+              className="px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-700/30 transition-colors"
             >
               Isso resolveu meu problema
             </button>
             <button
               type="button"
               onClick={() => setSelectedKbArticle(null)}
-              className="px-4 py-2 bg-etus-green hover:bg-etus-green-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
+              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-600-dark rounded-lg text-sm font-medium text-gray-900 transition-colors"
             >
               Continuar Criando Ticket
             </button>

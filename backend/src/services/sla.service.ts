@@ -1,10 +1,11 @@
 import prisma from '../lib/prisma';
 import { AppError } from '../middleware/errorHandler';
 import { logger } from '../utils/logger';
-import { TicketStatus, SlaInstanceStatus, TicketEventType, EventOrigin, AutomationEvent } from '@prisma/client';
+import { TicketStatus, SlaInstanceStatus, TicketEventType, EventOrigin, AutomationEvent, TagGroup, UserRole } from '@prisma/client';
 import { businessCalendarService } from './businessCalendar.service';
 import { ticketEventService } from './ticketEvent.service';
 import { businessMinutesBetween, BusinessSchedule } from '../domain/time/businessTime.engine';
+import { notificationService } from './notification.service';
 
 export interface CreateSlaPolicyDto {
   name: string;
@@ -86,6 +87,136 @@ async function calculateElapsedBusinessMinutes(
 }
 
 export const slaService = {
+  async scanResolutionRiskTickets(options?: { limit?: number }) {
+    const limit = Math.max(1, Math.min(options?.limit ?? 200, 500));
+    const now = new Date();
+
+    const activeInstances = await prisma.ticketSlaInstance.findMany({
+      where: {
+        status: {
+          in: [SlaInstanceStatus.RUNNING, SlaInstanceStatus.PAUSED],
+        },
+        ticket: {
+          status: {
+            in: [TicketStatus.OPEN, TicketStatus.IN_PROGRESS],
+          },
+        },
+      },
+      include: {
+        slaPolicy: {
+          select: {
+            id: true,
+            calendarId: true,
+            targetResolutionBusinessMinutes: true,
+          },
+        },
+        ticket: {
+          select: {
+            id: true,
+            createdAt: true,
+            status: true,
+            assignedTechnicianId: true,
+            teamId: true,
+            tags: {
+              include: {
+                tag: {
+                  select: { id: true, name: true },
+                },
+              },
+            },
+          },
+        },
+      },
+      orderBy: { startedAt: 'asc' },
+      take: limit,
+    });
+
+    if (activeInstances.length === 0) {
+      return { scanned: 0, atRisk: 0, alertedUsers: 0 };
+    }
+
+    const riskTag = await prisma.tag.upsert({
+      where: { name: 'Risco de SLA' },
+      update: { isActive: true },
+      create: {
+        name: 'Risco de SLA',
+        group: TagGroup.STATUS_REASON,
+        isActive: true,
+      },
+      select: { id: true, name: true },
+    });
+
+    let atRisk = 0;
+    let alertedUsers = 0;
+
+    for (const instance of activeInstances) {
+      const targetMinutes = instance.slaPolicy.targetResolutionBusinessMinutes;
+      if (!targetMinutes || targetMinutes <= 0) continue;
+
+      const thresholdMinutes = Math.ceil(targetMinutes * 0.8);
+      const schedule = await businessCalendarService.getBusinessSchedule(
+        instance.slaPolicy.calendarId
+      );
+      const elapsedBusinessMinutes = await calculateElapsedBusinessMinutes(
+        instance.ticket,
+        now,
+        schedule
+      );
+
+      if (elapsedBusinessMinutes < thresholdMinutes || elapsedBusinessMinutes >= targetMinutes) {
+        continue;
+      }
+
+      atRisk += 1;
+
+      const alreadyTagged = instance.ticket.tags.some(
+        (ticketTag) => ticketTag.tag.name.toLowerCase() === riskTag.name.toLowerCase()
+      );
+      if (!alreadyTagged) {
+        await prisma.ticketTag.create({
+          data: {
+            ticketId: instance.ticket.id,
+            tagId: riskTag.id,
+          },
+        }).catch(() => null);
+      }
+
+      const message = `⚠️ Atenção: O ticket #${instance.ticket.id.slice(0, 8)} está prestes a violar o SLA de resolução.`;
+      const recipients = new Set<string>();
+
+      if (instance.ticket.assignedTechnicianId) {
+        recipients.add(instance.ticket.assignedTechnicianId);
+      } else if (instance.ticket.teamId) {
+        const teamUsers = await prisma.userTeam.findMany({
+          where: { teamId: instance.ticket.teamId },
+          select: { userId: true },
+        });
+        teamUsers.forEach((teamUser) => recipients.add(teamUser.userId));
+      } else {
+        const admins = await prisma.user.findMany({
+          where: {
+            role: { in: [UserRole.ADMIN, UserRole.TRIAGER] },
+            active: true,
+          },
+          select: { id: true },
+          take: 10,
+        });
+        admins.forEach((admin) => recipients.add(admin.id));
+      }
+
+      for (const recipientId of recipients) {
+        const created = await notificationService.createSlaRiskNotification(
+          recipientId,
+          instance.ticket.id,
+          message
+        );
+        if (created) alertedUsers += 1;
+      }
+    }
+
+    return { scanned: activeInstances.length, atRisk, alertedUsers };
+  },
+
   /**
    * Cria uma política de SLA
    */

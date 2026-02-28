@@ -74,10 +74,17 @@ const auth0Schema = z.object({
   requireRole: z.boolean().optional(),
 });
 
+const slackSchema = z.object({
+  enabled: z.boolean(),
+  botToken: z.string().optional(),
+  signingSecret: z.string().optional(),
+});
+
 const settingsSchema = z.object({
   saml: samlSchema.optional(),
   auth0: auth0Schema.optional(),
   platform: platformSchema.optional(),
+  slack: slackSchema.optional(),
 });
 
 const isValidJsonObject = (value?: string) => {
@@ -140,6 +147,15 @@ export const adminSettingsController = {
       ...runtime.auth0,
       clientSecret: auth0SecretConfigured ? '***' : '',
     });
+    const slackEnabled = Boolean(
+      await platformSettingsService.getSettingDecrypted('SLACK_ENABLED')
+    );
+    const slackBotToken = await platformSettingsService.getSetting('SLACK_BOT_TOKEN');
+    const slackSigningSecret = await platformSettingsService.getSetting('SLACK_SIGNING_SECRET');
+    const slackBotTokenConfigured = Boolean((slackBotToken?.valueJson as any)?.isConfigured);
+    const slackSigningSecretConfigured = Boolean(
+      (slackSigningSecret?.valueJson as any)?.isConfigured
+    );
 
     res.json({
       activeProvider: runtime.activeProvider,
@@ -147,6 +163,11 @@ export const adminSettingsController = {
       saml: samlMasked,
       auth0: auth0Masked,
       platform: runtime.platform,
+      slack: {
+        enabled: slackEnabled,
+        botToken: slackBotTokenConfigured ? '***' : '',
+        signingSecret: slackSigningSecretConfigured ? '***' : '',
+      },
     });
   },
 
@@ -233,6 +254,30 @@ export const adminSettingsController = {
       updates.push({ key: 'platform', valueJson: payload.platform, isSecret: false });
     }
 
+    if (payload.slack) {
+      updates.push({
+        key: 'SLACK_ENABLED',
+        valueJson: Boolean(payload.slack.enabled),
+        isSecret: false,
+      });
+
+      if (payload.slack.botToken && payload.slack.botToken !== '***') {
+        updates.push({
+          key: 'SLACK_BOT_TOKEN',
+          valueJson: { botToken: payload.slack.botToken },
+          isSecret: true,
+        });
+      }
+
+      if (payload.slack.signingSecret && payload.slack.signingSecret !== '***') {
+        updates.push({
+          key: 'SLACK_SIGNING_SECRET',
+          valueJson: { signingSecret: payload.slack.signingSecret },
+          isSecret: true,
+        });
+      }
+    }
+
     if (updates.length === 0) {
       if (!payload.saml && !payload.auth0) {
         res.status(400).json({ error: 'Nenhuma configuração para atualizar' });
@@ -293,6 +338,50 @@ export const adminSettingsController = {
         error: error?.message || 'Erro ao salvar configurações',
       });
     }
+  },
+
+  async getSlackSettings(_req: Request, res: Response) {
+    const slackEnabled = Boolean(await platformSettingsService.getSettingDecrypted('SLACK_ENABLED'));
+    const slackBotToken = await platformSettingsService.getSetting('SLACK_BOT_TOKEN');
+    const slackSigningSecret = await platformSettingsService.getSetting('SLACK_SIGNING_SECRET');
+
+    res.json({
+      enabled: slackEnabled,
+      botToken: (slackBotToken?.valueJson as any)?.isConfigured ? '***' : '',
+      signingSecret: (slackSigningSecret?.valueJson as any)?.isConfigured ? '***' : '',
+    });
+  },
+
+  async updateSlackSettings(req: Request, res: Response) {
+    const payload = slackSchema.parse(req.body);
+    const actorUserId = req.userId as string;
+    const updates: Array<{ key: string; valueJson: any; isSecret: boolean }> = [
+      { key: 'SLACK_ENABLED', valueJson: Boolean(payload.enabled), isSecret: false },
+    ];
+
+    if (payload.botToken && payload.botToken !== '***') {
+      updates.push({
+        key: 'SLACK_BOT_TOKEN',
+        valueJson: { botToken: payload.botToken },
+        isSecret: true,
+      });
+    }
+
+    if (payload.signingSecret && payload.signingSecret !== '***') {
+      updates.push({
+        key: 'SLACK_SIGNING_SECRET',
+        valueJson: { signingSecret: payload.signingSecret },
+        isSecret: true,
+      });
+    }
+
+    await platformSettingsService.setMany(updates, actorUserId);
+    await platformAuditService.log(actorUserId, 'SETTING_UPDATED', 'SLACK', {
+      keys: updates.map((item) => item.key),
+      enabled: payload.enabled,
+    });
+
+    res.json({ success: true });
   },
 
   async testSamlSettings(req: Request, res: Response) {

@@ -13,6 +13,8 @@ router.use(requireModuleAccess('ADMIN'));
 
 router.get('/settings', requirePermission(PERMISSIONS.PLATFORM_SETTINGS_READ), adminSettingsController.getSettings);
 router.put('/settings', requirePermission(PERMISSIONS.PLATFORM_SETTINGS_WRITE), adminSettingsController.updateSettings);
+router.get('/settings/slack', requirePermission(PERMISSIONS.PLATFORM_SETTINGS_READ), adminSettingsController.getSlackSettings);
+router.put('/settings/slack', requirePermission(PERMISSIONS.PLATFORM_SETTINGS_WRITE), adminSettingsController.updateSlackSettings);
 router.post('/settings/saml/test', requirePermission(PERMISSIONS.PLATFORM_AUTHPROVIDER_WRITE), adminSettingsController.testSamlSettings);
 router.post('/settings/auth0/test', requirePermission(PERMISSIONS.PLATFORM_AUTHPROVIDER_WRITE), adminSettingsController.testAuth0Settings);
 
